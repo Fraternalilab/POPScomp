@@ -1,0 +1,27 @@
+Package: RPOPS
+Type: Package
+Title: R Interface of POPS
+Version: 0.1
+Authors@R: c(person("Jens", "Kleinjung", role  = c("aut", "cre"),
+                     email = "jens@jkleinj.eu"),
+             person("Franca", "Fraternali", role  = c("aut", "cre"),
+                     email = "franca.fraternali@kcl.ac.uk"))
+Author: Jens Kleinjung, Franca Fraternali
+Maintainer: Jens Kleinjung <jents@jkleinj.eu> 
+Description: The package serves as a front-end to the POPS program,
+  either in the R environment (pops.R) or as a Shiny server (shiny.R).
+  It serves additionally as a source for SASA plotting functions
+  (plotSASA.R) and to process protein complexes on-the-fly in the
+  spirit of POPSCOMP.
+Depends: R (>= 3.4)
+Imports: ggplot2 (>= 2.3)
+Suggests: knitr,
+          rmarkdown
+Collate: generics.R pops.R popscomp.R plotSASA.R shiny.R 
+License: GPL-3
+URL: https://github.com/Fraternalilab/POPS
+BugReports: https://github.com/Fraternalilab/POPS/Issues
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
+VignetteBuilder: knitr
