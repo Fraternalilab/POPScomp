@@ -3,8 +3,10 @@
 Calculation of solvent accessible surface areas (SASAs) of biopolymers,
 currently proteins and nucleic acids.
 
+## POPScomp server
+* [POPScomp](http://popscomp.org:3838)
 
-## Servers
+## Legacy Servers
 * [POPS](http://mathbio.crick.ac.uk/wiki/POPS)
 * [POPSCOMP](http://mathbio.crick.ac.uk/wiki/POPSCOMP)
 

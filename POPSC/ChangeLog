@@ -1,11 +1,9 @@
-- 3.1
-
-	Rout branch: Shiny application to visualise R output.
 
 - 3.0
-
-	popscomp branch: POPSCOMP is integrated into the C code in the 
-		'popscomp' branch.
+Mon 22 Apr 22:53:52 BST 2019
+	Launched POPScomp as R Shiny server popscomp.org:3838.
+	Development of POPSC and POPSR synchronised under
+	https://github.com/Fraternalilab/POPScomp.
 
 - 2.3
 Sat 18 Aug 15:47:57 BST 2018

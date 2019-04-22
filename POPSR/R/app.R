@@ -68,6 +68,12 @@ ui <- fluidPage(
         tabPanel("Molecule",
           DT::dataTableOutput("popsMolecule")
         ),
+        tabPanel("Summaries",
+                 p("Summaries of SASAs")
+        ),
+        tabPanel("Plots",
+          p("Plots of SASAs")
+        ),
         tabPanel("Readme",
           p("The POPS program computes the Solvent Accessible Surface Area (SASA)
             of a given PDB structure. If the structure was composed of more than one chain
