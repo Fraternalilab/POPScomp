@@ -1,10 +1,6 @@
 # *POPScomp*
-To make the text below more readable, programs (in the sense of
-data processing routines) are formatted in **bold**, while interfaces
-to their input/output streams are denoted in *italic*.
-
 The *POPScomp* package provides the R Shiny interface to **POPS**,
-which is a C program and neeeds to be installed and compiled separately;
+which is a C program that needs to be installed and compiled separately;
 the latter should be present under 'POPScomp/bin/pops' as a link.
 See 'POPScomp/bin/README.md' for more information.
 

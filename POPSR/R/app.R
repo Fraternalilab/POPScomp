@@ -13,7 +13,7 @@ library(digest)
 # POPS UI
 ui <- fluidPage(
 
-  titlePanel("POPScomp (version 3.0.0)", windowTitle = "POPScomp"),
+  titlePanel("POPScomp", windowTitle = "POPScomp"),
 
   ## sidebar layout
   sidebarLayout(
@@ -67,6 +67,51 @@ ui <- fluidPage(
         ),
         tabPanel("Molecule",
           DT::dataTableOutput("popsMolecule")
+        ),
+        tabPanel("Readme",
+          p("The POPS program computes the Solvent Accessible Surface Area (SASA)
+            of a given PDB structure. If the structure was composed of more than one chain
+            containing protein or RNA/DNA, POPScomp creates internally all pair combinations
+            of chains to compute the buried SASA upon complexation. Details of the procedure
+            are explained in the published papers on POPS and POPSCOMP."),
+          br(),
+          p("POPScomp shows tabs for atom, residue, chain and molecule SASAs.
+            The tables are initialised without any values and therefore the user sees
+            the table header and below the notice 'Showing 0 to 0 of 0 entries'.
+            After selecting a PDB file and pressing 'run POPScomp', the sever runs
+            the POPS program on components of the PDB file. Because that computation
+            is a system call, the success of the computation is returned 
+            as exit code and shown below the 'run POPScomp' button:"
+          ),
+          p("* 0 - Success"),
+          p("* 1 - Catchall for general errors"),
+          p("* 2 - Misuse of shell builtins (according to Bash documentation"),
+          p("* 126 - Command invoked cannot execute"),
+          p("* 127 - Command not found"),
+          p("* 128 - Invalid argument to exit"),
+          p("* 128+n - Fatal error signal 'n'"),
+          p("* 130 - Script terminated by Control-C"),
+          p("* 255* - Exit status out of range")
+        ),
+        tabPanel("About",
+            h5("This is version 3.0.0 of the", a("POPScomp server",
+                                    href="http://popscom.org:3838")),
+            p("The POPScomp server is based on two software packages:"),
+            p("1. A GNU Autotools package of the POPS C program."),
+            p("2. An R package containing a Shiny server",
+              "to interface the POPS program and POPSCOMP functionality."),
+            p("Since April 2019, the POPS program (POPSC) and the",
+              "POPScomp Shiny server (POPSR) are being co-developed."),
+            h5("Source code and detailed information can be found on
+               Fraternali Lab's", a("POPScomp GitHub page",
+                                    href="https://github.com/Fraternalilab/POPScomp")),
+            br(),
+            h5("POPScomp is part of the FunPDBe", a("FunPDBe resources",
+                                    href="https://www.ebi.ac.uk/pdbe/funpdbe/deposition")),
+            br(),
+            p("Authors:",
+              "Franca Fraternali (franca.fraternali@kcl.ac.uk)",
+              "and Jens Kleinjung (jens@jkleinj.eu)")
         )
       )
     )
@@ -112,7 +157,6 @@ server <- function(input, output) {
     outdir = paste(mainDir, subDir, sep = "/")
     dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
     setwd(file.path(mainDir, subDir))
-    system("ln -s ~/0/POPS/src/pops")
 
     ## download/copy PDB structure
     if (input$pdbentry != "") {
@@ -127,7 +171,7 @@ server <- function(input, output) {
     }
 
     ## run POPS as system command
-    command = paste("./pops --outDirName", outdir,
+    command = paste("pops --outDirName", outdir,
                     "--rout --atomOut --residueOut --chainOut",
                     "--pdb", inputPDB, "1> POPScomp.o 2> POPScomp.e");
     system_status = system(command)
