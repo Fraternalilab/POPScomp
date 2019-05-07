@@ -9,9 +9,6 @@ of a given PDB structure. If the structure was composed of more than one chain
 containing protein or RNA/DNA, *POPScomp* creates internally all pair combinations
 of chains to compute the buried SASA upon complexation. Details of the procedure
 are explained in the published papers on POPS and POPSCOMP.
-In that regard, *POPScomp* (starting with *POPS* version 3.0) replaces both
-the original *POPS* and *POPSCOMP* web server interfaces (written in PHP) as well
-as the **POPSCOMP** script for multiple chain processing (written in Perl).
 
 *POPScomp* shows several tabs for atom, residue, chain and molecule SASAs.
 The tables are initialised without any values and therefore the user sees
@@ -31,3 +28,5 @@ the exit code will be shown below the "run POPScomp" button:
 * 130 - Script terminated by Control-C
 * 255\* - Exit status out of range 
 
+With respect to earlier servers, this *POPScomp* server (starting with *POPS* version 3.0)
+replaces all previous implementations related to the **POPS** program.
