@@ -1,1 +1,5 @@
-exportPattern("^[[:alpha:]]+")
+export(popsR)
+export(plotSASAatom)
+export(plotSASAresidue)
+export(plotSASAchain)
+export(runPOPSR)

@@ -76,18 +76,19 @@ ui <- fluidPage(
         ),
         tabPanel("Readme",
           p("The POPS program computes the Solvent Accessible Surface Area (SASA)
-            of a given PDB structure. If the structure was composed of more than one chain
+            of a given PDB structure. If the structure is composed of more than one chain
             containing protein or RNA/DNA, POPScomp creates internally all pair combinations
-            of chains to compute the buried SASA upon complexation. Details of the procedure
+            of chains to compute the buried SASA upon complexation. Details of those routines
             are explained in the published papers on POPS and POPSCOMP."),
           br(),
           p("POPScomp shows tabs for atom, residue, chain and molecule SASAs.
             The tables are initialised without any values and therefore the user sees
-            the table header and below the notice 'Showing 0 to 0 of 0 entries'.
-            After selecting a PDB file and pressing 'run POPScomp', the sever runs
-            the POPS program on components of the PDB file. Because that computation
-            is a system call, the success of the computation is returned 
-            as exit code and shown below the 'run POPScomp' button:"
+            the table header and below the notice 'No data available in table'.
+            After selecting a PDB identifier or file and pressing 'run POPScomp',
+			the sever runs the POPS program on components of the PDB file
+			and the tables automatically refresh to show the resulting SASA values. 
+			Because running POPS is a system call, the success of the computation
+			is returned as exit code and shown below the 'run POPScomp' button:"
           ),
           p("* 0 - Success"),
           p("* 1 - Catchall for general errors"),
@@ -97,16 +98,20 @@ ui <- fluidPage(
           p("* 128 - Invalid argument to exit"),
           p("* 128+n - Fatal error signal 'n'"),
           p("* 130 - Script terminated by Control-C"),
-          p("* 255* - Exit status out of range")
+          p("* 255* - Exit status out of range"),
+		  br(),
+		  p("Results will be stored on the server for maximally one day.
+			Upon high demand the storage time might be reduced 30 minutes.
+			Please download your results via the 'Download' buttons.")
         ),
         tabPanel("About",
             h5("This is version 3.0.0 of the", a("POPScomp server",
                                     href="http://popscom.org:3838")),
             p("The POPScomp server is based on two software packages:"),
-            p("1. A GNU Autotools package of the POPS C program."),
+            p("1. A GNU Autotools package of the POPS C program."), 
             p("2. An R package containing a Shiny server",
-              "to interface the POPS program and POPSCOMP functionality."),
-            p("Since April 2019, the POPS program (POPSC) and the",
+              "to interface the POPS program and to provide the POPSsCOMP functionality."),
+            p("Since April 2019 the POPS program (POPSC) and the",
               "POPScomp Shiny server (POPSR) are being co-developed."),
             h5("Source code and detailed information can be found on
                Fraternali Lab's", a("POPScomp GitHub page",
