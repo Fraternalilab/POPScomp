@@ -10,70 +10,92 @@ library(DT)
 library(digest)
 
 #_______________________________________________________________________________
+#_______________________________________________________________________________
 # POPS UI
 ui <- fluidPage(
 
+  #_______________________________________________________________________________
   titlePanel("POPScomp", windowTitle = "POPScomp"),
 
+  #_______________________________________________________________________________
   ## sidebar layout
   sidebarLayout(
     sidebarPanel(
-      ## i1.1
+      #_______________________________________________________________________________
+      ## input 1 : PDB file
+      ## PDB identifier
       textInput(inputId = "pdbentry",
                 label = "Enter PDB entry:",
                 value = ""),
-      ## i1.2
+      ## PDB upload
       fileInput("PDBfile", "OR upload PDB file",
                 multiple = FALSE,
                 accept = c("text/csv",
                            "text/comma-separated-values,text/plain",
                            ".pdb")),
 
-      # horizontal line
+      ## horizontal line
       tags$hr(),
 
-      ## i2
+      #_______________________________________________________________________________
+      ## input 2 : POPS mode
       selectInput(inputId = "popsmode",
                 label = "Resolution:",
                 choices = c("atomistic", "coarse")),
-      ## i3
+      ## input 3 : Probe (= solvent) radius
       numericInput(inputId = "rprobe",
                    label = "Solvent radius [Angstrom]:",
                    value = 1.4),
 
-      # horizontal line
+      ## horizontal line
       tags$hr(),
 
-      # i4 action button
+      #_______________________________________________________________________________
+      ## input 4 : Action button
       actionButton("popscomp", label = "run POPScomp", class = "btn-primary"),
 
       textOutput("nil"),
 
-      # horizontal line
+      ## horizontal line
       tags$hr()
     ),
 
+    #_______________________________________________________________________________
     ## main panel for output
     mainPanel(
       tabsetPanel(
+        #_______________________________________________________________________________
+        ## Atom SASA table
         tabPanel("Atom",
           DT::dataTableOutput("popsAtom")
         ),
+        #_______________________________________________________________________________
+        ## Residue SASA table
         tabPanel("Residue",
           DT::dataTableOutput("popsResidue")
         ),
+        #_______________________________________________________________________________
+        ## Chain SASA table
         tabPanel("Chain",
           DT::dataTableOutput("popsChain")
         ),
+        #_______________________________________________________________________________
+        ## Molecule SASA table
         tabPanel("Molecule",
           DT::dataTableOutput("popsMolecule")
         ),
+        #_______________________________________________________________________________
+        ## Summary SASA table
         tabPanel("Summaries",
                  p("Summaries of SASAs")
         ),
+        #_______________________________________________________________________________
+        ## Plots
         tabPanel("Plots",
           p("Plots of SASAs")
         ),
+        #_______________________________________________________________________________
+        ## Readme
         tabPanel("Readme",
           p("The POPS program computes the Solvent Accessible Surface Area (SASA)
             of a given PDB structure. If the structure is composed of more than one chain
@@ -86,13 +108,13 @@ ui <- fluidPage(
             the table header and below the notice 'No data available in table'.
             After selecting a PDB identifier or file and pressing 'run POPScomp',
 			the sever runs the POPS program on components of the PDB file
-			and the tables automatically refresh to show the resulting SASA values. 
+			and the tables automatically refresh to show the resulting SASA values.
 			Because running POPS is a system call, the success of the computation
 			is returned as exit code and shown below the 'run POPScomp' button:"
           ),
           p("* 0 - Success"),
           p("* 1 - Catchall for general errors"),
-          p("* 2 - Misuse of shell builtins (according to Bash documentation"),
+          p("* 2 - Misuse of shell builtins (according to Bash documentation)"),
           p("* 126 - Command invoked cannot execute"),
           p("* 127 - Command not found"),
           p("* 128 - Invalid argument to exit"),
@@ -104,23 +126,31 @@ ui <- fluidPage(
 			Upon high demand the storage time might be reduced 30 minutes.
 			Please download your results via the 'Download' buttons.")
         ),
-        tabPanel("About",
-            h5("This is version 3.0.0 of the", a("POPScomp server",
-                                    href="http://popscom.org:3838")),
-            p("The POPScomp server is based on two software packages:"),
-            p("1. A GNU Autotools package of the POPS C program."), 
-            p("2. An R package containing a Shiny server",
-              "to interface the POPS program and to provide the POPSsCOMP functionality."),
-            p("Since April 2019 the POPS program (POPSC) and the",
+		  #_______________________________________________________________________________
+		  ## About
+		  tabPanel("About",
+          h5("This is version 3.0.0 of the", a("POPScomp server",
+              href="http://popscom.org:3838")),
+          p("The server automatically recognises PDB identifiers and multi-chain structures.
+              Output comprises downloadable SASA tables and graphs shown on the Shiny server pages."),
+          br(),
+          p("The POPScomp server is based on two software packages:"),
+          p("1. A GNU Autotools package of the POPS C program that computes SASA for a given structure."),
+          p("2. An R package containing an R program that a) splits complexes into single and pair
+              components to compute buried SASA using POPSC and b) provides a Shiny server to interface the R program."),
+          p("Since April 2019 the POPS program (POPSC) and the",
               "POPScomp Shiny server (POPSR) are being co-developed."),
-            h5("Source code and detailed information can be found on
-               Fraternali Lab's", a("POPScomp GitHub page",
-                                    href="https://github.com/Fraternalilab/POPScomp")),
-            br(),
-            h5("POPScomp is part of the FunPDBe", a("FunPDBe resources",
-                                    href="https://www.ebi.ac.uk/pdbe/funpdbe/deposition")),
-            br(),
-            p("Authors:",
+          br(),
+          h5("Source code and detailed information can be found on
+              Fraternali Lab's", a("POPScomp GitHub page",
+              href="https://github.com/Fraternalilab/POPScomp")),
+          p("Please use that site for bug reports and other comments."),
+          br(),
+          h5("POPScomp is part of the", a("FunPDBe resources",
+              href="https://www.ebi.ac.uk/pdbe/funpdbe/deposition")),
+          br(),
+          p("Usage of the server is free, the code license is GPL3."),
+          p("Authors:",
               "Franca Fraternali (franca.fraternali@kcl.ac.uk)",
               "and Jens Kleinjung (jens@jkleinj.eu)")
         )
@@ -133,26 +163,30 @@ ui <- fluidPage(
 # server routines
 server <- function(input, output) {
 
-  ## o1.1 display input PDB entry
+  #_______________________________________________________________________________
+  ## output 1 : display input PDB entry
   output$pdbentry <- renderText({
     input$pdbentry
   })
 
-  ## o2 display input POPS mode
+  #_______________________________________________________________________________
+  ## output 2 : display input POPS mode
   output$popsmode <- renderText({
     input$popsmode
   })
 
-  ## o3 display input probe radius
+  #_______________________________________________________________________________
+  ## output 3 : display input probe radius
   output$rprobe <- renderText({
     input$rprobe
   })
 
-  ## o4 download PDB entry or upload input file
+  #_______________________________________________________________________________
+  ## silent reactive output 4: download PDB entry or upload input file
   ## run POPS on specified PDB file
   ## Comment: The 'fileInput' function returns the object 'input$file1',
   ##  a list of four elements, of which the fourth element is the
-  ##  path to the temporary file.
+  ##  path to the temporary file. See below 'input$PDBfile[[4]]'.
   output$nil <- eventReactive(input$popscomp, {
     ## to proceed, we require one PDB identifier or uploaded PDB file
     validate(need(((input$pdbentry != "") || (! is.null(input$PDBfile))),
@@ -161,7 +195,7 @@ server <- function(input, output) {
     validate(need(((input$pdbentry == "") || (is.null(input$PDBfile))),
           message = "Two PDB sources input!"))
 
-    ## set output directory
+    ## set/create output directory
     mainDir = "/tmp"
     ## creates random string based on subsecond time
     subDir = paste0("POPScomp_", digest(format(Sys.time(), "%H:%M:%OS3")))
@@ -181,7 +215,8 @@ server <- function(input, output) {
       inputPDB = input$PDBfile[[1]]
     }
 
-    ## run POPS as system command
+    #_______________________________________________________________________________
+    ## run POPS via system (= shell) call
     command = paste("pops --outDirName", outdir,
                     "--rout --atomOut --residueOut --chainOut",
                     "--pdb", inputPDB, "1> POPScomp.o 2> POPScomp.e");
@@ -189,7 +224,9 @@ server <- function(input, output) {
     paste("Exit code:", system_status)
   })
 
-  ## o5 display POPS output for atoms, residues, chains and molecule
+  #_______________________________________________________________________________
+  ## output 5 : display POPS output for atoms, residues, chains and molecule
+  #_____________________________________
   ## atom
   ## empty dataframe with column names
   ## that wil show up as empty table before POPS has been run
@@ -217,6 +254,7 @@ server <- function(input, output) {
     atomOutput$data = atomOutputData()
   })
 
+  #_____________________________________
   ## residue
   ## create empty dataframe in r with column names
   residue_null.df = data.frame(
@@ -239,6 +277,7 @@ server <- function(input, output) {
     residueOutput$data = residueOutputData()
   })
 
+  #_____________________________________
   ## chain
   chain_null.df = data.frame(
                     ChainNr = integer(),
@@ -252,6 +291,7 @@ server <- function(input, output) {
     chainOutput$data = chainOutputData()
   })
 
+  #_____________________________________
   ## molecule
   molecule_null.df = data.frame(
                       Phob = double(),
