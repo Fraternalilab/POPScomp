@@ -1,7 +1,7 @@
 #! /usr/bin/R
 #===============================================================================
-## shiny application for R interface of POPS
-# (C) 2019 Jens Kleinjung
+## Shiny application for R interface of POPS
+# (C) 2019 Jens Kleinjung and Franca Fraternali
 #===============================================================================
 
 library(shiny)
