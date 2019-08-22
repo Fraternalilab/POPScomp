@@ -45,8 +45,8 @@ popscompR = function(inputPDB, outdir) {
 	sapply(1:length(chainpair.files), function(x) {
 	  command = paste0("pops --outDirName ", outdir,
 	                  " --rout --atomOut --residueOut --chainOut ",
-	                  "--pdb ", chainpair.files[x], " 1> POPScomp_chainpair", x, ".o",
-                                                 " 2> POPScomp_chainpair", x, ".e");
+	                  "--pdb ", chainpair.files[x], " 1> ", outdir, "/POPScomp_chainpair", x, ".o",
+                                                  " 2> ", outdir, "/POPScomp_chainpair", x, ".e");
 	  system_status = system(command);
 	  paste("Exit code:", system_status);
 	});
