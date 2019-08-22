@@ -86,7 +86,7 @@ static void set_defaults(Arg *arg, Argpdb *argpdb)
 	argpdb->partOcc = 0; /* partial occupancy [0,1] */
 	arg->rProbe = 1.4; /* probe radius (in Angstrom) */
 	arg->silent = 0; /* suppress stdout */
-	arg->outDirName = ".";
+	arg->outDirName = 0;
     arg->sasaOutFileName = "pops.out";
     arg->sasatrajOutFileName = "popstraj";
     arg->bsasaOutFileName = "popsb.out";

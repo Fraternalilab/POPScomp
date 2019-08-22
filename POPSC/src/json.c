@@ -26,7 +26,11 @@ void print_json(Arg *arg, cJSON *json)
 		fprintf(stdout, "\tSASA of input molecule: %s\n", arg->jsonOutFileName);
 
 	/* print string to file */
-	sprintf(outpath, "%s/%s", arg->outDirName, arg->jsonOutFileName);
+	if (arg->outDirName) {
+		sprintf(outpath, "%s/%s", arg->outDirName, arg->jsonOutFileName);
+	} else {
+		sprintf(outpath, "%s", arg->jsonOutFileName);
+	}
 	arg->jsonOutFile = safe_open(outpath, "w");
 	fprintf(arg->jsonOutFile, "%s", popsOutJson);
 	fclose(arg->jsonOutFile);
