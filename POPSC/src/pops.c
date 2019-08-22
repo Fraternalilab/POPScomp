@@ -165,8 +165,9 @@ int main(int argc, char *argv[])
 		/** print tabulated output */
 		if (! arg.silent) fprintf(stdout, "SASA Output:\n");
 		print_sasa(&arg, &argpdb, &pdb, &type, &topol, &molSasa, constant_sasa, -1);
-		if (! arg.silent) fprintf(stdout, "bSASA Output:\n");
-		print_bsasa(&arg, &argpdb, &pdb, &type, &topol, &molSasa, constant_sasa, -1);
+		if (! arg.silent && ! arg.rout) fprintf(stdout, "bSASA Output:\n");
+		if (! arg.rout)
+			print_bsasa(&arg, &argpdb, &pdb, &type, &topol, &molSasa, constant_sasa, -1);
 	}
 
     /*____________________________________________________________________________*/
@@ -177,9 +178,10 @@ int main(int argc, char *argv[])
     
     /*____________________________________________________________________________*/
 	/** print Solvation Free Energy */
-	if (! arg.silent) fprintf(stdout, "SFE Output:\n");
+	if (! arg.silent && ! argpdb.coarse && ! arg.jsonOut && ! arg.rout)
+		fprintf(stdout, "SFE Output:\n");
 	/* we don't have SFEs for residues yet */
-	if (! argpdb.coarse && ! arg.jsonOut)
+	if (! argpdb.coarse && ! arg.jsonOut && ! arg.rout)
 		print_sfe(&arg, &argpdb, &pdb, &type, &topol, &molSFE, constant_sigma, -1);
 
     /*____________________________________________________________________________*/

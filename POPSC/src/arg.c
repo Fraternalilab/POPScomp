@@ -1,6 +1,6 @@
 /*==============================================================================
 arg.c : parse command line arguments
-Copyright (C) 2007 Jens Kleinjung
+Copyright (C) 2007-2019 Jens Kleinjung
 Read the COPYING file for license information.
 ==============================================================================*/
 
@@ -86,7 +86,7 @@ static void set_defaults(Arg *arg, Argpdb *argpdb)
 	argpdb->partOcc = 0; /* partial occupancy [0,1] */
 	arg->rProbe = 1.4; /* probe radius (in Angstrom) */
 	arg->silent = 0; /* suppress stdout */
-	arg->outDirName = 0;
+	arg->outDirName = ".";
     arg->sasaOutFileName = "pops.out";
     arg->sasatrajOutFileName = "popstraj";
     arg->bsasaOutFileName = "popsb.out";
@@ -197,7 +197,7 @@ int parse_args(int argc, char **argv, Arg *arg, Argpdb *argpdb)
 	   --rProbe <probe radius [A]>\t(mode: optional , type: float , default: 1.4)\n\
 	   --silent\t\t\t(mode: optional , type: no_arg, default: off)\n\
 	 OUTPUT OPTIONS\n\
-       --outDirName <output dir>\t(mode: optional , type: char  , default: '.')\n\
+       --outDirName <output dir>\t(mode: optional , type: char  , default: NULL)\n\
 	   --popsOut <POPS output>\t(mode: optional , type: char  , default: pops.out)\n\
 	   --popstrajOut <POPS output>\t(mode: optional , type: char  , default: popstraj.out)\n\
 	   --popsbOut <POPSb output>\t(mode: optional , type: char  , default: popsb.out)\n\
@@ -276,6 +276,7 @@ int parse_args(int argc, char **argv, Arg *arg, Argpdb *argpdb)
         switch(c) {
             case 1:
                 arg->pdbInFileName = optarg;
+				arg->pdbIn = basename(optarg);
                 break;
             case 2:
                 arg->trajInFileName = optarg;
@@ -359,6 +360,7 @@ int parse_args(int argc, char **argv, Arg *arg, Argpdb *argpdb)
                 break;
             case 29:
                 arg->pdbmlInFileName = optarg;
+				arg->pdbIn = basename(optarg);
 				arg->pdbml = 1;
 				break;
             case 30:
