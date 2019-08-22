@@ -25,7 +25,18 @@ popscompR = function(inputPDB, outdir) {
 	chain.files.short = sub('\\.pdb$', '', basename(chain.files));
 
 	#________________________________________________________________________________
-	## create temporary PDB files for all pairwise chain combinations
+	## run POPS over all single chains via system (= shell) call
+	sapply(1:length(chainpair.files), function(x) {
+	  command = paste0("pops --outDirName ", outdir,
+	                   " --rout --atomOut --residueOut --chainOut ",
+	                   "--pdb ", chainpair.files[x], " 1> ", outdir, "/POPScomp_chainpair", x, ".o",
+	                   " 2> ", outdir, "/POPScomp_chainpair", x, ".e");
+	  system_status = system(command);
+	  paste("Exit code:", system_status);
+	});
+
+	#________________________________________________________________________________
+	## create PDB files for all pairwise chain combinations
 	pair.cmbn = combn(length(chain.files), 2);
 	chainpair.files = list();
 	chainpair.files = sapply(1:dim(pair.cmbn)[2], function(x) {
