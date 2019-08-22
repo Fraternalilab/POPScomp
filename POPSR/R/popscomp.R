@@ -26,11 +26,11 @@ popscompR = function(inputPDB, outdir) {
 
 	#________________________________________________________________________________
 	## run POPS over all single chains via system (= shell) call
-	sapply(1:length(chainpair.files), function(x) {
+	sapply(1:length(chain.files), function(x) {
 	  command = paste0("pops --outDirName ", outdir,
 	                   " --rout --atomOut --residueOut --chainOut ",
-	                   "--pdb ", chainpair.files[x], " 1> ", outdir, "/POPScomp_chainpair", x, ".o",
-	                   " 2> ", outdir, "/POPScomp_chainpair", x, ".e");
+	                   "--pdb ", chain.files[x], " 1> ", outdir, "/POPScomp_chain", x, ".o",
+	                   " 2> ", outdir, "/POPScomp_chain", x, ".e");
 	  system_status = system(command);
 	  paste("Exit code:", system_status);
 	});
