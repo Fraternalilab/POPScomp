@@ -363,7 +363,12 @@ void print_sasa(Arg *arg, Argpdb *argpdb, Str *pdb, Type *type, Topol *topol, \
 	/* atom SASA */
 	if (arg->atomOut && ! argpdb->coarse) {
 		if (arg->rout) {
-			sprintf(rpopsOutFileName, "%s.%s", arg->sasaOutFileName, "rpopsAtom");
+			if (arg->outDirName) {
+				sprintf(rpopsOutFileName, "%s/%s.%s",
+					arg->outDirName, arg->sasaOutFileName, "rpopsAtom");
+			} else {
+				sprintf(rpopsOutFileName, "%s.%s", arg->sasaOutFileName, "rpopsAtom");
+			}
 			rpopsOutFile = safe_open(rpopsOutFileName, "w");
 			print_atom_sasa(rpopsOutFile, arg, pdb, molSasa);
 			fclose(rpopsOutFile);
@@ -375,7 +380,12 @@ void print_sasa(Arg *arg, Argpdb *argpdb, Str *pdb, Type *type, Topol *topol, \
 	/* residue SASA */
 	if (arg->residueOut) {
 		if (arg->rout) {
-			sprintf(rpopsOutFileName, "%s.%s", arg->sasaOutFileName, "rpopsResidue");
+			if (arg->outDirName) {
+				sprintf(rpopsOutFileName, "%s/%s.%s",
+					arg->outDirName, arg->sasaOutFileName, "rpopsResidue");
+			} else {
+				sprintf(rpopsOutFileName, "%s.%s", arg->sasaOutFileName, "rpopsResidue");
+			}
 			rpopsOutFile = safe_open(rpopsOutFileName, "w");
 			print_residue_sasa(rpopsOutFile, arg, pdb, molSasa);
 			fclose(rpopsOutFile);
@@ -387,7 +397,12 @@ void print_sasa(Arg *arg, Argpdb *argpdb, Str *pdb, Type *type, Topol *topol, \
 	/* chain SASA */
 	if (arg->chainOut) {
 		if (arg->rout) {
-			sprintf(rpopsOutFileName, "%s.%s", arg->sasaOutFileName, "rpopsChain");
+			if (arg->outDirName) {
+				sprintf(rpopsOutFileName, "%s/%s.%s",
+					arg->outDirName, arg->sasaOutFileName, "rpopsChain");
+			} else {
+				sprintf(rpopsOutFileName, "%s.%s", arg->sasaOutFileName, "rpopsChain");
+			}
 			rpopsOutFile = safe_open(rpopsOutFileName, "w");
 			print_chain_sasa(rpopsOutFile, arg, pdb, molSasa);
 			fclose(rpopsOutFile);
@@ -399,7 +414,12 @@ void print_sasa(Arg *arg, Argpdb *argpdb, Str *pdb, Type *type, Topol *topol, \
 	/* molecule SASA */
 	if (! arg->noTotalOut) {
 		if (arg->rout) {
-			sprintf(rpopsOutFileName, "%s.%s", arg->sasaOutFileName, "rpopsMolecule");
+			if (arg->outDirName) {
+				sprintf(rpopsOutFileName, "%s/%s.%s",
+					arg->outDirName, arg->sasaOutFileName, "rpopsChain");
+			} else {
+				sprintf(rpopsOutFileName, "%s.%s", arg->sasaOutFileName, "rpopsMolecule");
+			}
 			rpopsOutFile = safe_open(rpopsOutFileName, "w");
 			print_mol_sasa(rpopsOutFile, arg, molSasa);
 			fclose(rpopsOutFile);
