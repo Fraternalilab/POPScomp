@@ -2,7 +2,7 @@
 
 #===============================================================================
 # POPSR package
-# Process complex structures
+# Process complex structures to compute SASA difference values
 # (C) 2019 Jens Kleinjung and Franca Fraternali
 #===============================================================================
 
@@ -61,6 +61,45 @@ popscompR = function(inputPDB, outdir) {
 	  system_status = system(command);
 	  paste("Exit code:", system_status);
 	});
+
+	#________________________________________________________________________________
+	## read SASA files
+  ## the structure will be a list (all chain pairs) of lists (chainpair12, chain1, chain2)
+	sasapair.files = list();
+	rpopsAtom = ".rpopsAtom";
+	pdbRpopsAtom = ".pdb.rpopsAtom";
+
+	sasapair.files = lapply(1:dim(pair.cmbn)[2], function(x) {
+    sasa.files = list();
+    sasa.files[[1]] = read.table(paste0(chainpair.files[x], rpopsAtom), header = TRUE);
+    sasa.files[[2]] = read.table(paste0(outdir, "/", chain.files.short[pair.cmbn[1, x]], pdbRpopsAtom),
+                                 header = TRUE);
+    sasa.files[[3]] = read.table(paste0(outdir, "/", chain.files.short[pair.cmbn[2, x]], pdbRpopsAtom),
+                                 header = TRUE);
+    names(sasa.files) = c(paste0(sasa.files[[2]][1, "Chain"], sasa.files[[3]][1, "Chain"]),
+                          as.character(sasa.files[[2]][1, "Chain"]),
+                          as.character(sasa.files[[3]][1, "Chain"]));
+    return(sasa.files);
+  });
+
+	#________________________________________________________________________________
+	## compute SASA differences (POPScomp values)
+	## merging first the single-chain with the pair-chain values
+	## by using the 'AtomNr' (atom serial number), because that refers to the line of
+	##   the coordinate entry and is therefore unique and contiguous
+	sasadiff.tables = lapply(1:dim(pair.cmbn)[2], function(x) {
+	  sasa.diff = list();
+	  ## SASA difference first chain
+	  sasa.diff[[1]] = merge(sasapair.files[[x]][[2]], sasapair.files[[x]][[1]],
+	                         by = "AtomNr", all = FALSE);
+	  sasa.diff[[1]]$diff = sasa.diff[[1]]$SASA.A.2.x - sasa.diff[[1]]$SASA.A.2.y;
+	  ## SASA difference second chain
+	  sasa.diff[[2]] = merge(sasapair.files[[x]][[3]], sasapair.files[[x]][[1]],
+	                         by = "AtomNr", all = FALSE);
+	  sasa.diff[[2]]$diff = sasa.diff[[2]]$SASA.A.2.x - sasa.diff[[2]]$SASA.A.2.y;
+	});
 }
+
+
 
 #===============================================================================
