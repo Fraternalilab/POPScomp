@@ -8,6 +8,7 @@ library(shiny)
 library(bio3d)
 library(DT)
 library(digest)
+library(RPOPS)
 
 #_______________________________________________________________________________
 #_______________________________________________________________________________
@@ -183,7 +184,7 @@ server <- function(input, output) {
 
   #_______________________________________________________________________________
   ## silent reactive output 4: download PDB entry or upload input file
-  ## run POPS on specified PDB file
+  ## run popscompR on specified PDB file
   ## Comment: The 'fileInput' function returns the object 'input$file1',
   ##  a list of four elements, of which the fourth element is the
   ##  path to the temporary file. See below 'input$PDBfile[[4]]'.
@@ -196,12 +197,8 @@ server <- function(input, output) {
           message = "Two PDB sources input!"))
 
     ## set/create output directory
-    mainDir = "/tmp"
-    ## creates random string based on subsecond time
-    subDir = paste0("POPScomp_", digest(format(Sys.time(), "%H:%M:%OS3")))
-    outdir = paste(mainDir, subDir, sep = "/")
-    dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
-    setwd(file.path(mainDir, subDir))
+    outdir = tempdir();
+    setwd(outdir);
 
     ## download/copy PDB structure
     if (input$pdbentry != "") {
@@ -216,12 +213,14 @@ server <- function(input, output) {
     }
 
     #_______________________________________________________________________________
-    ## run POPS via system (= shell) call
-    command = paste("pops --outDirName", outdir,
-                    "--rout --atomOut --residueOut --chainOut",
-                    "--pdb", inputPDB, "1> POPScomp.o 2> POPScomp.e");
-    system_status = system(command)
-    paste("Exit code:", system_status)
+    ## run popscompR
+    sasa.l = popscompR(inputPDB, outdir);
+
+    #command = paste("pops --outDirName", outdir,
+    #                "--rout --atomOut --residueOut --chainOut",
+    #                "--pdb", inputPDB, "1> POPScomp.o 2> POPScomp.e");
+    #system_status = system(command)
+    #paste("Exit code:", system_status)
   })
 
   #_______________________________________________________________________________
@@ -244,14 +243,15 @@ server <- function(input, output) {
                       AtomGp = integer(),
                       Surf = double()
   )
-  write.table(atom_null.df, file = "pops.out.rpopsAtom")
+  #write.table(atom_null.df, file = "sasa.l[[1]][[1]]")
   ## reactive data: update output when file content changes
   atomOutput = reactiveValues(highlight = NULL, data = NULL)
-  atomOutputData = reactiveFileReader(2000, NULL, "pops.out.rpopsAtom",
-                                         read.table, header = TRUE)
+  atomOutputData = sasa.l[[1]][[1]];
+  #atomOutputData = reactiveFileReader(2000, NULL, "pops.out.rpopsAtom",
+                                         #read.table, header = TRUE)
   ## render output data as table
   output$popsAtom = DT::renderDataTable({
-    atomOutput$data = atomOutputData()
+    atomOutput$data = atomOutputData
   })
 
   #_____________________________________

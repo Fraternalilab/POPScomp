@@ -2,7 +2,9 @@
 
 #===============================================================================
 # POPSR package
-# Process complex structures to compute SASA difference values
+# popscompR: Processing of complex structures to compute SASA difference values
+# Returns a list of POPS output files of single-chain and pair-chain structures
+#   plus a list of per-chain difference values.
 # (C) 2019 Jens Kleinjung and Franca Fraternali
 #===============================================================================
 
@@ -18,8 +20,8 @@ popscompR = function(inputPDB, outdir) {
 
 	#________________________________________________________________________________
 	## split input PDB into chains
-	inputPDB = "1f3r.pdb";
-	outdir = tempdir();
+	#inputPDB = "1f3r.pdb";
+	#outdir = tempdir();
 	chain.files = pdbsplit(inputPDB,  path = outdir, multi = FALSE);
 	## short names
 	chain.files.short = sub('\\.pdb$', '', basename(chain.files));
@@ -98,8 +100,8 @@ popscompR = function(inputPDB, outdir) {
 	                         by = "AtomNr", all = FALSE);
 	  sasa.diff[[2]]$diff = sasa.diff[[2]]$SASA.A.2.x - sasa.diff[[2]]$SASA.A.2.y;
 	});
+
+	return(list(sasapair.files[[1]], sasadiff.tables[[1]]));
 }
-
-
 
 #===============================================================================
