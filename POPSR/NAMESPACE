@@ -1,5 +1,6 @@
-export(popsR)
+export(popscompR)
 export(plotSASAatom)
 export(plotSASAresidue)
 export(plotSASAchain)
 export(runPOPSR)
+
