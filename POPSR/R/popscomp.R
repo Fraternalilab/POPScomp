@@ -20,9 +20,7 @@ popscompR = function(inputPDB, outdir) {
 
 	#________________________________________________________________________________
 	## split input PDB into chains
-	#inputPDB = "1f3r.pdb";
-	#outdir = tempdir();
-	chain.files = pdbsplit(inputPDB,  path = outdir, multi = FALSE);
+	chain.files = pdbsplit(paste(outdir, inputPDB, sep = "/"),  path = outdir, multi = FALSE);
 	## short names
 	chain.files.short = sub('\\.pdb$', '', basename(chain.files));
 
@@ -67,38 +65,44 @@ popscompR = function(inputPDB, outdir) {
 	#________________________________________________________________________________
 	## read SASA files
   ## the structure will be a list (all chain pairs) of lists (chainpair12, chain1, chain2)
-	sasapair.files = list();
-	rpopsAtom = ".rpopsAtom";
-	pdbRpopsAtom = ".pdb.rpopsAtom";
-
-	sasapair.files = lapply(1:dim(pair.cmbn)[2], function(x) {
-    sasa.files = list();
-    sasa.files[[1]] = read.table(paste0(chainpair.files[x], rpopsAtom), header = TRUE);
-    sasa.files[[2]] = read.table(paste0(outdir, "/", chain.files.short[pair.cmbn[1, x]], pdbRpopsAtom),
-                                 header = TRUE);
-    sasa.files[[3]] = read.table(paste0(outdir, "/", chain.files.short[pair.cmbn[2, x]], pdbRpopsAtom),
-                                 header = TRUE);
-    names(sasa.files) = c(paste0(sasa.files[[2]][1, "Chain"], sasa.files[[3]][1, "Chain"]),
-                          as.character(sasa.files[[2]][1, "Chain"]),
-                          as.character(sasa.files[[3]][1, "Chain"]));
-    return(sasa.files);
+	rpopsLevel = c(".rpopsAtom", ".rpopsResidue", ".rpopsChain", ".rpopsMolecule");
+  ## sasapair.level is a list with elements at resolutions: atom, residue, chain, molecule
+	sasapair.level.files = lapply(1:length(rpopsLevel), function(y) {
+	  ## 'sasapair' is a list with a chain pair SASA and the two single chain SASAs as elements
+	  sasapair.files = lapply(1:dim(pair.cmbn)[2], function(x) {
+      sasa.files = list();
+      sasa.files[[1]] = read.table(paste0(chainpair.files[x], rpopsLevel[y]), header = TRUE);
+      sasa.files[[2]] = read.table(paste0(outdir, "/", chain.files.short[pair.cmbn[1, x]],
+                                          ".pdb", rpopsLevel[y]), header = TRUE);
+      sasa.files[[3]] = read.table(paste0(outdir, "/", chain.files.short[pair.cmbn[2, x]],
+                                          ".pdb", rpopsLevel[y]), header = TRUE);
+      names(sasa.files) = c(paste0(sasa.files[[2]][1, "Chain"], sasa.files[[3]][1, "Chain"]),
+                            as.character(sasa.files[[2]][1, "Chain"]),
+                            as.character(sasa.files[[3]][1, "Chain"]));
+      return(sasa.files);
+    });
   });
+	names(sasapair.level.files) = rpopsLevel;
 
 	#________________________________________________________________________________
 	## compute SASA differences (POPScomp values)
 	## merging first the single-chain with the pair-chain values
 	## by using the 'AtomNr' (atom serial number), because that refers to the line of
 	##   the coordinate entry and is therefore unique and contiguous
-	sasadiff.tables = lapply(1:dim(pair.cmbn)[2], function(x) {
-	  sasa.diff = list();
-	  ## SASA difference first chain
-	  sasa.diff[[1]] = merge(sasapair.files[[x]][[2]], sasapair.files[[x]][[1]],
-	                         by = "AtomNr", all = FALSE);
-	  sasa.diff[[1]]$diff = sasa.diff[[1]]$SASA.A.2.x - sasa.diff[[1]]$SASA.A.2.y;
-	  ## SASA difference second chain
-	  sasa.diff[[2]] = merge(sasapair.files[[x]][[3]], sasapair.files[[x]][[1]],
-	                         by = "AtomNr", all = FALSE);
-	  sasa.diff[[2]]$diff = sasa.diff[[2]]$SASA.A.2.x - sasa.diff[[2]]$SASA.A.2.y;
+	bynameLevel = c("AtomNr", "Chain", "Id");
+	sasapair.level.files = lapply(1:(length(rpopsLevel) - 1), function(y) {
+	  ## sasadiff is a list of SASA difference values for two chains as list elements
+		sasadiff.tables = lapply(1:dim(pair.cmbn)[2], function(x) {
+	    sasa.diff = list();
+	    ## SASA difference first chain
+	    sasa.diff[[1]] = merge(sasapair.level.files[[y]][[x]][[2]], sasapair.level.files[[y]][[x]][[1]],
+	                           by = bynameLevel[y], all = FALSE);
+	    sasa.diff[[1]]$diff = sasa.diff[[1]]$SASA.A.2.x - sasa.diff[[1]]$SASA.A.2.y;
+	    ## SASA difference second chain
+	    sasa.diff[[2]] = merge(sasapair.level.files[[y]][[x]][[3]], sasapair.level.files[[y]][[x]][[1]],
+	                           by = bynameLevel[y], all = FALSE);
+	    sasa.diff[[2]]$diff = sasa.diff[[2]]$SASA.A.2.x - sasa.diff[[2]]$SASA.A.2.y;
+	  });
 	});
 
 	return(list(sasapair.files[[1]], sasadiff.tables[[1]]));

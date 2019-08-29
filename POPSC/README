@@ -6,10 +6,8 @@ currently proteins and nucleic acids.
 ## POPScomp server
 * [POPScomp](http://popscomp.org:3838)
 
-## Legacy Servers
-* [POPS](http://mathbio.crick.ac.uk/wiki/POPS)
-* [POPSCOMP](http://mathbio.crick.ac.uk/wiki/POPSCOMP)
-
+## Source code
+* [POPScomp GitHub](https://github.com/Fraternalilab/POPScomp)
 
 ## References
 Users publishing results obtained with the program and its applications
@@ -260,7 +258,7 @@ with the '--*Out' command line flags.
 * ResidNr : residue number in molecular coordinate file
 * Phob/A^2 : hydrophobic solvent accessible surace area in Angstrom^2 units
 * Phil/A^2 : hydrophilic solvent accessible surace area in Angstrom^2 units
-* Total/A^2 : total solvent accessible surace area in Angstrom^2 units
+* SASA /A^2 : total solvent accessible surace area in Angstrom^2 units
 * Q(SASA) : quotient of SASA and Surf (below), i.e. the fraction of SASA
 * N(overl) : number of overlaps with residue neighbours
 * Surf/A^2 : surface area of isolated residue
@@ -272,12 +270,12 @@ with the '--*Out' command line flags.
 * ResidRange : range of residue numbers in chain
 * Phob/A^2 : hydrophobic solvent accessible surace area in Angstrom^2 units
 * Phil/A^2 : hydrophilic solvent accessible surace area in Angstrom^2 units
-* Total/A^2 : total solvent accessible surace area in Angstrom^2 units
+* SASA/A^2 : total solvent accessible surace area in Angstrom^2 units
 
 ### MOLECULE SASAs
 * Phob/A^2 : hydrophobic solvent accessible surace area in Angstrom^2 units
 * Phil/A^2 : hydrophilic solvent accessible surace area in Angstrom^2 units
-* Total/A^2 : total solvent accessible surace area in Angstrom^2 units
+* SASA/A^2 : total solvent accessible surace area in Angstrom^2 units
 
 ### bSASAs
 The same type of information as for the SASAs is produced for bSASAs,
@@ -286,7 +284,7 @@ bSASAs serve as a component in the definition of a structural
 environment (3D profile).
 * Phob/A^2 : solvent accessible surface area buried by hydrophobic neighbour atoms in Angstrom^2 units
 * Phil/A^2 : solvent accessible surface area buried by hydrophilic neighbour atoms in Angstrom^2 units
-* Total/A^2 : solvent accessible surface area buried by all neighbour atoms in Angstrom^2 units
+* SASA/A^2 : solvent accessible surface area buried by all neighbour atoms in Angstrom^2 units
 
 ### INTERFACE
 Information of interface residues in complexes can be obtained with switch

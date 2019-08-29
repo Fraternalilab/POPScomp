@@ -170,7 +170,7 @@ static void print_residue_sasa(FILE *sasaOutFile, Arg *arg, Str *pdb, MolSasa *m
 		fprintf(sasaOutFile, "\n=== RESIDUE SASAs ===\n");
 	}
 	if (! arg->noHeaderOut || arg->rout) {
-		fprintf(sasaOutFile, "ResidNe\tChain\tResidNr\tiCode\tPhob/A^2\t\tPhil/A^2\tTotal/A^2\t\tQ(SASA)\tN(overl)\tSurf/A^2\n");
+		fprintf(sasaOutFile, "ResidNe\tChain\tResidNr\tiCode\tPhob/A^2\t\tPhil/A^2\tSASA/A^2\t\tQ(SASA)\tN(overl)\tSurf/A^2\n");
 	}
 
     for (i = 0; i < pdb->nAllResidue; ++ i) { 
@@ -210,7 +210,7 @@ static void print_chain_sasa(FILE *sasaOutFile, Arg *arg, Str *pdb, MolSasa *mol
 		fprintf(sasaOutFile, "\n=== CHAIN SASAs ===\n(Atom Range excluding hydrogen atoms)\n");
 	}
 	if (! arg->noHeaderOut || arg->rout) {
-		fprintf(sasaOutFile, "Chain\tId\tAtomRange\tResidRange\t\tPhob/A^2\t\tPhil/A^2\t\tTotal/A^2\n");
+		fprintf(sasaOutFile, "Chain\tId\tAtomRange\tResidRange\t\tPhob/A^2\t\tPhil/A^2\t\tSASA/A^2\n");
 	}
 
     for (i = 0; i < pdb->nChain; ++ i)
@@ -234,7 +234,7 @@ void print_mol_sasa(FILE *sasaOutFile, Arg *arg, MolSasa *molSasa)
 		fprintf(sasaOutFile, "\n=== MOLECULE SASAs ===\n");
 	}
 	if (! arg->noHeaderOut || arg->rout) {
-		fprintf(sasaOutFile, "Phob/A^2\t\tPhil/A^2\t\tTotal/A^2\n");
+		fprintf(sasaOutFile, "Phob/A^2\t\tPhil/A^2\t\tSASA/A^2\n");
 	}
 
     fprintf(sasaOutFile, "%10.2f\t%10.2f\t%10.2f\n",
