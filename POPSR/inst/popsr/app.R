@@ -4,11 +4,12 @@
 # (C) 2019 Jens Kleinjung and Franca Fraternali
 #===============================================================================
 
-library(shiny)
-library(bio3d)
-library(DT)
-library(digest)
-library(RPOPS)
+library("shiny")
+library("DT")
+library("digest")
+library("RPOPS")
+library("bio3d")
+library("parallel")
 
 #_______________________________________________________________________________
 #_______________________________________________________________________________
@@ -216,11 +217,6 @@ server <- function(input, output) {
     ## run popscompR
     sasa.l = popscompR(inputPDB, outdir);
 
-    #command = paste("pops --outDirName", outdir,
-    #                "--rout --atomOut --residueOut --chainOut",
-    #                "--pdb", inputPDB, "1> POPScomp.o 2> POPScomp.e");
-    #system_status = system(command)
-    #paste("Exit code:", system_status)
   })
 
   #_______________________________________________________________________________
@@ -243,12 +239,8 @@ server <- function(input, output) {
                       AtomGp = integer(),
                       Surf = double()
   )
-  #write.table(atom_null.df, file = "sasa.l[[1]][[1]]")
-  ## reactive data: update output when file content changes
   atomOutput = reactiveValues(highlight = NULL, data = NULL)
   atomOutputData = sasa.l[[1]][[1]];
-  #atomOutputData = reactiveFileReader(2000, NULL, "pops.out.rpopsAtom",
-                                         #read.table, header = TRUE)
   ## render output data as table
   output$popsAtom = DT::renderDataTable({
     atomOutput$data = atomOutputData
@@ -269,12 +261,11 @@ server <- function(input, output) {
                       N = integer(),
                       Surf = double()
   )
-  write.table(residue_null.df, file = "pops.out.rpopsResidue")
   residueOutput = reactiveValues(highlight = NULL, data = NULL)
-  residueOutputData = reactiveFileReader(2000, NULL, "pops.out.rpopsResidue",
-                                      read.table, header = TRUE)
+  residueOutputData = sasa.l[[1]][[1]];
+  ## render output data as table
   output$popsResidue = DT::renderDataTable({
-    residueOutput$data = residueOutputData()
+    residueOutput$data = residueOutputData
   })
 
   #_____________________________________
@@ -283,12 +274,11 @@ server <- function(input, output) {
                     ChainNr = integer(),
                     ChainNe = character()
   )
-  write.table(chain_null.df, file = "pops.out.rpopsChain")
   chainOutput = reactiveValues(highlight = NULL, data = NULL)
-  chainOutputData = reactiveFileReader(2000, NULL, "pops.out.rpopsChain",
-                                      read.table, header = TRUE)
+  chainOutputData = sasa.l[[1]][[1]];
+  ## render output data as table
   output$popsChain = DT::renderDataTable({
-    chainOutput$data = chainOutputData()
+    chainOutput$data = chainOutputData
   })
 
   #_____________________________________
@@ -298,12 +288,11 @@ server <- function(input, output) {
                       Phil = double(),
                       Total = double()
   )
-  write.table(molecule_null.df, file = "pops.out.rpopsMolecule")
   moleculeOutput = reactiveValues(highlight = NULL, data = NULL)
-  moleculeOutputData = reactiveFileReader(2000, NULL, "pops.out.rpopsMolecule",
-                                      read.table, header = TRUE)
+  moleculeOutputData = sasa.l[[1]][[1]];
+  ## render output data as table
   output$popsMolecule = DT::renderDataTable({
-    moleculeOutput$data = moleculeOutputData()
+    moleculeOutput$data = moleculeOutputData
   })
 }
 
