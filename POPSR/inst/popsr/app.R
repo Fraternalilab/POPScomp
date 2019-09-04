@@ -69,22 +69,22 @@ ui <- fluidPage(
         #_______________________________________________________________________________
         ## Atom SASA table
         tabPanel("Atom",
-          DT::dataTableOutput("popsAtom")
+          DT::DTOutput("popsAtom")
         ),
         #_______________________________________________________________________________
         ## Residue SASA table
         tabPanel("Residue",
-          DT::dataTableOutput("popsResidue")
+          DT::DTOutput("popsResidue")
         ),
         #_______________________________________________________________________________
         ## Chain SASA table
         tabPanel("Chain",
-          DT::dataTableOutput("popsChain")
+          DT::DTOutput("popsChain")
         ),
         #_______________________________________________________________________________
         ## Molecule SASA table
         tabPanel("Molecule",
-          DT::dataTableOutput("popsMolecule")
+          DT::DTOutput("popsMolecule")
         ),
         #_______________________________________________________________________________
         ## Summary SASA table
@@ -132,7 +132,7 @@ ui <- fluidPage(
 		  ## About
 		  tabPanel("About",
           h5("This is version 3.0.0 of the", a("POPScomp server",
-              href="http://popscom.org:3838")),
+              href="http://popscom.org:3838"), "."),
           p("The server automatically recognises PDB identifiers and multi-chain structures.
               Output comprises downloadable SASA tables and graphs shown on the Shiny server pages."),
           br(),
@@ -215,17 +215,26 @@ server <- function(input, output) {
 
     #_______________________________________________________________________________
     ## run popscompR
+    ## sasa.l has two top elements: SASAs and SASA diffs
+    ## those two elements have 4 and 3 elements: atom, residue, chain, (molecule)
+    ## those 4/3 elements have 3 and 2 elements: pair/chain1/chain2 and diff1/diff2
+    ## that means the data.frames of SASA values are on the third list index
     sasa.l = popscompR(inputPDB, outdir);
-
   })
 
   #_______________________________________________________________________________
   ## output 5 : display POPS output for atoms, residues, chains and molecule
   #_____________________________________
+  ## empty nested list to initialise app with empty tables
+  ## the '4' corresponds to the levels atom, residue, chain, molecule
+  tmp1.l = rep(list(list(list())), 4);
+  tmp2.l = rep(list(list(list())), 3);
+  sasa.l = list(tmp1.l,tmp2.l);
+
   ## atom
   ## empty dataframe with column names
-  ## that wil show up as empty table before POPS has been run
-  atom_null.df = data.frame(
+  ## that will show up as empty table before POPS has been run
+  sasa.l[[1]][[1]][[1]][[1]] = data.frame(
                       AtomNr = integer(),
                       AtomNe = character(),
                       Residue = character(),
@@ -240,58 +249,63 @@ server <- function(input, output) {
                       Surf = double()
   )
   atomOutput = reactiveValues(highlight = NULL, data = NULL)
-  atomOutputData = sasa.l[[1]][[1]];
+  atomOutputData = sasa.l[[1]][[1]][[1]][[1]];
   ## render output data as table
-  output$popsAtom = DT::renderDataTable({
+  output$popsAtom = DT::renderDT({
     atomOutput$data = atomOutputData
   })
 
   #_____________________________________
   ## residue
   ## create empty dataframe in r with column names
-  residue_null.df = data.frame(
+  sasa.l[[1]][[2]][[1]][[1]] = data.frame(
                       ResidNe = character(),
                       Chain = character(),
                       ResidNr = integer(),
                       iCode = integer(),
                       Phob = double(),
                       Phil = double(),
-                      Total = double(),
+                      SASA = double(),
                       Q = double(),
                       N = integer(),
                       Surf = double()
   )
   residueOutput = reactiveValues(highlight = NULL, data = NULL)
-  residueOutputData = sasa.l[[1]][[1]];
+  residueOutputData = sasa.l[[1]][[2]][[1]][[1]];
   ## render output data as table
-  output$popsResidue = DT::renderDataTable({
+  output$popsResidue = DT::renderDT({
     residueOutput$data = residueOutputData
   })
 
   #_____________________________________
   ## chain
-  chain_null.df = data.frame(
-                    ChainNr = integer(),
-                    ChainNe = character()
+  sasa.l[[1]][[3]][[1]][[1]] = data.frame(
+                      Chain = character(),
+                      Id = character(),
+                      AtomRange = character(),
+                      ResidRange  = character(),
+                      Phob = double(),
+                      Phil = double(),
+                      SASA = double()
   )
   chainOutput = reactiveValues(highlight = NULL, data = NULL)
-  chainOutputData = sasa.l[[1]][[1]];
+  chainOutputData = sasa.l[[1]][[3]][[1]][[1]];
   ## render output data as table
-  output$popsChain = DT::renderDataTable({
+  output$popsChain = DT::renderDT({
     chainOutput$data = chainOutputData
   })
 
   #_____________________________________
   ## molecule
-  molecule_null.df = data.frame(
+  sasa.l[[1]][[4]][[1]][[1]] = data.frame(
                       Phob = double(),
                       Phil = double(),
-                      Total = double()
+                      SASA = double()
   )
   moleculeOutput = reactiveValues(highlight = NULL, data = NULL)
-  moleculeOutputData = sasa.l[[1]][[1]];
+  moleculeOutputData = sasa.l[[1]][[4]][[1]][[1]];
   ## render output data as table
-  output$popsMolecule = DT::renderDataTable({
+  output$popsMolecule = DT::renderDT({
     moleculeOutput$data = moleculeOutputData
   })
 }
