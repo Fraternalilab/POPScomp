@@ -14,6 +14,46 @@ library("bio3d");
 
 library("parallel");
 
+#_______________________________________________________________________________
+#' sasa : An S4 class for SASA data
+#' @slot valueAtomPairchain: SASA values of paired chain at atom resolution
+#' @slot valueAtomChain1: same for the first isolated chain
+#' @slot valueAtomChain2: same for the second isolated chain
+#' ... equally for the other resolutions 'Residue', 'Chain' and 'Molecule'
+#' @slot diffAtomChain1: SASA differences of chain 1 at atom resolution
+#' @slot diffAtomChain2: SASA differences of chain 2 at atom resolution
+#' ... equally for the other resolutions 'Residue' and 'Chain'
+sasa <- setClass(
+  "sasa",
+
+  slots = c(
+    valueAtomPairchain = "data.frame",
+    valueAtomChain1 = "data.frame",
+    valueAtomChain2 = "data.frame",
+    valueResiduePairchain = "data.frame",
+    valueResidueChain1 = "data.frame",
+    valueResidueChain2 = "data.frame",
+    valueChainPairchain = "data.frame",
+    valueChainChain1 = "data.frame",
+    valueChainChain2 = "data.frame",
+    valueMoleculePairchain = "data.frame",
+    valueMoleculeChain1 = "data.frame",
+    valueMoleculeChain2 = "data.frame",
+    diffAtomChain1 = "data.frame",
+    diffAtomChain2 = "data.frame",
+    diffResidueChain1 = "data.frame",
+    diffResidueChain2 = "data.frame",
+    diffChainChain1 = "data.frame",
+    diffChainChain2 = "data.frame"
+  )
+)
+
+#_______________________________________________________________________________
+## POPScomp function implemented in R
+##+++++
+## It might be better to split popscomp.R into a shell-oritend part and two
+##   other functions that return the sasa values and differences
+##+++++
 popscompR = function(inputPDB, outdir) {
 	## number of cores
 	nCore = detectCores() - 1;
@@ -90,7 +130,7 @@ popscompR = function(inputPDB, outdir) {
 	## by using the 'AtomNr' (atom serial number), because that refers to the line of
 	##   the coordinate entry and is therefore unique and contiguous
 	bynameLevel = c("AtomNr", "Chain", "Id");
-	sasapair.level.files = lapply(1:(length(rpopsLevel) - 1), function(y) {
+	sasadiff.level.tables = lapply(1:(length(rpopsLevel) - 1), function(y) {
 	  ## sasadiff is a list of SASA difference values for two chains as list elements
 		sasadiff.tables = lapply(1:dim(pair.cmbn)[2], function(x) {
 	    sasa.diff = list();
@@ -105,7 +145,7 @@ popscompR = function(inputPDB, outdir) {
 	  });
 	});
 
-	return(list(sasapair.files[[1]], sasadiff.tables[[1]]));
+	return(list(sasapair.level.files, sasadiff.level.tables));
 }
 
 #===============================================================================
