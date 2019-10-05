@@ -74,6 +74,7 @@ typedef struct chain
 typedef struct str
 {
 	struct str *next, *prev;
+	char pdbID[1024];
 	Atom *atom; /* array of atoms constituting structure */
 	int *resAtom; /* atom indices of CA and P atoms */
 	int *atomMap; /* map of the selected atom count to the original atom count */

@@ -142,9 +142,13 @@ int parseXML(const char *filename, Str *pdb) {
 	/* set root node */
 	root_node = xmlDocGetRootElement(doc);
 
-	/* atom sites are set as child nodes */
+	/* traverse XML tree: read datablock content and halt at atom_siteCategory */
+	/* traverse atom sites as child nodes below */
 	for (cur_node = root_node->children; cur_node; cur_node = cur_node->next) {
-		if(strcmp("atom_siteCategory", (char *)cur_node->name) == 0) {
+		if (strcmp("datablock", (char *)atom_node->name) == 0) {
+			sscanf((char *)content, "%s", pdb->pdbID);
+		}
+		if (strcmp("atom_siteCategory", (char *)cur_node->name) == 0) {
 			site_node = cur_node;
 			break;
 		}
@@ -171,7 +175,7 @@ int parseXML(const char *filename, Str *pdb) {
 	compile_patterns(regexPattern, &(hetAtomPattern[0]), nHetAtom);
 
 	/*____________________________________________________________________________*/
-	/* traverse XML tree (atom sites) */
+	/* traverse XML tree: atom sites */
 	for (atom_node = site_node->children; atom_node; atom_node = atom_node->next) {
 		if (strcmp("atom_site", (char *)atom_node->name) == 0) {
 			/* initialise all entries of this atom */ 
@@ -366,5 +370,7 @@ void read_structure_xml(Arg *arg, Argpdb *argpdb, Str *pdb)
 										"\t\tchains = %d\n",
 							arg->pdbmlInFileName, pdb->nAllAtom,
 							pdb->nAtom, pdb->nResidue, pdb->nChain);
+
+    fprintf(stderr, "\tpdbId:: %s\n", pdb->pdbID);
 }
 
