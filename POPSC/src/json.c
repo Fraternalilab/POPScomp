@@ -46,7 +46,6 @@ void print_json(Arg *arg, cJSON *json)
 void make_resSasaJson(Arg *arg, Str *pdb, ResSasa *resSasa, cJSON *json)
 {
 	char reslab[8];
-
 	/* 'json' is the root object to which everything else will be attached */
 
 	/* indices to iterate through arrays defined below */
