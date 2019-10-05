@@ -33,22 +33,34 @@ This is version 3.0.0 of the [POPScomp server](href="http://popscom.org:3838).
 The server automatically recognises PDB identifiers and multi-chain structures.
 Output comprises downloadable SASA tables and graphs shown on the Shiny server pages.
 
-The POPScomp server is based on two software packages:
-1. A GNU Autotools package of the POPS C program that computes SASA for a given structure.
-2. An R package containing an R program that a) splits complexes into single and pair
-  components to compute buried SASA using POPSC and b) provides a Shiny server to interface the R program.
-Since April 2019 the POPS program (POPSC) and the POPScomp Shiny server (POPSR)
-are being co-developed.
+### Packages
+1. *POPSC*: A GNU Autotools package of the POPS C program that computes SASA for a given structure.
+2. *POPSR*: An R package containing an R program that
+    - splits complexes into single and pair components to compute buried SASA using POPSC and 
+    - provides a Shiny server as interface to the combined R and POPS programs.
+3. *FunPDBe*
+Scripts to run POPScomp over the PDB database and feed the outut into the FunPDBe project.
+4. *Docker*: A Docker image is under development and scheduled for version 3.1.
 
-Source code and detailed information can be found on Fraternali lab's
-[POPScomp GitHub page](href="https://github.com/Fraternalilab/POPScomp).
+Since April 2019, version 3.0 of POPScomp,
+the above packages *POPSC*, *POPSR*, *FunPDBe* and *Docker* are being co-developed
+in a single project for mutual compatibility.
+
+### Source code
+Fraternali lab's
+[POPScomp GitHub page](href="https://github.com/Fraternalilab/POPScomp").
 Please use that site for bug reports and other comments.
 
+### POPScomp server
+* [POPScomp](http://popscomp.org:3838)
+
+### FunPDBe
 POPScomp is part of the [FunPDBe resources](href="https://www.ebi.ac.uk/pdbe/funpdbe/deposition).
 
-Usage of the server is free, the code license is GPL3.
+### License
+Usage of the software and server is free, the code license is GPL3.
 
-Authors:
+### Authors
 - Franca Fraternali (franca.fraternali@kcl.ac.uk)
 - Jens Kleinjung (jens@jkleinj.eu)
-        )
+
