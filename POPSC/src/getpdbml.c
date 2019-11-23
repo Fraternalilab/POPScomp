@@ -1,7 +1,8 @@
 /*==============================================================================
 getpdbml.c : routines for reading PDBML structures
 https://doi.org/10.1093/bioinformatics/bti082
-Copyright (C) 2018 Jens Kleinjung
+http://xmlsoft.org/index.html
+Copyright (C) 2018-2019 Jens Kleinjung
 Read the COPYING file for license information.
 ==============================================================================*/
 #include "getpdbml.h"
@@ -120,7 +121,7 @@ int parseXML(const char *filename, Str *pdb) {
 	xmlNode *atom_node = 0;
 	unsigned int allocated_atom = 64;
 	unsigned int allocated_residue = 64;
-	xmlChar *data = "datablockName";
+	xmlChar *data = (xmlChar*)"datablockName";
 	xmlChar *content = 0;
 	unsigned int k = 0;
 	int ca_p = 0;
@@ -143,6 +144,7 @@ int parseXML(const char *filename, Str *pdb) {
 	/* parse document tree */
 	/* set root node */
 	root_node = xmlDocGetRootElement(doc);
+	/* extract pdbID via root node property "datablockName" */
 	content = xmlGetProp(root_node, data);
 	sscanf((char *)content, "%s", pdb->pdbID);
 
