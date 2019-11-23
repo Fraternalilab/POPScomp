@@ -101,8 +101,8 @@ Kleinjung, J. and Fraternali, F.<br>
 Usage of the software and server is free, the code license is GPL3.
 
 ### Copyright Holders, Authors and Maintainers 
-- 2002-2019 Franca Fraternali (franca.fraternali@kcl.ac.uk)
-- 2008-2019 Jens Kleinjung (jens@jkleinj.eu)
+- 2002-2019 Franca Fraternali (program author, mainatainer) franca.fraternali@kcl.ac.uk
+- 2008-2019 Jens Kleinjung (modular C code, Shiny server, Docker image) jens@jkleinj.eu
 
 ### Contributors
 - 2002 Kuang Lin and Valerie Hindie (translation to C)
