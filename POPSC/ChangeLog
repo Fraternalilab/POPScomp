@@ -1,4 +1,10 @@
 
+- 3.0.1
+Sat 23 Nov 15:34:37 GMT 2019
+	Fixed bug: Now PDB identifier is read correctly from XML file.
+	Removed HET atom matching until POPSCOMP functionality reinstated.
+	Release of new POPScomp_PDBML data resource.
+
 - 3.0
 Mon 22 Apr 22:53:52 BST 2019
 	Launched POPScomp as R Shiny server popscomp.org:3838.

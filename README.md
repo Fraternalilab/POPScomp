@@ -27,16 +27,15 @@ is returned as exit code and shown below the 'run POPScomp' button:
 ## Software
 
 ### Packages
-Since POPScomp 3.0 (04.2019), the packages *POPSC*, *POPSR*, *FunPDBe* and
+Since POPScomp 3.0 (04.2019), the modules *POPSC*, *POPSR*, *FunPDBe* and
 *Docker* are part of the POPScomp project.
 1. *POPSC*: A GNU Autotools package of the POPS C program that computes SASA
   for a given structure.
 2. *POPSR*: An R package containing an R program that
     - splits complexes into single and pair components to compute buried SASA
 	  using POPSC and 
-    - provides a Shiny server as interface to the POPScomp (C and R) programs.
-3. *FunPDBe*
-Scripts to run POPScomp over the PDB database and feed the output into
+    - provides a Shiny server as interface to the POPScomp (POPSC and POPSR) programs.
+3. *FunPDBe*: Scripts to run POPScomp over the PDB database and feed the output into
   the FunPDBe project.
 4. *Docker*: A Docker image is under development and scheduled for version 3.1.
 

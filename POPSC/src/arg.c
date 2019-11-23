@@ -37,10 +37,11 @@ static void print_header()
 /** print license */
 static void print_license()
 {
-    fprintf(stdout, "\nCopyright (C) 2002-2019 Franca Fraternali (program author)\n"
-			"Copyright (C) 2008-2019 Jens Kleinjung (modular C code)\n"
-			"Copyright (C) 2002 Kuang Lin and Valerie Hindie (translation to C)\n"
-			"Copyright (C) 2002 Luigi Cavallo (parametrisation)\n"
+    fprintf(stdout, "\nCopyright (C) and Contributions\n"
+			"\t2002-2019 Franca Fraternali (author, maintainer)\n"
+			"\t2008-2019 Jens Kleinjung (author, maintainer)\n"
+			"\t2002 Kuang Lin and Valerie Hindie (translation to C)\n"
+			"\t2002 Luigi Cavallo (parametrisation)\n"
 			"POPS* is free software and comes with ABSOLUTELY NO WARRANTY.\n"
 			"You are welcome to redistribute it under certain conditions.\n"
 			"Read the COPYING file for distribution details.\n\n");
@@ -184,43 +185,43 @@ int parse_args(int argc, char **argv, Arg *arg, Argpdb *argpdb)
 	int c;
 	const char usage[] = "\npops [--pdb ... | --pdbml ...] [OPTIONS ...]\n\
 	 INPUT OPTIONS\n\
-       Input is either a *.pdb[.gz] file (--pdb) or a *.xml[.gz] file (--pdbml).\n\
-	   --pdb <PDB input>\t\t(mode: optional, type: char  , default: void)\n\
-	   --pdbml <PDBML input>\t(mode: optional, type: char  , default: void)\n\
-	   --traj <trajectory input>\t(mode: optional , type: char  , default: void)\n\
-	   --zipped\t\t\t(mode: opional , type: bool  , default: false)\n\
+	   Input syntax is either '--pdb <name>.pdb[.gz]' or '--pdbml <name>.xml[.gz]'.\n\
+	   --pdb <PDB input>\t\t(type: char  , default: void)\n\
+	   --pdbml <PDBML input>\t(type: char  , default: void)\n\
+	   --traj <trajectory input>\t(type: char  , default: void)\n\
+	   --zipped\t\t\t(type: no_arg, default: off)\n\
 	 MODE OPTIONS\n\
-	   --coarse\t\t\t(mode: optional , type: no_arg, default: off)\n\
-	   --hydrogens\t\t\t(mode: optional , type: no_arg, default: off)\n\
-	   --multiModel\t\t\t(mode: optional , type: no_arg, default: off)\n\
-	   --partOcc\t\t\t(mode: optional , type: no_arg, default: off)\n\
-	   --rProbe <probe radius [A]>\t(mode: optional , type: float , default: 1.4)\n\
-	   --silent\t\t\t(mode: optional , type: no_arg, default: off)\n\
+	   --coarse\t\t\t(type: no_arg, default: off)\n\
+	   --hydrogens\t\t\t(type: no_arg, default: off)\n\
+	   --multiModel\t\t\t(type: no_arg, default: off)\n\
+	   --partOcc\t\t\t(type: no_arg, default: off)\n\
+	   --rProbe <probe radius [A]>\t(type: float , default: 1.4)\n\
+	   --silent\t\t\t(type: no_arg, default: off)\n\
 	 OUTPUT OPTIONS\n\
-       --outDirName <output dir>\t(mode: optional , type: char  , default: NULL)\n\
-	   --popsOut <POPS output>\t(mode: optional , type: char  , default: pops.out)\n\
-	   --popstrajOut <POPS output>\t(mode: optional , type: char  , default: popstraj.out)\n\
-	   --popsbOut <POPSb output>\t(mode: optional , type: char  , default: popsb.out)\n\
-	   --popsbtrajOut <POPSb output>(mode: optional , type: char  , default: popsbtraj.out)\n\
-	   --sigmaOut <SFE output>\t(mode: optional , type: char  , default: sigma.out)\n\
-	   --sigmatrajOut <SFE output>\t(mode: optional , type: char  , default: sigmatraj.out)\n\
-	   --interfaceOut\t\t(mode: optional , type: no_arg, default: off)\n\
-	   --compositionOut\t\t(mode: optional , type: no_arg, default: off)\n\
-	   --typeOut\t\t\t(mode: optional , type: no_arg, default: off)\n\
-	   --topologyOut\t\t(mode: optional , type: no_arg, default: off)\n\
-	   --atomOut\t\t\t(mode: optional , type: no_arg, default: off)\n\
-	   --residueOut\t\t\t(mode: optional , type: no_arg, default: off)\n\
-	   --chainOut\t\t\t(mode: optional , type: no_arg, default: off)\n\
-	   --neighbourOut\t\t(mode: optional , type: no_arg, default: off)\n\
-	   --parameterOut\t\t(mode: optional , type: no_arg, default: off)\n\
-	   --noTotalOut\t\t\t(mode: optional , type: no_arg, default: off)\n\
-	   --noHeaderOut\t\t(mode: optional , type: no_arg, default: off)\n\
-	   --padding\t\t\t(mode: optional , type: no_arg, default: off)\n\
-	   --rout\t\t\t(mode: optional , type: no_arg, default: off)\n\
-	   --jsonOut\t\t\t(mode: optional , type: no_arg, default: off)\n\
+	   --outDirName <output dir>\t(type: char  , default: NULL)\n\
+	   --popsOut <POPS output>\t(type: char  , default: pops.out)\n\
+	   --popstrajOut <POPS output>\t(type: char  , default: popstraj.out)\n\
+	   --popsbOut <POPSb output>\t(type: char  , default: popsb.out)\n\
+	   --popsbtrajOut <POPSb output>(type: char  , default: popsbtraj.out)\n\
+	   --sigmaOut <SFE output>\t(type: char  , default: sigma.out)\n\
+	   --sigmatrajOut <SFE output>\t(type: char  , default: sigmatraj.out)\n\
+	   --interfaceOut\t\t(type: no_arg, default: off)\n\
+	   --compositionOut\t\t(type: no_arg, default: off)\n\
+	   --typeOut\t\t\t(type: no_arg, default: off)\n\
+	   --topologyOut\t\t(type: no_arg, default: off)\n\
+	   --atomOut\t\t\t(type: no_arg, default: off)\n\
+	   --residueOut\t\t\t(type: no_arg, default: off)\n\
+	   --chainOut\t\t\t(type: no_arg, default: off)\n\
+	   --neighbourOut\t\t(type: no_arg, default: off)\n\
+	   --parameterOut\t\t(type: no_arg, default: off)\n\
+	   --noTotalOut\t\t\t(type: no_arg, default: off)\n\
+	   --noHeaderOut\t\t(type: no_arg, default: off)\n\
+	   --padding\t\t\t(type: no_arg, default: off)\n\
+	   --rout\t\t\t(type: no_arg, default: off)\n\
+	   --jsonOut\t\t\t(type: no_arg, default: off)\n\
 	 INFO OPTIONS\n\
-	   --cite\t\t\t(mode: optional , type: no_arg, default: off)\n\
-	   --version\t\t\t(mode: optional , type: no_arg, default: off)\n\
+	   --cite\t\t\t(type: no_arg, default: off)\n\
+	   --version\t\t\t(type: no_arg, default: off)\n\
 	   --help\n";
 
     if (argc < 2) {
