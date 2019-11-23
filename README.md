@@ -5,7 +5,7 @@ containing protein or RNA/DNA, POPScomp creates internally all pair combinations
 of chains to compute the buried SASA upon complexation. Details of those routines
 are explained in the published papers on POPS and POPSCOMP.
 
-POPScomp shows tabs for atom, residue, chain and molecule SASAs.
+POPScomp (*Shiny* app) shows tabs for atom, residue, chain and molecule SASAs.
 The tables are initialised without any values and therefore the user sees
 the table header and below the notice 'No data available in table'.
 After selecting a PDB identifier or file and pressing 'run POPScomp',
@@ -24,43 +24,56 @@ is returned as exit code and shown below the 'run POPScomp' button:
 * 255\* - Exit status out of range
 
 Results will be stored on the server for maximally one day.
-Upon high demand the storage time might be reduced 30 minutes.
-Please download your results via the 'Download' buttons.
+For permanent storage, please download your results via the
+'Download' buttons.
 
 
 ## About
-This is version 3.0.0 of the [POPScomp server](href="http://popscom.org:3838).
+This is version 3.0.0 of the [POPScomp server](http://popscom.org:3838).
 The server automatically recognises PDB identifiers and multi-chain structures.
 Output comprises downloadable SASA tables and graphs shown on the Shiny server pages.
 
 ### Packages
-1. *POPSC*: A GNU Autotools package of the POPS C program that computes SASA for a given structure.
+Since POPScomp 3.0 (04.2019), the packages *POPSC*, *POPSR*, *FunPDBe* and
+*Docker* are part of the POPScomp project.
+1. *POPSC*: A GNU Autotools package of the POPS C program that computes SASA
+  for a given structure.
 2. *POPSR*: An R package containing an R program that
-    - splits complexes into single and pair components to compute buried SASA using POPSC and 
-    - provides a Shiny server as interface to the combined R and POPS programs.
+    - splits complexes into single and pair components to compute buried SASA
+	  using POPSC and 
+    - provides a Shiny server as interface to the POPScomp (C and R) programs.
 3. *FunPDBe*
-Scripts to run POPScomp over the PDB database and feed the outut into the FunPDBe project.
+Scripts to run POPScomp over the PDB database and feed the output into
+  the FunPDBe project.
 4. *Docker*: A Docker image is under development and scheduled for version 3.1.
 
-Since April 2019, version 3.0 of POPScomp,
-the above packages *POPSC*, *POPSR*, *FunPDBe* and *Docker* are being co-developed
-in a single project for mutual compatibility.
 
 ### Source code
 Fraternali lab's
-[POPScomp GitHub page](href="https://github.com/Fraternalilab/POPScomp").
-Please use that site for bug reports and other comments.
+[POPScomp GitHub page](https://github.com/Fraternalilab/POPScomp).
+Please use that site for bug reports and add a Star to the repository
+to support the software maintainers.
+
+### Docker image
+A *Docker* image of POPScomp can be pulled from the Google Cloud.
+```
+docker push eu.gcr.io/high-hue-217311/popscomp:0.1
+```
 
 ### POPScomp server
 * [POPScomp](http://popscomp.org:3838)
 
 ### FunPDBe
-POPScomp is part of the [FunPDBe resources](href="https://www.ebi.ac.uk/pdbe/funpdbe/deposition).
+POPScomp is part of the [FunPDBe resources](https://www.ebi.ac.uk/pdbe/funpdbe/deposition).
 
 ### License
 Usage of the software and server is free, the code license is GPL3.
 
-### Authors
-- Franca Fraternali (franca.fraternali@kcl.ac.uk)
-- Jens Kleinjung (jens@jkleinj.eu)
+### Copyright Holders, Authors and Maintainers 
+- 2002-2019 Franca Fraternali (franca.fraternali@kcl.ac.uk)
+- 2008-2019 Jens Kleinjung (jens@jkleinj.eu)
+
+### Contributors
+- 2002 Kuang Lin and Valerie Hindie (translation to C)
+- 2002 Luigi Cavallo (parametrisation)
 

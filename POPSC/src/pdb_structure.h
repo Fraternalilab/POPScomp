@@ -18,7 +18,7 @@ typedef struct atom
 {
 	struct atom *next;
 	char recordName[8]; /* Record type; 1 - 6*/
-	int  entityId; /* Entity ID; in XML files */
+	int entityID; /* entity identifier; in XML files */
 	int atomNumber; /* Atom serial number;  7 - 11 */
 	char atomName[8]; /* Atom name; 13 - 16 */
 	char atomName_raw[8]; /* Atom name; 13 - 14 */
@@ -74,7 +74,7 @@ typedef struct chain
 typedef struct str
 {
 	struct str *next, *prev;
-	char pdbID[1024];
+	char pdbID[16]; /* PDB identifier */
 	Atom *atom; /* array of atoms constituting structure */
 	int *resAtom; /* atom indices of CA and P atoms */
 	int *atomMap; /* map of the selected atom count to the original atom count */

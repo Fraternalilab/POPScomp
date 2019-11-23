@@ -1,5 +1,6 @@
 /*==============================================================================
 getpdbml.c : routines for reading PDBML structures
+https://doi.org/10.1093/bioinformatics/bti082
 Copyright (C) 2018 Jens Kleinjung
 Read the COPYING file for license information.
 ==============================================================================*/
@@ -119,6 +120,7 @@ int parseXML(const char *filename, Str *pdb) {
 	xmlNode *atom_node = 0;
 	unsigned int allocated_atom = 64;
 	unsigned int allocated_residue = 64;
+	xmlChar *data = "datablockName";
 	xmlChar *content = 0;
 	unsigned int k = 0;
 	int ca_p = 0;
@@ -141,13 +143,12 @@ int parseXML(const char *filename, Str *pdb) {
 	/* parse document tree */
 	/* set root node */
 	root_node = xmlDocGetRootElement(doc);
+	content = xmlGetProp(root_node, data);
+	sscanf((char *)content, "%s", pdb->pdbID);
 
 	/* traverse XML tree: read datablock content and halt at atom_siteCategory */
 	/* traverse atom sites as child nodes below */
 	for (cur_node = root_node->children; cur_node; cur_node = cur_node->next) {
-		if (strcmp("datablock", (char *)atom_node->name) == 0) {
-			sscanf((char *)content, "%s", pdb->pdbID);
-		}
 		if (strcmp("atom_siteCategory", (char *)cur_node->name) == 0) {
 			site_node = cur_node;
 			break;
@@ -363,14 +364,13 @@ void read_structure_xml(Arg *arg, Argpdb *argpdb, Str *pdb)
     }
 
     if (! arg->silent) fprintf(stdout, "\tPDB file: %s\n"
+										"\tPDB identifier: %s\n"
 										"\tPDB file content:\n"
 										"\t\tall atoms = %d\n"
 										"\t\tprocessed atoms (C,N,O,S,P) = %d\n"
 										"\t\tresidues (CA||N3) = %d\n"
 										"\t\tchains = %d\n",
-							arg->pdbmlInFileName, pdb->nAllAtom,
+							arg->pdbmlInFileName, pdb->pdbID, pdb->nAllAtom,
 							pdb->nAtom, pdb->nResidue, pdb->nChain);
-
-    fprintf(stderr, "\tpdbId:: %s\n", pdb->pdbID);
 }
 
