@@ -377,9 +377,9 @@ int parse_args(int argc, char **argv, Arg *arg, Argpdb *argpdb)
 				print_license();
                 exit(0);
             default:
-                fprintf(stderr, "%s", usage);
+                fprintf(stdout, "%s", usage);
 				print_license();
-                exit(1);
+                exit(0);
         }
     }
 

@@ -54,12 +54,12 @@ void make_resSasaJson(Arg *arg, Str *pdb, ResSasa *resSasa, cJSON *json)
 	unsigned int r = 0; /* residue index */
 
 	/* header: attached to 'json' */
-	cJSON_AddStringToObject(json, "data_resource", "popscomp");
-	cJSON_AddStringToObject(json, "resource_version", "2.3.0");
-	cJSON_AddStringToObject(json, "software_version", "2.3.0");
-	cJSON_AddStringToObject(json, "resource_entry_url", "https://github.com/Fraternalilab/POPSCOMP");
-	cJSON_AddStringToObject(json, "release_date", "04/11/2018");
-	cJSON_AddStringToObject(json, "pdb_id", "1f3r");
+	cJSON_AddStringToObject(json, "data_resource", "POPScomp");
+	cJSON_AddStringToObject(json, "resource_version", "PDBML_20191122");
+	cJSON_AddStringToObject(json, "software_version", "3.0.1");
+	cJSON_AddStringToObject(json, "resource_entry_url", "https://github.com/Fraternalilab/POPScomp");
+	cJSON_AddStringToObject(json, "release_date", "22/11/2019");
+	cJSON_AddStringToObject(json, "pdb_id", pdb->pdbID);
 
 	/* add Chain array */
 	cJSON *chains = cJSON_AddArrayToObject(json, "chains");
