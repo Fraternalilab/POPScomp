@@ -49,7 +49,7 @@ to support the software maintainers.
 ### Docker image
 A *Docker* image of POPScomp can be pulled from the Google Cloud.
 ```
-docker push eu.gcr.io/high-hue-217311/popscomp:0.1
+docker pull eu.gcr.io/high-hue-217311/popscomp:0.1
 ```
 
 ## Servers
@@ -57,11 +57,11 @@ docker push eu.gcr.io/high-hue-217311/popscomp:0.1
 ### POPScomp server
 * [POPScomp](http://popscomp.org:3838)
 
-### FunPDBe
-POPScomp is part of the [FunPDBe resources](https://www.ebi.ac.uk/pdbe/funpdbe/deposition).
-
 Results will be stored on the server for maximally one day.
 For permanent storage, please download your results via the 'Download' buttons.
+
+### FunPDBe
+POPScomp is part of the [FunPDBe resources](https://www.ebi.ac.uk/pdbe/funpdbe/deposition).
 
 
 ## References
