@@ -66,7 +66,7 @@ POPScomp is part of the [FunPDBe resources](https://www.ebi.ac.uk/pdbe/funpdbe/d
 
 ## References
 Users publishing results obtained with the program and its applications
-should acknowledge its use by the following citation:
+should acknowledge its use by citation:
 
 ### Implicit solvent
    Fraternali, F. and van Gunsteren, W.F.
