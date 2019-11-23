@@ -94,6 +94,7 @@ __inline__ static void init_atom(Str *pdb)
 	pdb->atom[pdb->nAtom].pos.y = 0.;
 	pdb->atom[pdb->nAtom].pos.z = 0.;
 	strcpy(pdb->atom[pdb->nAtom].chainIdentifier, "");
+	pdb->atom[pdb->nAtom].atomNumber = 0;
 	strcpy(pdb->atom[pdb->nAtom].atomName, "");
 	strcpy(pdb->atom[pdb->nAtom].atomNameHet, "");
 	strcpy(pdb->atom[pdb->nAtom].residueName, "");
@@ -126,12 +127,12 @@ int parseXML(const char *filename, Str *pdb) {
 	unsigned int k = 0;
 	int ca_p = 0;
 	char resbuf;
-	char line[80];
+	/*char line[80];*/
 	regex_t *regexPattern = 0; /* regular atom patterns */
 	/* allowed HETATM atom types (standard N,CA,C,O) and elements (any N,C,O,P,S) */
 	const int nHetAtom = 6;
 	char hetAtomPattern[6][32] = {{"N"},{"CA"},{"C"},{"O"},{"P"},{"S"}};
-	char hetAtomNewname[6][32] = {{"N_"},{"CA"},{"C_"},{"O_"},{"P_"},{"S_"}};
+	/*char hetAtomNewname[6][32] = {{"N_"},{"CA"},{"C_"},{"O_"},{"P_"},{"S_"}};*/
 
 	/*____________________________________________________________________________*/
     /* parse the file and get the document (DOM) */
@@ -214,6 +215,10 @@ int parseXML(const char *filename, Str *pdb) {
 				if (strcmp((char *)cur_node->name, "auth_atom_id") == 0) {
 					sscanf((char *)content, "%s", pdb->atom[pdb->nAtom].atomName);
 				}
+				/* atom number */
+				if (strcmp((char *)cur_node->name, "auth_seq_id") == 0) {
+					sscanf((char *)content, "%d", &(pdb->atom[pdb->nAtom].atomNumber));
+				}
 				/* residue name */
 				if (strcmp((char *)cur_node->name, "auth_comp_id") == 0) {
 					sscanf((char *)content, "%s", pdb->atom[pdb->nAtom].residueName);
@@ -270,10 +275,13 @@ int parseXML(const char *filename, Str *pdb) {
 	
 			/* process HETATM entries */
 			if (strcmp(pdb->atom[pdb->nAtom].recordName, "HETATM") == 0) {
+				/* HETATM disabled
 				if (process_het(pdb, &(line[0]), regexPattern,
 						&(hetAtomNewname[0]), nHetAtom) != 0) {
 					continue;
 				}
+				*/
+				continue;
 			}
 
 			/* detect CA and N3 atoms for residue allocation */
