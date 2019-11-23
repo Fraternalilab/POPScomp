@@ -76,23 +76,23 @@ Fraternali, F. and van Gunsteren, W.F.<br>
 [![pubmed](https://img.shields.io/badge/pubmed-24681267-blue.svg?style=flat)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4045398/)
 
 ### POPS method
-Fraternali, F. and Cavallo, L.
-*Parameter optimized surfaces (POPS): analysis of key interactions and conformational changes in the ribosome.*
-**Nucleic Acids Research** 30 (2002) 2950-2960.
+Fraternali, F. and Cavallo, L.<br>
+*Parameter optimized surfaces (POPS): analysis of key interactions and conformational changes in the ribosome.*<br>
+**Nucleic Acids Research** 30 (2002) 2950-2960.<br>
 [![doi](https://img.shields.io/badge/doi-10.1016%2Fj.jmb.2014.03.010-blue.svg?style=flat)](https://dx.doi.org/10.1093%2Fnar%2Fgkf373)
 [![pubmed](https://img.shields.io/badge/pubmed-24681267-blue.svg?style=flat)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC117037/)
 
 ### POPS server
-Cavallo, L., Kleinjung, J. and Fraternali, F.
-*POPS: A fast algorithm for solvent accessible surface areas at atomic and residue level.*
-**Nucleic Acids Research** 31 (2003) 3364-3366.
+Cavallo, L., Kleinjung, J. and Fraternali, F.<br>
+*POPS: A fast algorithm for solvent accessible surface areas at atomic and residue level.*<br>
+**Nucleic Acids Research** 31 (2003) 3364-3366.<br>
 [![doi](https://img.shields.io/badge/doi-10.1016%2Fj.jmb.2014.03.010-blue.svg?style=flat)](https://dx.doi.org/10.1093%2Fnar%2Fgkg601)
 [![pubmed](https://img.shields.io/badge/pubmed-24681267-blue.svg?style=flat)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC169007/)
 
 ### POPSCOMP server
-Kleinjung, J. and Fraternali, F.
-*POPSCOMP: an automated interaction analysis of biomolecular complexes.*
-**Nucleic Acids Research** 33 (2005) W342-W346.
+Kleinjung, J. and Fraternali, F.<br>
+*POPSCOMP: an automated interaction analysis of biomolecular complexes.*<br>
+**Nucleic Acids Research** 33 (2005) W342-W346.<br>
 [![doi](https://img.shields.io/badge/doi-10.1016%2Fj.jmb.2014.03.010-blue.svg?style=flat)](https://dx.doi.org/10.1093%2Fnar%2Fgki369)
 [![pubmed](https://img.shields.io/badge/pubmed-24681267-blue.svg?style=flat)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1160130/)
 
