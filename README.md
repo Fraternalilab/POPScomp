@@ -69,28 +69,32 @@ Users publishing results obtained with the program and its applications
 should acknowledge its use by citation:
 
 ### Implicit solvent
-    Fraternali, F. and van Gunsteren, W.F.
-    *An efficient mean solvation force model for use in molecular dynamics simulations of proteins in aqueous solution.*
-    **Journal of Molecular Biology** 256 (1996) 939-948.
-[![doi](https://img.shields.io/badge/doi-10.1016%2Fj.jmb.2014.03.010-blue.svg?style=flat)](https://dx.doi.org/10.1016%2Fj.sbi.2014.04.003) [![pubmed](https://img.shields.io/badge/pubmed-24681267-blue.svg?style=flat)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4045398/)
+Fraternali, F. and van Gunsteren, W.F.<br>
+*An efficient mean solvation force model for use in molecular dynamics simulations of proteins in aqueous solution.*<br>
+**Journal of Molecular Biology** 256 (1996) 939-948.<br>
+[![doi](https://img.shields.io/badge/doi-10.1016%2Fj.jmb.2014.03.010-blue.svg?style=flat)](https://dx.doi.org/10.1016%2Fj.sbi.2014.04.003)
+[![pubmed](https://img.shields.io/badge/pubmed-24681267-blue.svg?style=flat)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4045398/)
 
 ### POPS method
-    Fraternali, F. and Cavallo, L.
-    *Parameter optimized surfaces (POPS): analysis of key interactions and conformational changes in the ribosome.*
-    **Nucleic Acids Research** 30 (2002) 2950-2960.
-[![doi](https://img.shields.io/badge/doi-10.1016%2Fj.jmb.2014.03.010-blue.svg?style=flat)](https://dx.doi.org/10.1093%2Fnar%2Fgkf373) [![pubmed](https://img.shields.io/badge/pubmed-24681267-blue.svg?style=flat)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC117037/)
+Fraternali, F. and Cavallo, L.
+*Parameter optimized surfaces (POPS): analysis of key interactions and conformational changes in the ribosome.*
+**Nucleic Acids Research** 30 (2002) 2950-2960.
+[![doi](https://img.shields.io/badge/doi-10.1016%2Fj.jmb.2014.03.010-blue.svg?style=flat)](https://dx.doi.org/10.1093%2Fnar%2Fgkf373)
+[![pubmed](https://img.shields.io/badge/pubmed-24681267-blue.svg?style=flat)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC117037/)
 
 ### POPS server
-    Cavallo, L., Kleinjung, J. and Fraternali, F.
-    *POPS: A fast algorithm for solvent accessible surface areas at atomic and residue level.*
-    **Nucleic Acids Research** 31 (2003) 3364-3366.
-[![doi](https://img.shields.io/badge/doi-10.1016%2Fj.jmb.2014.03.010-blue.svg?style=flat)](https://dx.doi.org/10.1093%2Fnar%2Fgkg601) [![pubmed](https://img.shields.io/badge/pubmed-24681267-blue.svg?style=flat)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC169007/)
+Cavallo, L., Kleinjung, J. and Fraternali, F.
+*POPS: A fast algorithm for solvent accessible surface areas at atomic and residue level.*
+**Nucleic Acids Research** 31 (2003) 3364-3366.
+[![doi](https://img.shields.io/badge/doi-10.1016%2Fj.jmb.2014.03.010-blue.svg?style=flat)](https://dx.doi.org/10.1093%2Fnar%2Fgkg601)
+[![pubmed](https://img.shields.io/badge/pubmed-24681267-blue.svg?style=flat)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC169007/)
 
 ### POPSCOMP server
-    Kleinjung, J. and Fraternali, F.
-    *POPSCOMP: an automated interaction analysis of biomolecular complexes.*
-    **Nucleic Acids Research** 33 (2005) W342-W346.
-[![doi](https://img.shields.io/badge/doi-10.1016%2Fj.jmb.2014.03.010-blue.svg?style=flat)](https://dx.doi.org/10.1093%2Fnar%2Fgki369) [![pubmed](https://img.shields.io/badge/pubmed-24681267-blue.svg?style=flat)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1160130/)
+Kleinjung, J. and Fraternali, F.
+*POPSCOMP: an automated interaction analysis of biomolecular complexes.*
+**Nucleic Acids Research** 33 (2005) W342-W346.
+[![doi](https://img.shields.io/badge/doi-10.1016%2Fj.jmb.2014.03.010-blue.svg?style=flat)](https://dx.doi.org/10.1093%2Fnar%2Fgki369)
+[![pubmed](https://img.shields.io/badge/pubmed-24681267-blue.svg?style=flat)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1160130/)
 
 
 ## License and Copyright
