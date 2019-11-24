@@ -1,8 +1,29 @@
 
+- 4.2
+
+	Docker iage tested on popscomp.org server.
+
+- 4.1
+
+	Docker image.
+
+- 4.0
+
+	POPSCOMP functionality
+
+- 3.2
+
+	Docker image tested on popscomp.org server.
+
+- 3.1
+
+	Docker image.
+
 - 3.0.1
 Sat 23 Nov 15:34:37 GMT 2019
 	Fixed bug: Now PDB identifier is read correctly from XML file.
 	Removed HET atom matching until POPSCOMP functionality reinstated.
+	Added recognition of alternative locations: only 'A' sites accepted.
 	Release of new POPScomp_PDBML data resource.
 
 - 3.0

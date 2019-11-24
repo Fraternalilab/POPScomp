@@ -95,6 +95,9 @@ __inline__ static void init_atom(Str *pdb)
 	pdb->atom[pdb->nAtom].pos.z = 0.;
 	strcpy(pdb->atom[pdb->nAtom].chainIdentifier, "");
 	pdb->atom[pdb->nAtom].atomNumber = 0;
+	/* setting this to 'space' (ASCII 32) to check later whether
+	   it is still that or 'A' (ASCII 65) or other character */
+	strcpy(pdb->atom[pdb->nAtom].alternativeLocation, " ");
 	strcpy(pdb->atom[pdb->nAtom].atomName, "");
 	strcpy(pdb->atom[pdb->nAtom].atomNameHet, "");
 	strcpy(pdb->atom[pdb->nAtom].residueName, "");
