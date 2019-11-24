@@ -275,8 +275,8 @@ int read_pdb(FILE *pdbInFile, gzFile *pdbgzInFile, Arg *arg, Argpdb *argpdb, Str
 		str->atom[str->nAtom].atomName[j] = '\0';
 
 		/* alternative location */
-		/*str->atom[str->nAtom].alternativeLocation[0] = line[16];	
-		str->atom[str->nAtom].alternativeLocation[1] = '\0';*/
+		str->atom[str->nAtom].alternativeLocation[0] = line[16];
+		str->atom[str->nAtom].alternativeLocation[1] = '\0';
 
 		/* residue name */
 		for (i = 17, j = 0; i < 20; ) {
