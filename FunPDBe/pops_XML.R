@@ -4,8 +4,8 @@
 # (C) 2018 Jens Kleinjung
 #===============================================================================
 
-library("rslurm");
-#library("parallel");
+#library("rslurm");
+library("parallel");
 
 #_______________________________________________________________________________
 #' sadata: An S4 class input/output control.
@@ -34,12 +34,14 @@ ioctrl_o = ioctrl();
 #system("rsync -rlpt -v -z --delete rsync.ebi.ac.uk::pub/databases/pdb/data/structures/divided/XML/ ./XML");
 
 ## link POPS and database
-#system("ln -s ~/POPS/src/pops");
-#system("ln -s ~/database/XML/");
+
 
 #_______________________________________________________________________________
 ## configure runs
 ## get input names of all subdirectories and 'xml.gz' files
+setwd("~/database");
+system("ln -s ~/0/POPScomp/POPSC/src/pops");
+
 ioctrl_o@dirnames = list.dirs(path = "./XML", full.names = FALSE);
 ioctrl_o@filenames = lapply(ioctrl_o@dirnames, function(x) {
 			list.files(path = paste("./XML/", x, sep = ""),
@@ -71,11 +73,12 @@ ioctrl_o@filenames_m = coerce_filenames(ioctrl_o);
 ## create output directory structure
 ## each input file will have its own output directory to accommodate multiple
 ##   output files from POPS
-#ioctrl_o@outpath = apply(ioctrl_o@filenames_m, 2, function(x) {
-#  outpath = paste("./JSON", x[1], x[2], sep = "/");
-#  dir.create(paste(outpath, showWarnings = FALSE, recursive = TRUE));
-#  return(outpath);
-#})
+dir.create("./JSON", showWarnings = FALSE);
+ioctrl_o@outpath = apply(ioctrl_o@filenames_m, 2, function(x) {
+  outpath = paste("./JSON", x[1], x[2], sep = "/");
+  dir.create(outpath, showWarnings = FALSE, recursive = TRUE);
+  return(outpath);
+})
 
 #_______________________________________________________________________________
 ## create POPS commands

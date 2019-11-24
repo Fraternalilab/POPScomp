@@ -219,6 +219,10 @@ int parseXML(const char *filename, Str *pdb) {
 				if (strcmp((char *)cur_node->name, "auth_seq_id") == 0) {
 					sscanf((char *)content, "%d", &(pdb->atom[pdb->nAtom].atomNumber));
 				}
+				/* alternative location */
+				if (strcmp((char *)cur_node->name, "label_alt_id") == 0) {
+					sscanf((char *)content, "%s", pdb->atom[pdb->nAtom].alternativeLocation);
+				}
 				/* residue name */
 				if (strcmp((char *)cur_node->name, "auth_comp_id") == 0) {
 					sscanf((char *)content, "%s", pdb->atom[pdb->nAtom].residueName);
@@ -265,6 +269,14 @@ int parseXML(const char *filename, Str *pdb) {
 			/* skip hydrogen atoms */
 			if (strcmp(pdb->atom[pdb->nAtom].element, "H") == 0) {
 				++ pdb->nAllAtom;
+				continue;
+			}
+
+			/* skip alternative locations except for location 'A' */ 
+			if (pdb->atom[pdb->nAtom].alternativeLocation[0] != 32 &&
+				pdb->atom[pdb->nAtom].alternativeLocation[0] != 65) {
+				/*fprintf(stderr, "Warning: Skipping atom %d in alternative location %c\n",
+					atoi(&line[6]), line[16]);*/
 				continue;
 			}
 
