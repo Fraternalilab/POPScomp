@@ -1,7 +1,7 @@
 #! /usr/bin/R
 #===============================================================================
 # run POPS ovar all XML files of PDB databank
-# (C) 2018 Jens Kleinjung
+# (C) 2018-2019 Jens Kleinjung
 #===============================================================================
 
 #library("rslurm");
@@ -33,15 +33,16 @@ ioctrl_o = ioctrl();
 ## synchronise XML database
 #system("rsync -rlpt -v -z --delete rsync.ebi.ac.uk::pub/databases/pdb/data/structures/divided/XML/ ./XML");
 
-## link POPS and database
+
 
 
 #_______________________________________________________________________________
 ## configure runs
-## get input names of all subdirectories and 'xml.gz' files
+## link POPS and database
 setwd("~/database");
-system("ln -s ~/0/POPScomp/POPSC/src/pops");
+system("ln -fs ~/0/POPScomp/POPSC/src/pops");
 
+## get input names of all subdirectories and 'xml.gz' files
 ioctrl_o@dirnames = list.dirs(path = "./XML", full.names = FALSE);
 ioctrl_o@filenames = lapply(ioctrl_o@dirnames, function(x) {
 			list.files(path = paste("./XML/", x, sep = ""),
@@ -73,12 +74,12 @@ ioctrl_o@filenames_m = coerce_filenames(ioctrl_o);
 ## create output directory structure
 ## each input file will have its own output directory to accommodate multiple
 ##   output files from POPS
-dir.create("./JSON", showWarnings = FALSE);
-ioctrl_o@outpath = apply(ioctrl_o@filenames_m, 2, function(x) {
-  outpath = paste("./JSON", x[1], x[2], sep = "/");
-  dir.create(outpath, showWarnings = FALSE, recursive = TRUE);
-  return(outpath);
-})
+#dir.create("./JSON", showWarnings = FALSE);
+#ioctrl_o@outpath = apply(ioctrl_o@filenames_m, 2, function(x) {
+#  outpath = paste("./JSON", x[1], x[2], sep = "/");
+#  dir.create(outpath, showWarnings = FALSE, recursive = TRUE);
+#  return(outpath);
+#})
 
 #_______________________________________________________________________________
 ## create POPS commands
@@ -93,9 +94,9 @@ ioctrl_o@command = apply(ioctrl_o@filenames_m, 2, function(x) {
 #_______________________________________________________________________________
 #_______________________________________________________________________________
 ## Option 1: run all command lines in serial mode
-run_results = parSapply(clu, 1:length(ioctrl_o@filenames_m), function(x) {
-  try(system(ioctrl_o@command[x]));
-})
+#run_results = parSapply(clu, 1:length(ioctrl_o@filenames_m), function(x) {
+#  try(system(ioctrl_o@command[x]));
+#})
 
 #_______________________________________________________________________________
 ## Option 2: run all command lines on Slurm cluster
@@ -104,12 +105,13 @@ run_results = parSapply(clu, 1:length(ioctrl_o@filenames_m), function(x) {
 #_______________________________________________________________________________
 ## Option 3: run all command lines using parallelism
 ## number of cores
-n_cores = detectCores() - 1;
+n_cores = detectCores();
 ## initiate cluster
 clu = makeCluster(n_cores);
 clusterExport(clu, "ioctrl_o");
 
-run_results = parSapply(clu, 1:length(ioctrl_o@filenames_m), function(x) {
+#run_results = parSapply(clu, 1:length(ioctrl_o@filenames_m), function(x) {
+run_results = parSapply(clu, 1:1000, function(x) {
   try(system(ioctrl_o@command[x]));
 })
 

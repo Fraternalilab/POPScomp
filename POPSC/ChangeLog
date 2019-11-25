@@ -24,6 +24,7 @@ Sat 23 Nov 15:34:37 GMT 2019
 	Fixed bug: Now PDB identifier is read correctly from XML file.
 	Removed HET atom matching until POPSCOMP functionality reinstated.
 	Added recognition of alternative locations: only 'A' sites accepted.
+	Corrected nucleotide residue matching.
 	Release of new POPScomp_PDBML data resource.
 
 - 3.0
