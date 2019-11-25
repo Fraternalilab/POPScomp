@@ -337,12 +337,18 @@ int read_pdb(FILE *pdbInFile, gzFile *pdbgzInFile, Arg *arg, Argpdb *argpdb, Str
 
 		/*____________________________________________________________________________*/
 		/* check conditions to record this entry */
-		/* if no hydrogens set, skip hydrogen lines */
+		/* if no hydrogens set, skip hydrogen lines, including deuterium */
 		if (! argpdb->hydrogens) {
 			strip_char(str->atom[str->nAtom].atomName, &(atomName[0]));
 			/* skip patterns 'H...' and '?H..', where '?' is a digit */
 			if ((atomName[0] == 'H') || \
 				((atomName[0] >= 48) && (atomName[0] <= 57) && (atomName[1] == 'H'))) {
+				++ str->nAllAtom;
+				continue;
+			}
+			/* same for D (deuterium)*/
+			if ((atomName[0] == 'D') || \
+				((atomName[0] >= 48) && (atomName[0] <= 57) && (atomName[1] == 'D'))) {
 				++ str->nAllAtom;
 				continue;
 			}

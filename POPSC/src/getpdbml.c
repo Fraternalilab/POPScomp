@@ -33,7 +33,7 @@ __inline__ static char aacode(char *code3)
 	/* three-letter code of amino acid residues, exception HET -> X */
 	char *aa3[] = {"ALA","---","CYS","ASP","GLU","PHE","GLY","HIS","ILE","---","LYS","LEU","MET","ASN","---","PRO","GLN","ARG","SER","THR","UNL","VAL","TRP","HET","TYR","UNK"};
 	/* nucleotide residues */
-	char *nuc[] = {"  A"," DA","  C"," DC","---","---","  G"," DG","  I"," DI","---","---","---","  N"," DN","---","---","---"," DT","  T","  U"," DU","---","---","---","---"};
+	char *nuc[] = {"A","DA","C","DC","---","---","G","DG","I","DI","---","---","---","N"," DN","---","---","---","DT","T","U","DU","---","---","---","---"};
 
 	/* match against amino acid residues */
 	residue = scan_array(code3, aa3, 65);
@@ -271,6 +271,11 @@ int parseXML(const char *filename, Str *pdb) {
 
 			/* skip hydrogen atoms */
 			if (strcmp(pdb->atom[pdb->nAtom].element, "H") == 0) {
+				++ pdb->nAllAtom;
+				continue;
+			}
+			/* same for D (deuterium)*/
+			if (strcmp(pdb->atom[pdb->nAtom].element, "D") == 0) {
 				++ pdb->nAllAtom;
 				continue;
 			}
