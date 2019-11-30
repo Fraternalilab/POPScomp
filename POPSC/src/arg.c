@@ -162,10 +162,10 @@ static void print_args(Arg *arg, Argpdb *argpdb)
     time_t now;
     time(&now);
 
-    fprintf(stdout, "date: %s", ctime(&now));
+    if (! arg->silent) fprintf(stdout, "date: %s", ctime(&now));
     fprintf(stdout, "pdb/pdbml: %s%s\n",
 					arg->pdbInFileName, arg->pdbmlInFileName);
-    if(! arg->silent) fprintf(stdout, \
+    if (! arg->silent) fprintf(stdout, \
 					"zipped: %d\n"
                     "traj: %s\n"
                     "coarse: %d\n"
@@ -385,7 +385,7 @@ int parse_args(int argc, char **argv, Arg *arg, Argpdb *argpdb)
     }
 
 	check_input(arg, argpdb);
-    print_header();
+    if (! arg->silent) print_header();
     print_args(arg, argpdb);
 
     return 0;

@@ -145,7 +145,6 @@ __inline__ static int mod_atom_sasa(Str *pdb, Topol *topol, Type *type, \
 	if (i == j) {
 		fprintf(stderr, "Problematic conformation at atoms %d %d\n",
 			pdb->atom[i].atomNumber, pdb->atom[i+1].atomNumber);
-		/*Warning("Atom distances too short? Probably incorrect POPS results!");*/
 		Error("Serious conformational problems in input structure.\nCheck the atom numbers listed above for steric clashes.");
 	}
 
@@ -168,7 +167,7 @@ __inline__ static int mod_atom_sasa(Str *pdb, Topol *topol, Type *type, \
 	if (atomDistance < .74) {
 		fprintf(stderr, "Atom distance %d %d = %f Angstrom\n",
 			pdb->atom[i].atomNumber, pdb->atom[j].atomNumber, atomDistance);
-		Warning("Atom distance too short! Probably incorrect POPS results!");
+		Error("Serious conformational problems in input structure.\nCheck the atom numbers listed above for steric clashes.");
 	}
 
 	/*___________________________________________________________________________*/

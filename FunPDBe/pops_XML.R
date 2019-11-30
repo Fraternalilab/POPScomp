@@ -105,7 +105,8 @@ ioctrl_o@command = apply(ioctrl_o@filenames_m, 2, function(x) {
 #_______________________________________________________________________________
 ## Option 3: run all command lines using parallelism
 ## number of cores
-n_cores = detectCores();
+#n_cores = detectCores();
+n_cores = 1
 ## initiate cluster
 clu = makeCluster(n_cores);
 clusterExport(clu, "ioctrl_o");
