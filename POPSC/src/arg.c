@@ -112,8 +112,8 @@ static void set_defaults(Arg *arg, Argpdb *argpdb)
 						(for benchmarking) */
 	arg->rout = 0; /* output for R-version of POPSCOMP */ 
 	arg->jsonOut = 0; /* JSON output */
-	arg->jsonOutFileName = "pops.json";
-	arg->jsonbOutFileName = "popsb.json";
+	arg->jsonOutFileName = "pops";
+	arg->jsonbOutFileName = "popsb";
 }
 
 /*____________________________________________________________________________*/

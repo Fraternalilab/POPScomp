@@ -114,6 +114,7 @@ int main(int argc, char *argv[])
     /*____________________________________________________________________________*/
     /** read input structure, either XML format or classic PDB format */
 	if (! arg.silent) fprintf(stdout, "Input structure\n");
+	strcpy(pdb.pdbID, "");
 	if (arg.pdbml) {
 		read_structure_xml(&arg, &argpdb, &pdb);
 	} else {
@@ -156,7 +157,7 @@ int main(int argc, char *argv[])
 		/** print JSON output */
 		if (! arg.silent) fprintf(stdout, "SASA Output:\n");
 		make_resSasaJson(&arg, &pdb, molSasa.resSasa, resSasaJson);
-		print_json(&arg, resSasaJson);
+		print_json(&arg, &pdb, resSasaJson);
 		if (! arg.silent) fprintf(stdout, "bSASA Output:\n");
 		/* disabled, because not validated against PDBe server */
 		/* make_resbSasaJson(&arg, &pdb, molSasa.resSasa, resSasaJsonb);
