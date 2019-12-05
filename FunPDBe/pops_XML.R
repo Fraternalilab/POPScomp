@@ -31,10 +31,7 @@ ioctrl_o = ioctrl();
 #_______________________________________________________________________________
 ## initialise resources
 ## synchronise XML database
-#system("rsync -rlpt -v -z --delete rsync.ebi.ac.uk::pub/databases/pdb/data/structures/divided/XML/ ./XML");
-
-
-
+system("rsync -rlpt -v -z --delete rsync.ebi.ac.uk::pub/databases/pdb/data/structures/divided/XML/ ./XML");
 
 #_______________________________________________________________________________
 ## configure runs
@@ -72,20 +69,18 @@ ioctrl_o@filenames_m = coerce_filenames(ioctrl_o);
 
 #_______________________________________________________________________________
 ## create output directory structure
-## each input file will have its own output directory to accommodate multiple
-##   output files from POPS
-#dir.create("./JSON", showWarnings = FALSE);
-#ioctrl_o@outpath = apply(ioctrl_o@filenames_m, 2, function(x) {
-#  outpath = paste("./JSON", x[1], x[2], sep = "/");
-#  dir.create(outpath, showWarnings = FALSE, recursive = TRUE);
-#  return(outpath);
-#})
+dir.create("./JSON", showWarnings = FALSE);
+ioctrl_o@outpath = apply(ioctrl_o@filenames_m, 2, function(x) {
+  outpath = paste("./JSON", x[1], sep = "/");
+  dir.create(outpath, showWarnings = FALSE, recursive = TRUE);
+  return(outpath);
+})
 
 #_______________________________________________________________________________
 ## create POPS commands
 ioctrl_o@command = apply(ioctrl_o@filenames_m, 2, function(x) {
   infile = paste("./XML", x[1], x[2], sep = "/");
-  outdir = paste("./JSON", x[1], x[2], sep = "/");
+  outdir = paste("./JSON", x[1], sep = "/");
   ## shell command for POPSing current input file
   command = paste("./pops --pdbml", infile, "--outDirName", outdir, "--zipped --jsonOut --silent || exit 1"); 
   return(command);
@@ -105,14 +100,15 @@ ioctrl_o@command = apply(ioctrl_o@filenames_m, 2, function(x) {
 #_______________________________________________________________________________
 ## Option 3: run all command lines using parallelism
 ## number of cores
-#n_cores = detectCores();
-n_cores = 1
+n_cores = detectCores() - 1;
+
 ## initiate cluster
 clu = makeCluster(n_cores);
 clusterExport(clu, "ioctrl_o");
 
 #run_results = parSapply(clu, 1:length(ioctrl_o@filenames_m), function(x) {
-run_results = parSapply(clu, 1:1000, function(x) {
+## 1:20000
+run_results = parSapply(clu, 1:20000, function(x) {
   try(system(ioctrl_o@command[x]));
 })
 

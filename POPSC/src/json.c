@@ -16,23 +16,27 @@ extern int nodes;
 extern int my_rank;
 
 /*____________________________________________________________________________*/
-void print_json(Arg *arg, cJSON *json)
+void print_json(Arg *arg, Str *pdb, cJSON *json)
 {
 	char outpath[256];
 	/* print JSON object to string */
 	char *popsOutJson = cJSON_Print(json);
+	char *idOut;
+
+	/* use input file basename as pdbID output name */
+	idOut = pdb->pdbID;
 
 	if (! arg->silent)
-		fprintf(stdout, "\tSASA of input molecule: %s\n", arg->jsonOutFileName);
+		fprintf(stdout, "\tSASA of input molecule: %s.json\n", idOut);
 
 	/* print string to file */
 	if (arg->outDirName) {
-		sprintf(outpath, "%s/%s", arg->outDirName, arg->jsonOutFileName);
+		sprintf(outpath, "%s/%s.json", arg->outDirName, idOut);
 	} else {
-		sprintf(outpath, "%s", arg->jsonOutFileName);
+		sprintf(outpath, "%s.json", idOut);
 	}
 	arg->jsonOutFile = safe_open(outpath, "w");
-	fprintf(arg->jsonOutFile, "%s", popsOutJson);
+	fprintf(arg->jsonOutFile, "%s.json", popsOutJson);
 	fclose(arg->jsonOutFile);
 
 	free(popsOutJson);
@@ -182,17 +186,23 @@ void make_resSasaJson(Arg *arg, Str *pdb, ResSasa *resSasa, cJSON *json)
 }
 
 /*____________________________________________________________________________*/
-void print_jsonb(Arg *arg, cJSON *jsonb)
+void print_jsonb(Arg *arg, Str *pdb, cJSON *jsonb)
 {
 	/* print JSON object to string */
 	char *popsbOutJson = cJSON_Print(jsonb);
+	char *idOut;
+
+	/* use input file basename as pdbID output name */
+	idOut = pdb->pdbID;
+	
+	sprintf(arg->jsonbOutFileName, "%s/%s.b.json", arg->outDirName, idOut);
 
 	if (! arg->silent)
-		fprintf(stdout, "\tbSASA of input molecule: %s\n", arg->jsonbOutFileName);
+		fprintf(stdout, "\tbSASA of input molecule: %s.b.json\n", idOut);
 
 	/* print string to file */
 	arg->jsonbOutFile = safe_open(arg->jsonbOutFileName, "w");
-	fprintf(arg->jsonbOutFile, "%s", popsbOutJson);
+	fprintf(arg->jsonbOutFile, "%s.b.json", popsbOutJson);
 	fclose(arg->jsonbOutFile);
 
 	free(popsbOutJson);
