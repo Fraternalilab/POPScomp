@@ -2,7 +2,7 @@
 /* src/config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* Define to compile without DEBUG settings. */
-#define DEBUG 1
+#define DEBUG 0
 
 /* Define to 1 if you have the <float.h> header file. */
 #define HAVE_FLOAT_H 1
