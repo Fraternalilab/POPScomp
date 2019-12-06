@@ -9,6 +9,7 @@
 ROOTDIR = /home/jkleinj
 ## POPSC program
 POPSC = ${ROOTDIR}/0/POPSCOMP/POPSC/src/pops
+POPSFLAGS = --zipped --jsonOut --silent
 ## database directory
 DBDIR = ${ROOTDIR}/database
 ## home of PDB database
@@ -28,17 +29,21 @@ JSONSUBDIR = $(notdir $(shell find ${JSONDIR}/ -type d))
 
 %.json : %.gz
 	$(info Running POPS over ${PDBIDS})
-	${POPSC} --pdbml $< --outDirName --zipped --jsonOut ${JSONDIR}/$X --silent > /dev/null 2> popsPDBML.e
+	${POPSC} --pdbml $< --outDirName ${JSONDIR}/$X ${POPSFLAGS} > /dev/null 2> popsPDBML.e
 
 #_______________________________________________________________________________
 ## targets
 ## pdbupdate: Synchronise local PDB database with EBI
 ## jsondir: Create JSON output directory if not existing
-## jsonsubdir: Create JSON subdirectory structure, mirroring the PDB structure
-## mkpops: Run POPS over all subdirectories and PDB entries without a JSON output file
+## jsonsubdir: Create JSON (output) subdirectory structure, mirroring the PDB structure
+## linkinput: Create symbolic links to all (input) PDBML entries
+## mkpops: Run POPS over all subdirectories and PDBML entries, only if JSON output
+##           is null or older than PDBML input.
 ## rename: Convert JSON output filenames to lower case, otherwise Make would not
 ##           know from the suffix rule that the JSON outtput file exists
-##         Also add a symbolic link to the source structure on the PDB database
+## Note: PDSUBDIR is also used for JSONDIR, because it is the reference array
+##         that is completely known from the start
+
 all : pdbupdate jsondir jsonsubdir mkpops rename
 
 pdbupdate :
@@ -63,21 +68,15 @@ mkpops :
 	$(info --- Run POPS on all structures.)
 	cd ${JSONDIR} ; \
 	for X in ${PDBSUBDIR} ; do \
-		ls *.json ; \
-		${PDBIDS} = $(patsubst %.xml.gz,%.json,$(wildcard *.gz)) ; \
+		${PDBIDS} = $(wildcard *.gz) ; \
+		${MAKE} run_pops "PDBDIR = ${PDBDIR}" "X = $$X" "PDBIDS = ${PDBIDS}" ; \
 	done
-
-#	for X in ${PDBSUBDIR} ; do \
-#		${PDBIDS} = $(patsubst %.xml.gz,%.json,$(wildcard *.gz)) ; \
-#		${MAKE} run_pops "PDBID = ${PDBID}" "X = $$X" "PDBIDS = ${PDBIDS}" ; \
-#	done
 
 run_pops : ${PDBDIR}/$X/${PDBIDS}
 
 
 rename :
-##	cd ${JSONDIR} ; find ?? -depth -name *.json | xargs -n 1 rename -v 's/(.*)\/([^\/]*)/$1\/\L$2/' {} ; 
-	cd ${JSONDIR} ; find ?? -depth -name *.json | cut -f 1 -d '.' | xargs -i bash -c "ln -s ${PDBDIR}/{}.xml.gz ${JSONDIR}/{}.xml.gz"
+	cd ${JSONDIR} ; find ?? -depth -name *.json | xargs -n 1 rename -v 's/(.*)\/([^\/]*)/$1\/\L$2/' {} ; 
 
 
 #===============================================================================
