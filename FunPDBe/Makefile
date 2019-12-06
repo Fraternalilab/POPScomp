@@ -16,14 +16,9 @@ PDBDIR = ${DBDIR}/XML
 ## PDB subdirectories
 PDBSUBDIR = $(notdir $(shell find ${PDBDIR}/ -type d))
 ## home of JSON output files
-JSONDIR = ${DBDIR}/JSON
+JSONDIR = ${DBDIR}/JSONTEST
 ## JSON subdirectories
 JSONSUBDIR = $(notdir $(shell find ${JSONDIR}/ -type d))
-## selected subdirectory, will become meaningful during computation
-SELSUBDIR = 
-## PDB IDs in selected subdirectory, i.e. those to process now
-PDBIDS = $(notdir $(shell find ${PDBDIR}/${SELSUBDIR} -type f))
-
 
 #_______________________________________________________________________________
 ## suffix rules
@@ -31,19 +26,15 @@ PDBIDS = $(notdir $(shell find ${PDBDIR}/${SELSUBDIR} -type f))
 
 .SUFFIXES : .gz .json
 
-##%/${PDBIDS}.json : %/${PDBIDS}.xml.gz
-##    $(info Running POPS over ${PDBIDS})
-##	cd ${DATABASE}; ${POPSC} --pdbml $< --outDirName --zipped --jsonOut --silent > /dev/null 2> popsPDBML.e
-
-## PDB files
-#PDB = $(shell find ${database}/XML/ -type f -name *.xml.gz)
+%.json : %.gz
+	$(info Running POPS over ${PDBIDS})
+	${POPSC} --pdbml $< --outDirName --zipped --jsonOut ${JSONDIR}/$X --silent > /dev/null 2> popsPDBML.e
 
 #_______________________________________________________________________________
 ## targets
-all : pdbupdate jsondir jsonsubdir runpops
+all : pdbupdate jsondir jsonsubdir mkpops
 
 pdbupdate :
-	cd ${DATABASE}; \
 	rsync -rlpt -v -z --delete rsync.ebi.ac.uk::pub/databases/pdb/data/structures/divided/XML ${DBDIR}/
 
 jsondir :
@@ -51,17 +42,23 @@ jsondir :
 	mkdir -p ${JSONDIR}
 
 jsonsubdir :
-	$(info Creating output sub-directories.)
+	$(info --- Creating output sub-directories.)
+	cd ${JSONDIR} ; \
 	for X in ${PDBSUBDIR} ; do \
 		mkdir -p ${JSONDIR}/$$X ; done
 
-runpops : ${PDBIDS}
+mkpops : 
+	cd ${PDBDIR}; \
+	for X in ${PDBSUBDIR} ; do \
+		${PDBIDS} = $(patsubst %.xml.gz,%.json,$(wildcard *.gz)) ; \
+		$(info ${PDBIDS}) ; \
+		${MAKE} run_pops "PDBID = ${PDBID}" \
+						 "X = $$X" \
+						 "PDBIDS = ${PDBIDS}" ; \
+    done
 
-${PDBIDS} : 
-    $(info --- Running POPS.)
-	##$(info MUTS = ${MUTS})
-    ##cd ${EXP}; \
-	##${POPSC} --pdbml $@ --outDirName --zipped --jsonOut --silent > /dev/null 2> popsPDBML.e
+run_pops : ${PDBID}/$X/${PDBIDS}
+
 
 #===============================================================================
 
