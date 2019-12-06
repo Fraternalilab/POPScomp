@@ -1,0 +1,27 @@
+#===============================================================================
+# Makefile.subdir : POPScomp pipeline for FunPDBe 
+# Copyright (C) 2019 Jens Kleinjung
+#===============================================================================
+
+## get structures in subdirectory; not run initially
+GETSTRUCTURES = $(patsubst %.xml.gz,%.json,$(wildcard *.xml.gz))
+SETSTRUCTURES = $(eval STRLIST=$(GETSTRUCTURES))
+
+#_______________________________________________________________________________
+## suffix rules
+.SUFFIXES :
+
+.SUFFIXES : .xml.gz .json
+
+%.json : %.xml.gz
+	$(info Running POPS.)
+	${POPSC} --pdbml $< ${POPSFLAGS}
+
+mkpops :
+	$(SETSTRUCTURES)
+	${MAKE} runpops
+
+runpops : ${STRLIST}
+
+#===============================================================================
+
