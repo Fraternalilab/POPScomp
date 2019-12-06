@@ -8,7 +8,7 @@
 ## root directory
 ROOTDIR = /home/jkleinj
 ## POPSC program
-POPSC = ${ROOTDIR}/0/POPSCOMP/POPSC/src/pops
+POPSC = ${ROOTDIR}/0/POPScomp/POPSC/src/pops
 POPSFLAGS = --zipped --jsonOut --silent
 ## database directory
 DBDIR = ${ROOTDIR}/database
@@ -20,16 +20,6 @@ PDBSUBDIR = $(notdir $(shell find ${PDBDIR}/ -type d))
 JSONDIR = ${DBDIR}/JSON
 ## JSON subdirectories
 JSONSUBDIR = $(notdir $(shell find ${JSONDIR}/ -type d))
-
-#_______________________________________________________________________________
-## suffix rules
-.SUFFIXES :
-
-.SUFFIXES : .gz .json
-
-%.json : %.gz
-	$(info Running POPS over ${PDBIDS})
-	${POPSC} --pdbml $< --outDirName ${JSONDIR}/$X ${POPSFLAGS} > /dev/null 2> popsPDBML.e
 
 #_______________________________________________________________________________
 ## targets
@@ -44,7 +34,7 @@ JSONSUBDIR = $(notdir $(shell find ${JSONDIR}/ -type d))
 ## Note: PDSUBDIR is also used for JSONDIR, because it is the reference array
 ##         that is completely known from the start
 
-all : pdbupdate jsondir jsonsubdir mkpops rename
+all : pdbupdate jsondir jsonsubdir getstr mkpops rename
 
 pdbupdate :
 	rsync -rlpt -v -z --delete rsync.ebi.ac.uk::pub/databases/pdb/data/structures/divided/XML ${DBDIR}/
@@ -66,14 +56,10 @@ linkinput :
 
 mkpops : 
 	$(info --- Run POPS on all structures.)
-	cd ${JSONDIR} ; \
 	for X in ${PDBSUBDIR} ; do \
-		${PDBIDS} = $(wildcard *.gz) ; \
-		${MAKE} run_pops "PDBDIR = ${PDBDIR}" "X = $$X" "PDBIDS = ${PDBIDS}" ; \
+		cd ${JSONDIR}/$$X ; \
+		${MAKE} mkpops ; \
 	done
-
-run_pops : ${PDBDIR}/$X/${PDBIDS}
-
 
 rename :
 	cd ${JSONDIR} ; find ?? -depth -name *.json | xargs -n 1 rename -v 's/(.*)\/([^\/]*)/$1\/\L$2/' {} ; 
