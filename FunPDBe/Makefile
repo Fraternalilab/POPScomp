@@ -55,6 +55,10 @@ jsonsubdir :
 		mkdir -p ${JSONDIR}/$$X ; \
 	done
 
+linkinput :
+	$(info --- Linking structure files to output directory.)
+	cd ${PDBDIR} ; find ?? -depth -name *.xml.gz | xargs -i bash -c "ln -s ${PDBDIR}/{} ${JSONDIR}/{}"
+
 mkpops : 
 	$(info --- Run POPS on all structures.)
 	cd ${JSONDIR} ; \
