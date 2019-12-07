@@ -8,10 +8,6 @@
 
 #_______________________________________________________________________________
 ## macros
-ROOTDIR = /home/jkleinj
-POPSC = ${ROOTDIR}/0/POPScomp/POPSC/src/pops
-POPSFLAGS = --zipped --jsonOut --silent
-
 ## creates .json dependencies from list of *.xml.gz
 JSONFILES := $(patsubst %.xml.gz,%.json,$(wildcard *.xml.gz))
 
@@ -22,12 +18,11 @@ JSONFILES := $(patsubst %.xml.gz,%.json,$(wildcard *.xml.gz))
 .SUFFIXES : .json
 
 %.json : %.xml.gz
-	@${POPSC} --pdbml $^ ${POPSFLAGS}
+	-@${POPSC} --pdbml $^ ${POPSFLAGS}
 
 #_______________________________________________________________________________
 ## targets
 all : ${JSONFILES} 
-
 
 #===============================================================================
 

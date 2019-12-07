@@ -57,9 +57,9 @@ linkinput :
 
 mkpops : 
 	$(info --- Run POPS on all structures.)
-	for X in "00" ; do \
+	for X in ${PDBSUBDIR} ; do \
 		cd ${JSONDIR}/$$X ; \
-		${MAKE} -f ../Makefile.subdir prepops "POPSC = ${POPSC}" "POPSFLAGS = ${POPSFLAGS}"; \
+		${MAKE} -f ../Makefile.subdir all "ROOTDIR = ${ROOTDIR}" "POPSC = ${POPSC}" "POPSFLAGS = ${POPSFLAGS}"; \
 	done
 
 rename :
@@ -67,5 +67,5 @@ rename :
 
 
 #===============================================================================
-##for X in ${PDBSUBDIR} ; do \
+
 
