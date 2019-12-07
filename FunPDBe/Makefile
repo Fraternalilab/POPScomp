@@ -1,5 +1,6 @@
 #===============================================================================
 # Makefile : POPScomp pipeline for FunPDBe 
+# Invokes Makefile.subdir for each subdirectory
 # Copyright (C) 2019 Jens Kleinjung
 #===============================================================================
 
@@ -56,9 +57,9 @@ linkinput :
 
 mkpops : 
 	$(info --- Run POPS on all structures.)
-	for X in ${PDBSUBDIR} ; do \
+	for X in "00" ; do \
 		cd ${JSONDIR}/$$X ; \
-		${MAKE} mkpops ; \
+		${MAKE} -f ../Makefile.subdir prepops "POPSC = ${POPSC}" "POPSFLAGS = ${POPSFLAGS}"; \
 	done
 
 rename :
@@ -66,4 +67,5 @@ rename :
 
 
 #===============================================================================
+##for X in ${PDBSUBDIR} ; do \
 

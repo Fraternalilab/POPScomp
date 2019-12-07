@@ -1,27 +1,33 @@
 #===============================================================================
 # Makefile.subdir : POPScomp pipeline for FunPDBe 
+# This is invoked for each subdirectory by the master Makefile.
+# Existing *.xml.gz structure files are POPSed if their JSON output file,
+#   here implied as dependency of 'all' target, needs updating.
 # Copyright (C) 2019 Jens Kleinjung
 #===============================================================================
 
-## get structures in subdirectory; not run initially
-GETSTRUCTURES = $(patsubst %.xml.gz,%.json,$(wildcard *.xml.gz))
-SETSTRUCTURES = $(eval STRLIST=$(GETSTRUCTURES))
+#_______________________________________________________________________________
+## macros
+ROOTDIR = /home/jkleinj
+POPSC = ${ROOTDIR}/0/POPScomp/POPSC/src/pops
+POPSFLAGS = --zipped --jsonOut --silent
+
+## creates .json dependencies from list of *.xml.gz
+JSONFILES := $(patsubst %.xml.gz,%.json,$(wildcard *.xml.gz))
 
 #_______________________________________________________________________________
 ## suffix rules
 .SUFFIXES :
 
-.SUFFIXES : .xml.gz .json
+.SUFFIXES : .json
 
 %.json : %.xml.gz
-	$(info Running POPS.)
-	${POPSC} --pdbml $< ${POPSFLAGS}
+	@${POPSC} --pdbml $^ ${POPSFLAGS}
 
-mkpops :
-	$(SETSTRUCTURES)
-	${MAKE} runpops
+#_______________________________________________________________________________
+## targets
+all : ${JSONFILES} 
 
-runpops : ${STRLIST}
 
 #===============================================================================
 
