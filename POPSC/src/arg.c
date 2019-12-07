@@ -163,7 +163,7 @@ static void print_args(Arg *arg, Argpdb *argpdb)
     time(&now);
 
     if (! arg->silent) fprintf(stdout, "date: %s", ctime(&now));
-    fprintf(stdout, "pdb/pdbml: %s%s\n",
+    fprintf(stdout, "%s%s\n",
 					arg->pdbInFileName, arg->pdbmlInFileName);
     if (! arg->silent) fprintf(stdout, \
 					"zipped: %d\n"

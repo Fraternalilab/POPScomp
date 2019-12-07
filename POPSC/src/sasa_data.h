@@ -69,7 +69,7 @@ ConstantSasa constant_sasa_data[] = {
 			/*DT */ 21, 
 			/*DU */ 20,
 			/* unknown polymer residue */
-			/*UNK*/ 7,
+			/*UNK*/ 8,
 			/* ligand */
 			/*HET*/ 9,
 			/* unknown ligand */
@@ -567,6 +567,7 @@ ConstantSasa constant_sasa_data[] = {
 			{	/*N   UNK*/   {"UNK", "N",   1.55000, 0.73027, 1, 0, 109.3588},
 				/*CA  UNK*/   {"UNK", "CA",  1.80000, 1.13196, 0, 0, 128.6796},
 				/*CB  UNK*/   {"UNK", "CB",  2.00000, 0.85415, 0, 0, 145.2672},
+				/*CG  UNK*/   {"UNK", "CG",  1.80000, 1.24985, 0, 0, 128.6796},
 				/*C   UNK*/   {"UNK", "C",   1.80000, 0.92266, 0, 0, 128.6796},
 				/*O   UNK*/   {"UNK", "O",   1.52000, 1.14574, 1, 0, 107.1459},
 				/*P   UNK*/   {"UNK", "P",   1.80000, 1.18065, 0, 0, 128.6796},
