@@ -126,6 +126,7 @@ int parseXML(const char *filename, Str *pdb) {
 	unsigned int allocated_atom = 64;
 	unsigned int allocated_residue = 64;
 	xmlChar *data = (xmlChar*)"datablockName";
+	xmlChar *id = (xmlChar*)"id";
 	xmlChar *content = 0;
 	unsigned int k = 0;
 	int ca_p = 0;
@@ -188,6 +189,10 @@ int parseXML(const char *filename, Str *pdb) {
 			/* initialise all entries of this atom */ 
 			init_atom(pdb);
 
+			/* extract atom number via atom_site "id" */
+			content = xmlGetProp(atom_node, id);
+			sscanf((char *)content, "%d", &(pdb->atom[pdb->nAtom].atomNumber));
+			
 			/* children (= entries) of this atom site */
 			for (cur_node = atom_node->children; cur_node; cur_node = cur_node->next) {
 				/* assign node content to string */
@@ -219,9 +224,11 @@ int parseXML(const char *filename, Str *pdb) {
 					sscanf((char *)content, "%s", pdb->atom[pdb->nAtom].atomName);
 				}
 				/* atom number */
+				/*
 				if (strcmp((char *)cur_node->name, "auth_seq_id") == 0) {
 					sscanf((char *)content, "%d", &(pdb->atom[pdb->nAtom].atomNumber));
 				}
+				*/
 				/* alternative location */
 				if (strcmp((char *)cur_node->name, "label_alt_id") == 0) {
 					sscanf((char *)content, "%s", pdb->atom[pdb->nAtom].alternativeLocation);

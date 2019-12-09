@@ -145,7 +145,7 @@ __inline__ static int mod_atom_sasa(Str *pdb, Topol *topol, Type *type, \
 	if (i == j) {
 		fprintf(stderr, "Problematic conformation at atoms %d %d\n",
 			pdb->atom[i].atomNumber, pdb->atom[i+1].atomNumber);
-		Error("Serious conformational problems in input structure.\nCheck the atom numbers listed above for steric clashes.");
+		exit(1);
 	}
 
 	/*___________________________________________________________________________*/
