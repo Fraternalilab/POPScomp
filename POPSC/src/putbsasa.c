@@ -6,12 +6,6 @@ Read the COPYING file for license information.
 
 #include "putbsasa.h"
 
-#ifdef MPI
-#include <mpi.h>
-#endif
-extern int nodes;
-extern int my_rank;
-
 /*___________________________________________________________________________*/
 /** print atom bSASA  */
 static void print_atom_bsasa(FILE *bsasaOutFile, Arg *arg, Str *pdb, MolSasa *molSasa)

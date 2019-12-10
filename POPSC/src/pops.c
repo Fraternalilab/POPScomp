@@ -34,17 +34,6 @@ Kleinjung, J. and Fraternali, F.
 #include "pops.h"
 
 /*____________________________________________________________________________*/
-/* global variables */
-#ifdef MPI
-#include <mpi.h>
-    int my_rank; /* rank of 'this' node */
-    int nodes; /* number of nodes */
-#else
-    int my_rank = 0; 
-    int nodes = 1; 
-#endif
-
-/*____________________________________________________________________________*/
 int main(int argc, char *argv[])
 {
 	int i;
@@ -80,15 +69,6 @@ int main(int argc, char *argv[])
 		cJSON_Delete(resSasaJsonb);
 		ErrorSpec("Exiting", "JSONb object returned NULL");
     }
-
-    /*________________________________________________________________________*/
-    /* MPI */
-#ifdef MPI
-    /* initialize MPI routines */
-    MPI_Init(&argc, &argv);
-    MPI_Comm_size(MPI_COMM_WORLD, &nodes);
-    MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
-#endif
 
     /*____________________________________________________________________________*/
     /** parse command line arguments */
@@ -246,13 +226,6 @@ int main(int argc, char *argv[])
 	/* JSON object */
 	cJSON_Delete(resSasaJson);
 	cJSON_Delete(resSasaJsonb);
-
-    /*________________________________________________________________________*/
-    /* MPI */
-#ifdef MPI
-    /* stop MPI processes */
-    MPI_Finalize();
-#endif
 
     /*____________________________________________________________________________*/
 	/* terminate */

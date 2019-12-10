@@ -10,12 +10,6 @@ Read the COPYING file for license information.
 #include "config.h"
 #include "sasa.h"
 
-#ifdef MPI
-#include <mpi.h>
-#endif
-extern int nodes;
-extern int my_rank;
-
 /*___________________________________________________________________________*/
 /** compute sphere surface */
 __inline__ static double sphere_surface(double atomRadius, float rSolvent)
@@ -139,13 +133,17 @@ __inline__ static int mod_atom_sasa(Str *pdb, Topol *topol, Type *type, \
     double ci1, cj1, cc2, ci3, cj3, bij, bji;
 	float atomDistance = 0.;
 	float cutoffRadius = 0.;
+	char syscmd[128];
+	int syscmdstat = 0;
 
 	/*___________________________________________________________________________*/
 	/* safety check */   
 	if (i == j) {
-		fprintf(stderr, "Problematic conformation at atoms %d %d\n",
-			pdb->atom[i].atomNumber, pdb->atom[i+1].atomNumber);
-		exit(1);
+		sprintf(syscmd, "touch %s.json", pdb->pdbID); 
+		syscmdstat = system("syscmd");
+		fprintf(stderr, "Problem at atoms %d %d ; system exit = %d\n",
+			pdb->atom[i].atomNumber, pdb->atom[i+1].atomNumber, syscmdstat);
+		exit(0);
 	}
 
 	/*___________________________________________________________________________*/
@@ -165,9 +163,11 @@ __inline__ static int mod_atom_sasa(Str *pdb, Topol *topol, Type *type, \
 
 	/* shortest atomic bond length is .74 A in hydrogen molecule H_2 */
 	if (atomDistance < .74) {
-		fprintf(stderr, "Atom distance %d %d = %f Angstrom\n",
-			pdb->atom[i].atomNumber, pdb->atom[j].atomNumber, atomDistance);
-		Error("Serious conformational problems in input structure.\nCheck the atom numbers listed above for steric clashes.");
+		sprintf(syscmd, "touch %s.json", pdb->pdbID); 
+		syscmdstat = system("syscmd");
+		fprintf(stderr, "Too short atom distance %d %d = %f A ; system exit = %d\n",
+			pdb->atom[i].atomNumber, pdb->atom[j].atomNumber, atomDistance, syscmdstat);
+		exit(0);
 	}
 
 	/*___________________________________________________________________________*/

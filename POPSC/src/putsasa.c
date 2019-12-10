@@ -6,12 +6,6 @@ Read the COPYING file for license information.
 
 #include "putsasa.h"
 
-#ifdef MPI
-#include <mpi.h>
-#endif
-extern int nodes;
-extern int my_rank;
-
 /*____________________________________________________________________________*/
 /** print molecule composition */
 static void print_composition(FILE *sasaOutFile, Arg *arg, Argpdb *argpdb, Str *pdb)

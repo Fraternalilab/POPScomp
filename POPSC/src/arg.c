@@ -7,12 +7,6 @@ Read the COPYING file for license information.
 #include "config.h"
 #include "arg.h"
 
-#ifdef MPI
-#include <mpi.h>
-#endif
-extern int nodes;
-extern int my_rank;
-
 /*____________________________________________________________________________*/
 /** print version */
 static void print_version()
