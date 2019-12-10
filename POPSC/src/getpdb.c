@@ -6,12 +6,6 @@ Read the COPYING file for license information.
 
 #include "getpdb.h"
 
-#ifdef MPI
-#include <mpi.h>
-#endif
-extern int nodes;
-extern int my_rank;
-
 /*____________________________________________________________________________*/
 /* match PDB residue name against constant residue name array */
 __inline__ static char scan_array(char *code3, char *residue_array[], int shift)

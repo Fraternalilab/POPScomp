@@ -6,12 +6,6 @@ Read the COPYING file for license information.
 
 #include "fs.h"
 
-#ifdef MPI
-#include <mpi.h>
-#endif
-extern int nodes;
-extern int my_rank;
-
 /*___________________________________________________________________________*/
 /* list directory content */
 /* modified from http://www.gnu.org/software/libtool/manual/libc/Simple-Directory-Lister.html */

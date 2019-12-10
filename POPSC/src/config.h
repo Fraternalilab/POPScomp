@@ -20,9 +20,6 @@
 /* Define to 1 if you have the <memory.h> header file. */
 #define HAVE_MEMORY_H 1
 
-/* Define if you have the MPI library. */
-/* #undef HAVE_MPI */
-
 /* Define to 1 if you have the `pow' function. */
 #define HAVE_POW 1
 
@@ -54,11 +51,11 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #define HAVE_UNISTD_H 1
 
-/* Compiling with MPI settings. */
-/* #undef MPI */
-
 /* Define to 1 if your C compiler doesn't accept -c and -o together. */
 /* #undef NO_MINUS_C_MINUS_O */
+
+/* Define to compile without openMP settings. */
+#define OPENMP 0
 
 /* Name of package */
 #define PACKAGE "pops"

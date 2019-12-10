@@ -26,6 +26,15 @@ AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([pow sqrt])
 
+# Checks for OpenMP
+AC_OPENMP
+if test "$ac_pkg_openmp" = "yes"; then
+	CFLAGS="-fopenmp"
+    AC_DEFINE(OPENMP,1,[Define to compile with openMP settings.])
+else
+    AC_DEFINE(OPENMP,0,[Define to compile without openMP settings.])
+fi
+
 # enable debug
 AC_ARG_ENABLE(debug, [  --enable-debug  Turn on debugging], [ac_use_debug="yes"], [ac_use_debug="no"])
 if test "$ac_use_debug" = "yes"; then
@@ -40,26 +49,6 @@ AC_ARG_ENABLE(profiling, [  --enable-profiling  Turn on profiling], [ac_use_prof
 if test "$ac_use_profiling" = "yes"; then
     CFLAGS="-pg -O2"
     AC_DEFINE(PROFILING,1,[Define to compile with PROFILING settings.])
-fi
-
-# MPI compiler search with ax_mpi.m4 
-# http://www.gnu.org/software/autoconf-archive/ax_mpi.html
-sinclude(ax_mpi.m4)
-
-# enable MPI
-AC_ARG_ENABLE(mpi, [  --enable-mpi         Turn on MPI],
-                [ac_use_mpi="yes"], [ac_use_mpi="no"])
-AC_ARG_WITH(mpi, [  --with-mpi=<path>      prefix of MPI installation],
-                 [  MPICC="$withval/bin/mpicc"
-                    CPPFLAGS="$CPPFLAGS -I $withval/include"
-                    LDFLAGS="$LDFLAGS -L $withval/lib"])
-
-if test "$ac_use_mpi" = "yes"; then
-   AX_MPI([], AC_MSG_ERROR([Could not find required MPI library.
-                         Consider using --with-mpi=<my-path-to-mpi>.]))
-   CC="$MPICC"
-   LIBS="$MPILIBS $LIBS"
-   AC_DEFINE(MPI,1,[Compiling with MPI settings.])
 fi
 
 # check for libxml2

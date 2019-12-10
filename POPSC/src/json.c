@@ -9,12 +9,6 @@ Read the COPYING file for license information.
 #include "json.h"
 #include "cJSON.h"
 
-#ifdef MPI
-#include <mpi.h>
-#endif
-extern int nodes;
-extern int my_rank;
-
 /*____________________________________________________________________________*/
 void print_json(Arg *arg, Str *pdb, cJSON *json)
 {
