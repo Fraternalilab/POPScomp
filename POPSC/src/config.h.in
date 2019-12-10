@@ -19,6 +19,9 @@
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
+/* Define if OpenMP is enabled */
+#undef HAVE_OPENMP
+
 /* Define to 1 if you have the `pow' function. */
 #undef HAVE_POW
 
@@ -53,7 +56,7 @@
 /* Define to 1 if your C compiler doesn't accept -c and -o together. */
 #undef NO_MINUS_C_MINUS_O
 
-/* Define to compile without openMP settings. */
+/* Compiling with OpenMP settings. */
 #undef OPENMP
 
 /* Name of package */

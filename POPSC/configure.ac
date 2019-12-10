@@ -28,11 +28,16 @@ AC_CHECK_FUNCS([pow sqrt])
 
 # Checks for OpenMP
 AC_OPENMP
-if test "$ac_pkg_openmp" = "yes"; then
-	CFLAGS="-fopenmp"
-    AC_DEFINE(OPENMP,1,[Define to compile with openMP settings.])
-else
-    AC_DEFINE(OPENMP,0,[Define to compile without openMP settings.])
+
+# enable OpenMP
+sinclude(ax_openmp.m4)
+AC_ARG_ENABLE(openmp, [  --enable-openmp         Turn on OpenMP],
+                [ac_use_openmp="yes"], [ac_use_openmp="no"])
+
+if test "$ac_use_openmp" = "yes"; then
+   AX_OPENMP([], AC_MSG_ERROR([Could not find required OpenMP library.]))
+   CFLAGS="$CFLAGS $OPENMP_CFLAGS"
+   AC_DEFINE(OPENMP,1,[Compiling with OpenMP settings.])
 fi
 
 # enable debug
