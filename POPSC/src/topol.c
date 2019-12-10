@@ -574,7 +574,7 @@ int get_topology(Str *pdb, Type *type, Topol *topol, ConstantSasa *constant_sasa
 
 	if (pdb->nAtom < 2) {
 		sprintf(syscmd, "touch %s.json", pdb->pdbID); 
-		syscmdstat = system("syscmd");
+		syscmdstat = system(syscmd);
 		fprintf(stderr, "< 2 atoms: try '--coarse' switch ; system exit = %d\n",
 			syscmdstat);
 	}
@@ -593,7 +593,7 @@ int get_topology(Str *pdb, Type *type, Topol *topol, ConstantSasa *constant_sasa
 #endif
 	if (topol->nBond < 2) {
 		sprintf(syscmd, "touch %s.json", pdb->pdbID); 
-		syscmdstat = system("syscmd");
+		syscmdstat = system(syscmd);
 		fprintf(stderr, "< 2 bonds: try '--coarse' switch ; system exit = %d\n",
 			syscmdstat);
 		exit(0);
@@ -605,7 +605,7 @@ int get_topology(Str *pdb, Type *type, Topol *topol, ConstantSasa *constant_sasa
 #endif
 	if (topol->nAngle < 2) {
 		sprintf(syscmd, "touch %s.json", pdb->pdbID); 
-		syscmdstat = system("syscmd");
+		syscmdstat = system(syscmd);
 		fprintf(stderr, "< 2 angles: try '--coarse' switch ; system exit = %d\n",
 			syscmdstat);
 		exit(0);
@@ -617,7 +617,7 @@ int get_topology(Str *pdb, Type *type, Topol *topol, ConstantSasa *constant_sasa
 #endif
 	if (topol->nTorsion < 2) {
 		sprintf(syscmd, "touch %s.json", pdb->pdbID); 
-		syscmdstat = system("syscmd");
+		syscmdstat = system(syscmd);
 		fprintf(stderr, "< 2 torsions: try '--coarse' switch ; system exit = %d\n",
 			syscmdstat);
 		exit(0);

@@ -140,7 +140,7 @@ __inline__ static int mod_atom_sasa(Str *pdb, Topol *topol, Type *type, \
 	/* safety check */   
 	if (i == j) {
 		sprintf(syscmd, "touch %s.json", pdb->pdbID); 
-		syscmdstat = system("syscmd");
+		syscmdstat = system(syscmd);
 		fprintf(stderr, "Problem at atoms %d %d ; system exit = %d\n",
 			pdb->atom[i].atomNumber, pdb->atom[i+1].atomNumber, syscmdstat);
 		exit(0);
@@ -164,7 +164,7 @@ __inline__ static int mod_atom_sasa(Str *pdb, Topol *topol, Type *type, \
 	/* shortest atomic bond length is .74 A in hydrogen molecule H_2 */
 	if (atomDistance < .74) {
 		sprintf(syscmd, "touch %s.json", pdb->pdbID); 
-		syscmdstat = system("syscmd");
+		syscmdstat = system(syscmd);
 		fprintf(stderr, "Too short atom distance %d %d = %f A ; system exit = %d\n",
 			pdb->atom[i].atomNumber, pdb->atom[j].atomNumber, atomDistance, syscmdstat);
 		exit(0);
