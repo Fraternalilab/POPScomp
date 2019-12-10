@@ -20,6 +20,9 @@
 /* Define to 1 if you have the <memory.h> header file. */
 #define HAVE_MEMORY_H 1
 
+/* Define if OpenMP is enabled */
+#define HAVE_OPENMP 1
+
 /* Define to 1 if you have the `pow' function. */
 #define HAVE_POW 1
 
@@ -54,8 +57,8 @@
 /* Define to 1 if your C compiler doesn't accept -c and -o together. */
 /* #undef NO_MINUS_C_MINUS_O */
 
-/* Define to compile without openMP settings. */
-#define OPENMP 0
+/* Compiling with OpenMP settings. */
+#define OPENMP 1
 
 /* Name of package */
 #define PACKAGE "pops"
