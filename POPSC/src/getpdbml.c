@@ -152,6 +152,7 @@ int parseXML(const char *filename, Str *pdb) {
 	/* extract pdbID via root node property "datablockName" */
 	content = xmlGetProp(root_node, data);
 	sscanf((char *)content, "%s", pdb->pdbID);
+	xmlFree(content);
 
 	/* traverse XML tree: read datablock content and halt at atom_siteCategory */
 	/* traverse atom sites as child nodes below */
@@ -192,6 +193,7 @@ int parseXML(const char *filename, Str *pdb) {
 			/* extract atom number via atom_site "id" */
 			content = xmlGetProp(atom_node, id);
 			sscanf((char *)content, "%d", &(pdb->atom[pdb->nAtom].atomNumber));
+			xmlFree(content);
 			
 			/* children (= entries) of this atom site */
 			for (cur_node = atom_node->children; cur_node; cur_node = cur_node->next) {
@@ -267,6 +269,8 @@ int parseXML(const char *filename, Str *pdb) {
 					sscanf((char *)content, "%d", &(pdb->atom[pdb->nAtom].formalCharge));
 					sscanf((char *)content, "%f", &(pdb->atom[pdb->nAtom].partialCharge));
 				}
+
+				xmlFree(content);
 			}
 
 			/*____________________________________________________________________________*/

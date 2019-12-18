@@ -248,35 +248,56 @@ static int compute_atom_sasa(Str *pdb, Topol *topol, Type *type, MolSasa *molSas
 	/*___________________________________________________________________________*/
 	/** 1-2 interactions along bonds 
 		using 1-2 connectivity parameters and identifiers of bond-forming atoms */
+	/*
+	#pragma omp parallel
+	{
+	*/
 	for (i = 0; i < topol->nBond; ++ i) {
         mod_atom_sasa(pdb, topol, type, molSasa, constant_sasa,
 			constant_sasa->connect_12_parameter,
 			topol->ib[i], topol->jb[i], arg->rProbe);
 	}
+	/*}*/
 
 	/*___________________________________________________________________________*/
     /** 1-3 interactions along angles */
+	/*
+	#pragma omp parallel
+	{
+	*/
     for (i = 0; i < topol->nAngle; ++ i) {
         mod_atom_sasa(pdb, topol, type, molSasa, constant_sasa,
 			constant_sasa->connect_13_parameter,
 			topol->it[i], topol->kt[i], arg->rProbe);
 	}
+	/*}*/
 
 	/*___________________________________________________________________________*/
     /* 1-4 interactions along torsion angles */
+	/*
+	#pragma omp parallel
+	{
+	*/
     for (i = 0; i < topol->nTorsion; ++ i) {
 		mod_atom_sasa(pdb, topol, type, molSasa, constant_sasa,
 			constant_sasa->connect_14_parameter,
 			topol->ip[i], topol->lp[i], arg->rProbe);
 	}
+	/*}*/
 
 	/*___________________________________________________________________________*/
     /*  >(1-4) interactions */
+	/*
+	#pragma omp parallel
+	{
+	*/
     for (i = 0; i < topol->nNonBonded; ++ i) {
         mod_atom_sasa(pdb, topol, type, molSasa, constant_sasa,
 			constant_sasa->connect_15_parameter,
 			topol->in[i], topol->jn[i], arg->rProbe);
 	}
+	/*}*/
+
 	return(0);
 }
 
@@ -293,6 +314,8 @@ static int compute_res_chain_mol_sasa(Str *pdb, Type *type, MolSasa *molSasa, \
 	molSasa->resSasa[0].atomRef = 0;
 	molSasa->chainSasa[0].first = 0;
 
+	/*#pragma omp parallel
+	{*/
     for (i = 0, j = 0, k = 0; i < pdb->nAtom; ++ i) { 
 		/*___________________________________________________________________________*/
 		/* first (==0) residue index */
@@ -354,6 +377,7 @@ static int compute_res_chain_mol_sasa(Str *pdb, Type *type, MolSasa *molSasa, \
 		molSasa->philicbSasa += molSasa->atomSasa[i].philicbSasa;
 		molSasa->bSasa += molSasa->atomSasa[i].phobicbSasa + molSasa->atomSasa[i].philicbSasa;
 	}
+	/*}*/
 	molSasa->chainSasa[k].last = i - 1;
 
 	return(0);

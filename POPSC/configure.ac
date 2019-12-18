@@ -1,6 +1,6 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
-AC_INIT(pops, 3.0.1, jens@jkleinj.eu)
+AC_INIT(pops, 3.0.2, jens@jkleinj.eu)
 
 AC_PREREQ([2.63])
 AC_CONFIG_SRCDIR([src/arg.c])
@@ -43,7 +43,7 @@ fi
 # enable debug
 AC_ARG_ENABLE(debug, [  --enable-debug  Turn on debugging], [ac_use_debug="yes"], [ac_use_debug="no"])
 if test "$ac_use_debug" = "yes"; then
-    CFLAGS="-ggdb"
+    CFLAGS="$CFLAGS -ggdb"
     AC_DEFINE(DEBUG,1,[Define to compile with DEBUG settings.])
 else
     AC_DEFINE(DEBUG,0,[Define to compile without DEBUG settings.])
@@ -52,7 +52,7 @@ fi
 # enable profiling 
 AC_ARG_ENABLE(profiling, [  --enable-profiling  Turn on profiling], [ac_use_profiling="yes"], [ac_use_profiling="no"])
 if test "$ac_use_profiling" = "yes"; then
-    CFLAGS="-pg -O2"
+    CFLAGS="$CFLAGS -pg -O2"
     AC_DEFINE(PROFILING,1,[Define to compile with PROFILING settings.])
 fi
 

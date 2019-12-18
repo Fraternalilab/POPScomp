@@ -19,6 +19,11 @@
 
 	Docker image.
 
+- 3.0.2
+	Added OpenMP support instead of MPI support
+	Removed MPI support
+	Changed to error exit=0 and empty <pdbID>.json output
+
 - 3.0.1
 Sat 23 Nov 15:34:37 GMT 2019
 	Fixed bug: Now PDB identifier is read correctly from XML file.
