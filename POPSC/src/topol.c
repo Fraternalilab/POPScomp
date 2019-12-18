@@ -157,8 +157,6 @@ int get_bonds(Str *pdb, Type *type, Topol *topol, ConstantSasa *constant_sasa, A
 	topol->jb = safe_malloc(allocated * sizeof(int));
 	topol->nBond = 0;
 
-	#pragma omp parallel
-	{
 	/* for all pairwise atom combinations */
 	for (i = 0; i < pdb->nAtom - 1; ++ i) {
 		/* coarse grained 'P' needs more generous cutoff */
@@ -213,7 +211,6 @@ int get_bonds(Str *pdb, Type *type, Topol *topol, ConstantSasa *constant_sasa, A
 			}
         }
     }
-	}
 	return(0);
 }
 
@@ -514,6 +511,7 @@ int nonbonded_overlaps(Str *pdb, Type *type, Topol *topol, ConstantSasa *constan
 	topol->jn = safe_malloc(allocated * sizeof(int));
 
     topol->nNonBonded = 0;
+
 
 	/* for all atom pair combinations */
     for (i = 0; i < pdb->nAtom - 1; ++ i) {
