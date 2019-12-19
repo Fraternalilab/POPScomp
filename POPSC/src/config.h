@@ -2,7 +2,7 @@
 /* src/config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* Define to compile without DEBUG settings. */
-#define DEBUG 1
+#define DEBUG 0
 
 /* Define to 1 if you have the <float.h> header file. */
 #define HAVE_FLOAT_H 1
@@ -21,7 +21,7 @@
 #define HAVE_MEMORY_H 1
 
 /* Define if OpenMP is enabled */
-#define HAVE_OPENMP 1
+/* #undef HAVE_OPENMP */
 
 /* Define to 1 if you have the `pow' function. */
 #define HAVE_POW 1
@@ -58,7 +58,7 @@
 /* #undef NO_MINUS_C_MINUS_O */
 
 /* Compiling with OpenMP settings. */
-#define OPENMP 1
+/* #undef OPENMP */
 
 /* Name of package */
 #define PACKAGE "pops"

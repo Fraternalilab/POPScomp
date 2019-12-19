@@ -5273,6 +5273,7 @@ $as_echo "#define HAVE_OPENMP 1" >>confdefs.h
 fi
 
    CFLAGS="$CFLAGS $OPENMP_CFLAGS"
+   LIBS="$LIBS $OPENMP_LIBS"
 
 $as_echo "#define OPENMP 1" >>confdefs.h
 

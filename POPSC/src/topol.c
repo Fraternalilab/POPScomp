@@ -512,7 +512,6 @@ int nonbonded_overlaps(Str *pdb, Type *type, Topol *topol, ConstantSasa *constan
 
     topol->nNonBonded = 0;
 
-
 	/* for all atom pair combinations */
     for (i = 0; i < pdb->nAtom - 1; ++ i) {
 		for (j = i + 1; j < pdb->nAtom; ++ j) {

@@ -37,6 +37,7 @@ AC_ARG_ENABLE(openmp, [  --enable-openmp         Turn on OpenMP],
 if test "$ac_use_openmp" = "yes"; then
    AX_OPENMP([], AC_MSG_ERROR([Could not find required OpenMP library.]))
    CFLAGS="$CFLAGS $OPENMP_CFLAGS"
+   LIBS="$LIBS $OPENMP_LIBS"
    AC_DEFINE(OPENMP,1,[Compiling with OpenMP settings.])
 fi
 
