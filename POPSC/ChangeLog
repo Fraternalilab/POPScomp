@@ -20,7 +20,10 @@
 	Docker image.
 
 - 3.0.2
-	Added OpenMP support instead of MPI support
+	Made PDBML version memory clean; just DLL libraries flag problems in
+	  valgrind, but that is likely a valgrind bug.
+	Added OpenMP support instead of MPI support, but requires code change.
+	  topol.c:nonbonded memory allocation outside loop, for example
 	Removed MPI support
 	Changed to error exit=0 and empty <pdbID>.json output
 
