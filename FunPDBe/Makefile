@@ -24,18 +24,23 @@ JSONSUBDIR = $(notdir $(shell find ${JSONDIR}/ -type d))
 
 #_______________________________________________________________________________
 ## targets
-## pdbupdate: Synchronise local PDB database with EBI
-## jsondir: Create JSON output directory if not existing
-## jsonsubdir: Create JSON (output) subdirectory structure, mirroring the PDB structure
-## linkinput: Create symbolic links to all (input) PDBML entries
-## mkpops: Run POPS over all subdirectories and PDBML entries, only if JSON output
-##           is null or older than PDBML input.
+## pdbupdate: Synchronise local PDB database with EBI's.
+## jsondir: Create JSON output directory if not existing.
+## jsonsubdir: Create JSON (output) subdirectory structure, mirroring the PDB's.
+## linkinput: Create symbolic links to all (input) PDBML entries,
+##              required to derive the dependency/target file names for Make.
+## mkpops: Run POPS over all subdirectories and PDBML entries, only if
+##           JSON output is missing or older than PDBML input.
 ## rename: Convert JSON output filenames to lower case, otherwise Make would not
-##           know from the suffix rule that the JSON outtput file exists
-## Note: PDSUBDIR is also used for JSONDIR, because it is the reference array
-##         that is completely known from the start
+##           know from the suffix rule that the JSON outtput file exists.
+## validate: Validate the JSON output against the FunPDBe schema
+##             (funpdbe_client.py).
+##
+## Note: PDBSUBDIR is also used for JSONDIR, because it is the reference array
+##         that is completely known from the start.
 
-all : pdbupdate jsondir jsonsubdir getstr mkpops rename
+all : pdbupdate jsondir jsonsubdir getstr mkpops rename validate
+.PHONY : pdbupdate jsondir jsonsubdir getstr mkpops rename validate
 
 pdbupdate :
 	rsync -rlpt -v -z --delete rsync.ebi.ac.uk::pub/databases/pdb/data/structures/divided/XML ${DBDIR}/
@@ -55,7 +60,7 @@ linkinput :
 	$(info --- Linking structure files to output directory.)
 	cd ${PDBDIR} ; find ?? -depth -name *.xml.gz | xargs -i bash -c "ln -s ${PDBDIR}/{} ${JSONDIR}/{}"
 
-mkpops : 
+mkpops :
 	$(info --- Run POPS on all structures.)
 	for X in ${PDBSUBDIR} ; do \
 		cd ${JSONDIR}/$$X ; \
@@ -65,6 +70,8 @@ mkpops :
 rename :
 	cd ${JSONDIR} ; find pp -depth -name *[A-Z]*.json | xargs -n 1 rename -v 'y/A-Z/a-z/' {} 
 
+validate :
+	cd FunPDBe_validate ; validate_all.bash 2>&1 | tee validate_`date +%Y%m%d.%H%M`.log
 
 #===============================================================================
 
