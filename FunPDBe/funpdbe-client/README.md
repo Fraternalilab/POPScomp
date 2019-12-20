@@ -19,7 +19,7 @@ The are two main approaches to getting the client up and running.
 #### Checking out this repository
 
 ```
-$ git git clone git@gitlabci.ebi.ac.uk:pdbe-kb/funpdbe/funpdbe-client.git
+$ git clone git@gitlabci.ebi.ac.uk:pdbe-kb/funpdbe/funpdbe-client.git
 $ cd funpdbe-client
 $ pip3 install -r requirements.txt
 ```
