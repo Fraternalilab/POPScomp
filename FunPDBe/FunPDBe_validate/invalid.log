@@ -1,0 +1,1134 @@
+WARNING:root:JSON does not comply with schema
+WARNING:root:[] is too short
+
+Failed validating 'minItems' in schema['properties']['chains']['items']['properties']['residues']:
+    {'items': {'additionalProperties': False,
+               'properties': {'aa_type': {'description': 'Three-letter '
+                                                         'amino acid code',
+                                          'pattern': '^[A-Za-z0-9]+$',
+                                          'type': 'string'},
+                              'additional_residue_annotations': {'description': 'Additional '
+                                                                                'residue-level '
+                                                                                'annotations',
+                                                                 'type': 'object'},
+                              'pdb_res_label': {'description': 'Residue '
+                                                               'index from '
+                                                               'the '
+                                                               'related '
+                                                               'PDB entry',
+                                                'type': 'string'},
+                              'site_data': {'items': {'additionalProperties': False,
+                                                      'properties': {'confidence_classification': {'description': 'Confidence '
+                                                                                                                  'classification '
+                                                                                                                  'of '
+                                                                                                                  'the '
+                                                                                                                  'residue',
+                                                                                                   'enum': ['high',
+                                                                                                            'medium',
+                                                                                                            'low',
+                                                                                                            'null'],
+                                                                                                   'type': 'string'},
+                                                                     'confidence_score': {'description': 'Confidence '
+                                                                                                         'level '
+                                                                                                         'of '
+                                                                                                         'the '
+                                                                                                         'annotation '
+                                                                                                         '(0-1, '
+                                                                                                         'except '
+                                                                                                         'if '
+                                                                                                         'the '
+                                                                                                         'method '
+                                                                                                         'justifies '
+                                                                                                         'otherwise)',
+                                                                                          'minimum': 0.0,
+                                                                                          'type': 'number'},
+                                                                     'raw_score': {'description': 'Raw '
+                                                                                                  'calculated '
+                                                                                                  'score',
+                                                                                   'type': 'number'},
+                                                                     'site_id_ref': {'description': 'Reference '
+                                                                                                    'to '
+                                                                                                    'site_id',
+                                                                                     'type': 'integer'}},
+                                                      'required': ['site_id_ref',
+                                                                   'raw_score',
+                                                                   'confidence_score',
+                                                                   'confidence_classification'],
+                                                      'type': 'object'},
+                                            'minItems': 1,
+                                            'type': 'array',
+                                            'uniqueItems': True}},
+               'required': ['pdb_res_label', 'aa_type', 'site_data'],
+               'type': 'object'},
+     'minItems': 1,
+     'type': 'array',
+     'uniqueItems': True}
+
+On instance['chains'][3]['residues']:
+    []
+ERROR:client:JSON does not comply with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+WARNING:root:JSON does not comply with schema
+WARNING:root:[] is too short
+
+Failed validating 'minItems' in schema['properties']['chains']['items']['properties']['residues']:
+    {'items': {'additionalProperties': False,
+               'properties': {'aa_type': {'description': 'Three-letter '
+                                                         'amino acid code',
+                                          'pattern': '^[A-Za-z0-9]+$',
+                                          'type': 'string'},
+                              'additional_residue_annotations': {'description': 'Additional '
+                                                                                'residue-level '
+                                                                                'annotations',
+                                                                 'type': 'object'},
+                              'pdb_res_label': {'description': 'Residue '
+                                                               'index from '
+                                                               'the '
+                                                               'related '
+                                                               'PDB entry',
+                                                'type': 'string'},
+                              'site_data': {'items': {'additionalProperties': False,
+                                                      'properties': {'confidence_classification': {'description': 'Confidence '
+                                                                                                                  'classification '
+                                                                                                                  'of '
+                                                                                                                  'the '
+                                                                                                                  'residue',
+                                                                                                   'enum': ['high',
+                                                                                                            'medium',
+                                                                                                            'low',
+                                                                                                            'null'],
+                                                                                                   'type': 'string'},
+                                                                     'confidence_score': {'description': 'Confidence '
+                                                                                                         'level '
+                                                                                                         'of '
+                                                                                                         'the '
+                                                                                                         'annotation '
+                                                                                                         '(0-1, '
+                                                                                                         'except '
+                                                                                                         'if '
+                                                                                                         'the '
+                                                                                                         'method '
+                                                                                                         'justifies '
+                                                                                                         'otherwise)',
+                                                                                          'minimum': 0.0,
+                                                                                          'type': 'number'},
+                                                                     'raw_score': {'description': 'Raw '
+                                                                                                  'calculated '
+                                                                                                  'score',
+                                                                                   'type': 'number'},
+                                                                     'site_id_ref': {'description': 'Reference '
+                                                                                                    'to '
+                                                                                                    'site_id',
+                                                                                     'type': 'integer'}},
+                                                      'required': ['site_id_ref',
+                                                                   'raw_score',
+                                                                   'confidence_score',
+                                                                   'confidence_classification'],
+                                                      'type': 'object'},
+                                            'minItems': 1,
+                                            'type': 'array',
+                                            'uniqueItems': True}},
+               'required': ['pdb_res_label', 'aa_type', 'site_data'],
+               'type': 'object'},
+     'minItems': 1,
+     'type': 'array',
+     'uniqueItems': True}
+
+On instance['chains'][2]['residues']:
+    []
+ERROR:client:JSON does not comply with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+WARNING:root:JSON does not comply with schema
+WARNING:root:[] is too short
+
+Failed validating 'minItems' in schema['properties']['chains']['items']['properties']['residues']:
+    {'items': {'additionalProperties': False,
+               'properties': {'aa_type': {'description': 'Three-letter '
+                                                         'amino acid code',
+                                          'pattern': '^[A-Za-z0-9]+$',
+                                          'type': 'string'},
+                              'additional_residue_annotations': {'description': 'Additional '
+                                                                                'residue-level '
+                                                                                'annotations',
+                                                                 'type': 'object'},
+                              'pdb_res_label': {'description': 'Residue '
+                                                               'index from '
+                                                               'the '
+                                                               'related '
+                                                               'PDB entry',
+                                                'type': 'string'},
+                              'site_data': {'items': {'additionalProperties': False,
+                                                      'properties': {'confidence_classification': {'description': 'Confidence '
+                                                                                                                  'classification '
+                                                                                                                  'of '
+                                                                                                                  'the '
+                                                                                                                  'residue',
+                                                                                                   'enum': ['high',
+                                                                                                            'medium',
+                                                                                                            'low',
+                                                                                                            'null'],
+                                                                                                   'type': 'string'},
+                                                                     'confidence_score': {'description': 'Confidence '
+                                                                                                         'level '
+                                                                                                         'of '
+                                                                                                         'the '
+                                                                                                         'annotation '
+                                                                                                         '(0-1, '
+                                                                                                         'except '
+                                                                                                         'if '
+                                                                                                         'the '
+                                                                                                         'method '
+                                                                                                         'justifies '
+                                                                                                         'otherwise)',
+                                                                                          'minimum': 0.0,
+                                                                                          'type': 'number'},
+                                                                     'raw_score': {'description': 'Raw '
+                                                                                                  'calculated '
+                                                                                                  'score',
+                                                                                   'type': 'number'},
+                                                                     'site_id_ref': {'description': 'Reference '
+                                                                                                    'to '
+                                                                                                    'site_id',
+                                                                                     'type': 'integer'}},
+                                                      'required': ['site_id_ref',
+                                                                   'raw_score',
+                                                                   'confidence_score',
+                                                                   'confidence_classification'],
+                                                      'type': 'object'},
+                                            'minItems': 1,
+                                            'type': 'array',
+                                            'uniqueItems': True}},
+               'required': ['pdb_res_label', 'aa_type', 'site_data'],
+               'type': 'object'},
+     'minItems': 1,
+     'type': 'array',
+     'uniqueItems': True}
+
+On instance['chains'][4]['residues']:
+    []
+ERROR:client:JSON does not comply with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+WARNING:root:JSON does not comply with schema
+WARNING:root:[] is too short
+
+Failed validating 'minItems' in schema['properties']['chains']['items']['properties']['residues']:
+    {'items': {'additionalProperties': False,
+               'properties': {'aa_type': {'description': 'Three-letter '
+                                                         'amino acid code',
+                                          'pattern': '^[A-Za-z0-9]+$',
+                                          'type': 'string'},
+                              'additional_residue_annotations': {'description': 'Additional '
+                                                                                'residue-level '
+                                                                                'annotations',
+                                                                 'type': 'object'},
+                              'pdb_res_label': {'description': 'Residue '
+                                                               'index from '
+                                                               'the '
+                                                               'related '
+                                                               'PDB entry',
+                                                'type': 'string'},
+                              'site_data': {'items': {'additionalProperties': False,
+                                                      'properties': {'confidence_classification': {'description': 'Confidence '
+                                                                                                                  'classification '
+                                                                                                                  'of '
+                                                                                                                  'the '
+                                                                                                                  'residue',
+                                                                                                   'enum': ['high',
+                                                                                                            'medium',
+                                                                                                            'low',
+                                                                                                            'null'],
+                                                                                                   'type': 'string'},
+                                                                     'confidence_score': {'description': 'Confidence '
+                                                                                                         'level '
+                                                                                                         'of '
+                                                                                                         'the '
+                                                                                                         'annotation '
+                                                                                                         '(0-1, '
+                                                                                                         'except '
+                                                                                                         'if '
+                                                                                                         'the '
+                                                                                                         'method '
+                                                                                                         'justifies '
+                                                                                                         'otherwise)',
+                                                                                          'minimum': 0.0,
+                                                                                          'type': 'number'},
+                                                                     'raw_score': {'description': 'Raw '
+                                                                                                  'calculated '
+                                                                                                  'score',
+                                                                                   'type': 'number'},
+                                                                     'site_id_ref': {'description': 'Reference '
+                                                                                                    'to '
+                                                                                                    'site_id',
+                                                                                     'type': 'integer'}},
+                                                      'required': ['site_id_ref',
+                                                                   'raw_score',
+                                                                   'confidence_score',
+                                                                   'confidence_classification'],
+                                                      'type': 'object'},
+                                            'minItems': 1,
+                                            'type': 'array',
+                                            'uniqueItems': True}},
+               'required': ['pdb_res_label', 'aa_type', 'site_data'],
+               'type': 'object'},
+     'minItems': 1,
+     'type': 'array',
+     'uniqueItems': True}
+
+On instance['chains'][2]['residues']:
+    []
+ERROR:client:JSON does not comply with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+WARNING:root:JSON does not comply with schema
+WARNING:root:[] is too short
+
+Failed validating 'minItems' in schema['properties']['chains']['items']['properties']['residues']:
+    {'items': {'additionalProperties': False,
+               'properties': {'aa_type': {'description': 'Three-letter '
+                                                         'amino acid code',
+                                          'pattern': '^[A-Za-z0-9]+$',
+                                          'type': 'string'},
+                              'additional_residue_annotations': {'description': 'Additional '
+                                                                                'residue-level '
+                                                                                'annotations',
+                                                                 'type': 'object'},
+                              'pdb_res_label': {'description': 'Residue '
+                                                               'index from '
+                                                               'the '
+                                                               'related '
+                                                               'PDB entry',
+                                                'type': 'string'},
+                              'site_data': {'items': {'additionalProperties': False,
+                                                      'properties': {'confidence_classification': {'description': 'Confidence '
+                                                                                                                  'classification '
+                                                                                                                  'of '
+                                                                                                                  'the '
+                                                                                                                  'residue',
+                                                                                                   'enum': ['high',
+                                                                                                            'medium',
+                                                                                                            'low',
+                                                                                                            'null'],
+                                                                                                   'type': 'string'},
+                                                                     'confidence_score': {'description': 'Confidence '
+                                                                                                         'level '
+                                                                                                         'of '
+                                                                                                         'the '
+                                                                                                         'annotation '
+                                                                                                         '(0-1, '
+                                                                                                         'except '
+                                                                                                         'if '
+                                                                                                         'the '
+                                                                                                         'method '
+                                                                                                         'justifies '
+                                                                                                         'otherwise)',
+                                                                                          'minimum': 0.0,
+                                                                                          'type': 'number'},
+                                                                     'raw_score': {'description': 'Raw '
+                                                                                                  'calculated '
+                                                                                                  'score',
+                                                                                   'type': 'number'},
+                                                                     'site_id_ref': {'description': 'Reference '
+                                                                                                    'to '
+                                                                                                    'site_id',
+                                                                                     'type': 'integer'}},
+                                                      'required': ['site_id_ref',
+                                                                   'raw_score',
+                                                                   'confidence_score',
+                                                                   'confidence_classification'],
+                                                      'type': 'object'},
+                                            'minItems': 1,
+                                            'type': 'array',
+                                            'uniqueItems': True}},
+               'required': ['pdb_res_label', 'aa_type', 'site_data'],
+               'type': 'object'},
+     'minItems': 1,
+     'type': 'array',
+     'uniqueItems': True}
+
+On instance['chains'][4]['residues']:
+    []
+ERROR:client:JSON does not comply with FunPDBe schema
+WARNING:root:JSON does not comply with schema
+WARNING:root:[] is too short
+
+Failed validating 'minItems' in schema['properties']['chains']['items']['properties']['residues']:
+    {'items': {'additionalProperties': False,
+               'properties': {'aa_type': {'description': 'Three-letter '
+                                                         'amino acid code',
+                                          'pattern': '^[A-Za-z0-9]+$',
+                                          'type': 'string'},
+                              'additional_residue_annotations': {'description': 'Additional '
+                                                                                'residue-level '
+                                                                                'annotations',
+                                                                 'type': 'object'},
+                              'pdb_res_label': {'description': 'Residue '
+                                                               'index from '
+                                                               'the '
+                                                               'related '
+                                                               'PDB entry',
+                                                'type': 'string'},
+                              'site_data': {'items': {'additionalProperties': False,
+                                                      'properties': {'confidence_classification': {'description': 'Confidence '
+                                                                                                                  'classification '
+                                                                                                                  'of '
+                                                                                                                  'the '
+                                                                                                                  'residue',
+                                                                                                   'enum': ['high',
+                                                                                                            'medium',
+                                                                                                            'low',
+                                                                                                            'null'],
+                                                                                                   'type': 'string'},
+                                                                     'confidence_score': {'description': 'Confidence '
+                                                                                                         'level '
+                                                                                                         'of '
+                                                                                                         'the '
+                                                                                                         'annotation '
+                                                                                                         '(0-1, '
+                                                                                                         'except '
+                                                                                                         'if '
+                                                                                                         'the '
+                                                                                                         'method '
+                                                                                                         'justifies '
+                                                                                                         'otherwise)',
+                                                                                          'minimum': 0.0,
+                                                                                          'type': 'number'},
+                                                                     'raw_score': {'description': 'Raw '
+                                                                                                  'calculated '
+                                                                                                  'score',
+                                                                                   'type': 'number'},
+                                                                     'site_id_ref': {'description': 'Reference '
+                                                                                                    'to '
+                                                                                                    'site_id',
+                                                                                     'type': 'integer'}},
+                                                      'required': ['site_id_ref',
+                                                                   'raw_score',
+                                                                   'confidence_score',
+                                                                   'confidence_classification'],
+                                                      'type': 'object'},
+                                            'minItems': 1,
+                                            'type': 'array',
+                                            'uniqueItems': True}},
+               'required': ['pdb_res_label', 'aa_type', 'site_data'],
+               'type': 'object'},
+     'minItems': 1,
+     'type': 'array',
+     'uniqueItems': True}
+
+On instance['chains'][2]['residues']:
+    []
+ERROR:client:JSON does not comply with FunPDBe schema
+WARNING:root:JSON does not comply with schema
+WARNING:root:[] is too short
+
+Failed validating 'minItems' in schema['properties']['chains']['items']['properties']['residues']:
+    {'items': {'additionalProperties': False,
+               'properties': {'aa_type': {'description': 'Three-letter '
+                                                         'amino acid code',
+                                          'pattern': '^[A-Za-z0-9]+$',
+                                          'type': 'string'},
+                              'additional_residue_annotations': {'description': 'Additional '
+                                                                                'residue-level '
+                                                                                'annotations',
+                                                                 'type': 'object'},
+                              'pdb_res_label': {'description': 'Residue '
+                                                               'index from '
+                                                               'the '
+                                                               'related '
+                                                               'PDB entry',
+                                                'type': 'string'},
+                              'site_data': {'items': {'additionalProperties': False,
+                                                      'properties': {'confidence_classification': {'description': 'Confidence '
+                                                                                                                  'classification '
+                                                                                                                  'of '
+                                                                                                                  'the '
+                                                                                                                  'residue',
+                                                                                                   'enum': ['high',
+                                                                                                            'medium',
+                                                                                                            'low',
+                                                                                                            'null'],
+                                                                                                   'type': 'string'},
+                                                                     'confidence_score': {'description': 'Confidence '
+                                                                                                         'level '
+                                                                                                         'of '
+                                                                                                         'the '
+                                                                                                         'annotation '
+                                                                                                         '(0-1, '
+                                                                                                         'except '
+                                                                                                         'if '
+                                                                                                         'the '
+                                                                                                         'method '
+                                                                                                         'justifies '
+                                                                                                         'otherwise)',
+                                                                                          'minimum': 0.0,
+                                                                                          'type': 'number'},
+                                                                     'raw_score': {'description': 'Raw '
+                                                                                                  'calculated '
+                                                                                                  'score',
+                                                                                   'type': 'number'},
+                                                                     'site_id_ref': {'description': 'Reference '
+                                                                                                    'to '
+                                                                                                    'site_id',
+                                                                                     'type': 'integer'}},
+                                                      'required': ['site_id_ref',
+                                                                   'raw_score',
+                                                                   'confidence_score',
+                                                                   'confidence_classification'],
+                                                      'type': 'object'},
+                                            'minItems': 1,
+                                            'type': 'array',
+                                            'uniqueItems': True}},
+               'required': ['pdb_res_label', 'aa_type', 'site_data'],
+               'type': 'object'},
+     'minItems': 1,
+     'type': 'array',
+     'uniqueItems': True}
+
+On instance['chains'][4]['residues']:
+    []
+ERROR:client:JSON does not comply with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+WARNING:root:JSON does not comply with schema
+WARNING:root:[] is too short
+
+Failed validating 'minItems' in schema['properties']['chains']['items']['properties']['residues']:
+    {'items': {'additionalProperties': False,
+               'properties': {'aa_type': {'description': 'Three-letter '
+                                                         'amino acid code',
+                                          'pattern': '^[A-Za-z0-9]+$',
+                                          'type': 'string'},
+                              'additional_residue_annotations': {'description': 'Additional '
+                                                                                'residue-level '
+                                                                                'annotations',
+                                                                 'type': 'object'},
+                              'pdb_res_label': {'description': 'Residue '
+                                                               'index from '
+                                                               'the '
+                                                               'related '
+                                                               'PDB entry',
+                                                'type': 'string'},
+                              'site_data': {'items': {'additionalProperties': False,
+                                                      'properties': {'confidence_classification': {'description': 'Confidence '
+                                                                                                                  'classification '
+                                                                                                                  'of '
+                                                                                                                  'the '
+                                                                                                                  'residue',
+                                                                                                   'enum': ['high',
+                                                                                                            'medium',
+                                                                                                            'low',
+                                                                                                            'null'],
+                                                                                                   'type': 'string'},
+                                                                     'confidence_score': {'description': 'Confidence '
+                                                                                                         'level '
+                                                                                                         'of '
+                                                                                                         'the '
+                                                                                                         'annotation '
+                                                                                                         '(0-1, '
+                                                                                                         'except '
+                                                                                                         'if '
+                                                                                                         'the '
+                                                                                                         'method '
+                                                                                                         'justifies '
+                                                                                                         'otherwise)',
+                                                                                          'minimum': 0.0,
+                                                                                          'type': 'number'},
+                                                                     'raw_score': {'description': 'Raw '
+                                                                                                  'calculated '
+                                                                                                  'score',
+                                                                                   'type': 'number'},
+                                                                     'site_id_ref': {'description': 'Reference '
+                                                                                                    'to '
+                                                                                                    'site_id',
+                                                                                     'type': 'integer'}},
+                                                      'required': ['site_id_ref',
+                                                                   'raw_score',
+                                                                   'confidence_score',
+                                                                   'confidence_classification'],
+                                                      'type': 'object'},
+                                            'minItems': 1,
+                                            'type': 'array',
+                                            'uniqueItems': True}},
+               'required': ['pdb_res_label', 'aa_type', 'site_data'],
+               'type': 'object'},
+     'minItems': 1,
+     'type': 'array',
+     'uniqueItems': True}
+
+On instance['chains'][4]['residues']:
+    []
+ERROR:client:JSON does not comply with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+WARNING:root:JSON does not comply with schema
+WARNING:root:[] is too short
+
+Failed validating 'minItems' in schema['properties']['chains']['items']['properties']['residues']:
+    {'items': {'additionalProperties': False,
+               'properties': {'aa_type': {'description': 'Three-letter '
+                                                         'amino acid code',
+                                          'pattern': '^[A-Za-z0-9]+$',
+                                          'type': 'string'},
+                              'additional_residue_annotations': {'description': 'Additional '
+                                                                                'residue-level '
+                                                                                'annotations',
+                                                                 'type': 'object'},
+                              'pdb_res_label': {'description': 'Residue '
+                                                               'index from '
+                                                               'the '
+                                                               'related '
+                                                               'PDB entry',
+                                                'type': 'string'},
+                              'site_data': {'items': {'additionalProperties': False,
+                                                      'properties': {'confidence_classification': {'description': 'Confidence '
+                                                                                                                  'classification '
+                                                                                                                  'of '
+                                                                                                                  'the '
+                                                                                                                  'residue',
+                                                                                                   'enum': ['high',
+                                                                                                            'medium',
+                                                                                                            'low',
+                                                                                                            'null'],
+                                                                                                   'type': 'string'},
+                                                                     'confidence_score': {'description': 'Confidence '
+                                                                                                         'level '
+                                                                                                         'of '
+                                                                                                         'the '
+                                                                                                         'annotation '
+                                                                                                         '(0-1, '
+                                                                                                         'except '
+                                                                                                         'if '
+                                                                                                         'the '
+                                                                                                         'method '
+                                                                                                         'justifies '
+                                                                                                         'otherwise)',
+                                                                                          'minimum': 0.0,
+                                                                                          'type': 'number'},
+                                                                     'raw_score': {'description': 'Raw '
+                                                                                                  'calculated '
+                                                                                                  'score',
+                                                                                   'type': 'number'},
+                                                                     'site_id_ref': {'description': 'Reference '
+                                                                                                    'to '
+                                                                                                    'site_id',
+                                                                                     'type': 'integer'}},
+                                                      'required': ['site_id_ref',
+                                                                   'raw_score',
+                                                                   'confidence_score',
+                                                                   'confidence_classification'],
+                                                      'type': 'object'},
+                                            'minItems': 1,
+                                            'type': 'array',
+                                            'uniqueItems': True}},
+               'required': ['pdb_res_label', 'aa_type', 'site_data'],
+               'type': 'object'},
+     'minItems': 1,
+     'type': 'array',
+     'uniqueItems': True}
+
+On instance['chains'][4]['residues']:
+    []
+ERROR:client:JSON does not comply with FunPDBe schema
+WARNING:root:JSON does not comply with schema
+WARNING:root:[] is too short
+
+Failed validating 'minItems' in schema['properties']['chains']['items']['properties']['residues']:
+    {'items': {'additionalProperties': False,
+               'properties': {'aa_type': {'description': 'Three-letter '
+                                                         'amino acid code',
+                                          'pattern': '^[A-Za-z0-9]+$',
+                                          'type': 'string'},
+                              'additional_residue_annotations': {'description': 'Additional '
+                                                                                'residue-level '
+                                                                                'annotations',
+                                                                 'type': 'object'},
+                              'pdb_res_label': {'description': 'Residue '
+                                                               'index from '
+                                                               'the '
+                                                               'related '
+                                                               'PDB entry',
+                                                'type': 'string'},
+                              'site_data': {'items': {'additionalProperties': False,
+                                                      'properties': {'confidence_classification': {'description': 'Confidence '
+                                                                                                                  'classification '
+                                                                                                                  'of '
+                                                                                                                  'the '
+                                                                                                                  'residue',
+                                                                                                   'enum': ['high',
+                                                                                                            'medium',
+                                                                                                            'low',
+                                                                                                            'null'],
+                                                                                                   'type': 'string'},
+                                                                     'confidence_score': {'description': 'Confidence '
+                                                                                                         'level '
+                                                                                                         'of '
+                                                                                                         'the '
+                                                                                                         'annotation '
+                                                                                                         '(0-1, '
+                                                                                                         'except '
+                                                                                                         'if '
+                                                                                                         'the '
+                                                                                                         'method '
+                                                                                                         'justifies '
+                                                                                                         'otherwise)',
+                                                                                          'minimum': 0.0,
+                                                                                          'type': 'number'},
+                                                                     'raw_score': {'description': 'Raw '
+                                                                                                  'calculated '
+                                                                                                  'score',
+                                                                                   'type': 'number'},
+                                                                     'site_id_ref': {'description': 'Reference '
+                                                                                                    'to '
+                                                                                                    'site_id',
+                                                                                     'type': 'integer'}},
+                                                      'required': ['site_id_ref',
+                                                                   'raw_score',
+                                                                   'confidence_score',
+                                                                   'confidence_classification'],
+                                                      'type': 'object'},
+                                            'minItems': 1,
+                                            'type': 'array',
+                                            'uniqueItems': True}},
+               'required': ['pdb_res_label', 'aa_type', 'site_data'],
+               'type': 'object'},
+     'minItems': 1,
+     'type': 'array',
+     'uniqueItems': True}
+
+On instance['chains'][4]['residues']:
+    []
+ERROR:client:JSON does not comply with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+WARNING:root:JSON does not comply with schema
+WARNING:root:[] is too short
+
+Failed validating 'minItems' in schema['properties']['chains']['items']['properties']['residues']:
+    {'items': {'additionalProperties': False,
+               'properties': {'aa_type': {'description': 'Three-letter '
+                                                         'amino acid code',
+                                          'pattern': '^[A-Za-z0-9]+$',
+                                          'type': 'string'},
+                              'additional_residue_annotations': {'description': 'Additional '
+                                                                                'residue-level '
+                                                                                'annotations',
+                                                                 'type': 'object'},
+                              'pdb_res_label': {'description': 'Residue '
+                                                               'index from '
+                                                               'the '
+                                                               'related '
+                                                               'PDB entry',
+                                                'type': 'string'},
+                              'site_data': {'items': {'additionalProperties': False,
+                                                      'properties': {'confidence_classification': {'description': 'Confidence '
+                                                                                                                  'classification '
+                                                                                                                  'of '
+                                                                                                                  'the '
+                                                                                                                  'residue',
+                                                                                                   'enum': ['high',
+                                                                                                            'medium',
+                                                                                                            'low',
+                                                                                                            'null'],
+                                                                                                   'type': 'string'},
+                                                                     'confidence_score': {'description': 'Confidence '
+                                                                                                         'level '
+                                                                                                         'of '
+                                                                                                         'the '
+                                                                                                         'annotation '
+                                                                                                         '(0-1, '
+                                                                                                         'except '
+                                                                                                         'if '
+                                                                                                         'the '
+                                                                                                         'method '
+                                                                                                         'justifies '
+                                                                                                         'otherwise)',
+                                                                                          'minimum': 0.0,
+                                                                                          'type': 'number'},
+                                                                     'raw_score': {'description': 'Raw '
+                                                                                                  'calculated '
+                                                                                                  'score',
+                                                                                   'type': 'number'},
+                                                                     'site_id_ref': {'description': 'Reference '
+                                                                                                    'to '
+                                                                                                    'site_id',
+                                                                                     'type': 'integer'}},
+                                                      'required': ['site_id_ref',
+                                                                   'raw_score',
+                                                                   'confidence_score',
+                                                                   'confidence_classification'],
+                                                      'type': 'object'},
+                                            'minItems': 1,
+                                            'type': 'array',
+                                            'uniqueItems': True}},
+               'required': ['pdb_res_label', 'aa_type', 'site_data'],
+               'type': 'object'},
+     'minItems': 1,
+     'type': 'array',
+     'uniqueItems': True}
+
+On instance['chains'][2]['residues']:
+    []
+ERROR:client:JSON does not comply with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+WARNING:root:JSON does not comply with schema
+WARNING:root:[] is too short
+
+Failed validating 'minItems' in schema['properties']['chains']['items']['properties']['residues']:
+    {'items': {'additionalProperties': False,
+               'properties': {'aa_type': {'description': 'Three-letter '
+                                                         'amino acid code',
+                                          'pattern': '^[A-Za-z0-9]+$',
+                                          'type': 'string'},
+                              'additional_residue_annotations': {'description': 'Additional '
+                                                                                'residue-level '
+                                                                                'annotations',
+                                                                 'type': 'object'},
+                              'pdb_res_label': {'description': 'Residue '
+                                                               'index from '
+                                                               'the '
+                                                               'related '
+                                                               'PDB entry',
+                                                'type': 'string'},
+                              'site_data': {'items': {'additionalProperties': False,
+                                                      'properties': {'confidence_classification': {'description': 'Confidence '
+                                                                                                                  'classification '
+                                                                                                                  'of '
+                                                                                                                  'the '
+                                                                                                                  'residue',
+                                                                                                   'enum': ['high',
+                                                                                                            'medium',
+                                                                                                            'low',
+                                                                                                            'null'],
+                                                                                                   'type': 'string'},
+                                                                     'confidence_score': {'description': 'Confidence '
+                                                                                                         'level '
+                                                                                                         'of '
+                                                                                                         'the '
+                                                                                                         'annotation '
+                                                                                                         '(0-1, '
+                                                                                                         'except '
+                                                                                                         'if '
+                                                                                                         'the '
+                                                                                                         'method '
+                                                                                                         'justifies '
+                                                                                                         'otherwise)',
+                                                                                          'minimum': 0.0,
+                                                                                          'type': 'number'},
+                                                                     'raw_score': {'description': 'Raw '
+                                                                                                  'calculated '
+                                                                                                  'score',
+                                                                                   'type': 'number'},
+                                                                     'site_id_ref': {'description': 'Reference '
+                                                                                                    'to '
+                                                                                                    'site_id',
+                                                                                     'type': 'integer'}},
+                                                      'required': ['site_id_ref',
+                                                                   'raw_score',
+                                                                   'confidence_score',
+                                                                   'confidence_classification'],
+                                                      'type': 'object'},
+                                            'minItems': 1,
+                                            'type': 'array',
+                                            'uniqueItems': True}},
+               'required': ['pdb_res_label', 'aa_type', 'site_data'],
+               'type': 'object'},
+     'minItems': 1,
+     'type': 'array',
+     'uniqueItems': True}
+
+On instance['chains'][4]['residues']:
+    []
+ERROR:client:JSON does not comply with FunPDBe schema
+WARNING:root:JSON does not comply with schema
+WARNING:root:[] is too short
+
+Failed validating 'minItems' in schema['properties']['chains']['items']['properties']['residues']:
+    {'items': {'additionalProperties': False,
+               'properties': {'aa_type': {'description': 'Three-letter '
+                                                         'amino acid code',
+                                          'pattern': '^[A-Za-z0-9]+$',
+                                          'type': 'string'},
+                              'additional_residue_annotations': {'description': 'Additional '
+                                                                                'residue-level '
+                                                                                'annotations',
+                                                                 'type': 'object'},
+                              'pdb_res_label': {'description': 'Residue '
+                                                               'index from '
+                                                               'the '
+                                                               'related '
+                                                               'PDB entry',
+                                                'type': 'string'},
+                              'site_data': {'items': {'additionalProperties': False,
+                                                      'properties': {'confidence_classification': {'description': 'Confidence '
+                                                                                                                  'classification '
+                                                                                                                  'of '
+                                                                                                                  'the '
+                                                                                                                  'residue',
+                                                                                                   'enum': ['high',
+                                                                                                            'medium',
+                                                                                                            'low',
+                                                                                                            'null'],
+                                                                                                   'type': 'string'},
+                                                                     'confidence_score': {'description': 'Confidence '
+                                                                                                         'level '
+                                                                                                         'of '
+                                                                                                         'the '
+                                                                                                         'annotation '
+                                                                                                         '(0-1, '
+                                                                                                         'except '
+                                                                                                         'if '
+                                                                                                         'the '
+                                                                                                         'method '
+                                                                                                         'justifies '
+                                                                                                         'otherwise)',
+                                                                                          'minimum': 0.0,
+                                                                                          'type': 'number'},
+                                                                     'raw_score': {'description': 'Raw '
+                                                                                                  'calculated '
+                                                                                                  'score',
+                                                                                   'type': 'number'},
+                                                                     'site_id_ref': {'description': 'Reference '
+                                                                                                    'to '
+                                                                                                    'site_id',
+                                                                                     'type': 'integer'}},
+                                                      'required': ['site_id_ref',
+                                                                   'raw_score',
+                                                                   'confidence_score',
+                                                                   'confidence_classification'],
+                                                      'type': 'object'},
+                                            'minItems': 1,
+                                            'type': 'array',
+                                            'uniqueItems': True}},
+               'required': ['pdb_res_label', 'aa_type', 'site_data'],
+               'type': 'object'},
+     'minItems': 1,
+     'type': 'array',
+     'uniqueItems': True}
+
+On instance['chains'][4]['residues']:
+    []
+ERROR:client:JSON does not comply with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+WARNING:root:JSON does not comply with schema
+WARNING:root:[] is too short
+
+Failed validating 'minItems' in schema['properties']['chains']['items']['properties']['residues']:
+    {'items': {'additionalProperties': False,
+               'properties': {'aa_type': {'description': 'Three-letter '
+                                                         'amino acid code',
+                                          'pattern': '^[A-Za-z0-9]+$',
+                                          'type': 'string'},
+                              'additional_residue_annotations': {'description': 'Additional '
+                                                                                'residue-level '
+                                                                                'annotations',
+                                                                 'type': 'object'},
+                              'pdb_res_label': {'description': 'Residue '
+                                                               'index from '
+                                                               'the '
+                                                               'related '
+                                                               'PDB entry',
+                                                'type': 'string'},
+                              'site_data': {'items': {'additionalProperties': False,
+                                                      'properties': {'confidence_classification': {'description': 'Confidence '
+                                                                                                                  'classification '
+                                                                                                                  'of '
+                                                                                                                  'the '
+                                                                                                                  'residue',
+                                                                                                   'enum': ['high',
+                                                                                                            'medium',
+                                                                                                            'low',
+                                                                                                            'null'],
+                                                                                                   'type': 'string'},
+                                                                     'confidence_score': {'description': 'Confidence '
+                                                                                                         'level '
+                                                                                                         'of '
+                                                                                                         'the '
+                                                                                                         'annotation '
+                                                                                                         '(0-1, '
+                                                                                                         'except '
+                                                                                                         'if '
+                                                                                                         'the '
+                                                                                                         'method '
+                                                                                                         'justifies '
+                                                                                                         'otherwise)',
+                                                                                          'minimum': 0.0,
+                                                                                          'type': 'number'},
+                                                                     'raw_score': {'description': 'Raw '
+                                                                                                  'calculated '
+                                                                                                  'score',
+                                                                                   'type': 'number'},
+                                                                     'site_id_ref': {'description': 'Reference '
+                                                                                                    'to '
+                                                                                                    'site_id',
+                                                                                     'type': 'integer'}},
+                                                      'required': ['site_id_ref',
+                                                                   'raw_score',
+                                                                   'confidence_score',
+                                                                   'confidence_classification'],
+                                                      'type': 'object'},
+                                            'minItems': 1,
+                                            'type': 'array',
+                                            'uniqueItems': True}},
+               'required': ['pdb_res_label', 'aa_type', 'site_data'],
+               'type': 'object'},
+     'minItems': 1,
+     'type': 'array',
+     'uniqueItems': True}
+
+On instance['chains'][2]['residues']:
+    []
+ERROR:client:JSON does not comply with FunPDBe schema
+WARNING:root:JSON does not comply with schema
+WARNING:root:[] is too short
+
+Failed validating 'minItems' in schema['properties']['chains']['items']['properties']['residues']:
+    {'items': {'additionalProperties': False,
+               'properties': {'aa_type': {'description': 'Three-letter '
+                                                         'amino acid code',
+                                          'pattern': '^[A-Za-z0-9]+$',
+                                          'type': 'string'},
+                              'additional_residue_annotations': {'description': 'Additional '
+                                                                                'residue-level '
+                                                                                'annotations',
+                                                                 'type': 'object'},
+                              'pdb_res_label': {'description': 'Residue '
+                                                               'index from '
+                                                               'the '
+                                                               'related '
+                                                               'PDB entry',
+                                                'type': 'string'},
+                              'site_data': {'items': {'additionalProperties': False,
+                                                      'properties': {'confidence_classification': {'description': 'Confidence '
+                                                                                                                  'classification '
+                                                                                                                  'of '
+                                                                                                                  'the '
+                                                                                                                  'residue',
+                                                                                                   'enum': ['high',
+                                                                                                            'medium',
+                                                                                                            'low',
+                                                                                                            'null'],
+                                                                                                   'type': 'string'},
+                                                                     'confidence_score': {'description': 'Confidence '
+                                                                                                         'level '
+                                                                                                         'of '
+                                                                                                         'the '
+                                                                                                         'annotation '
+                                                                                                         '(0-1, '
+                                                                                                         'except '
+                                                                                                         'if '
+                                                                                                         'the '
+                                                                                                         'method '
+                                                                                                         'justifies '
+                                                                                                         'otherwise)',
+                                                                                          'minimum': 0.0,
+                                                                                          'type': 'number'},
+                                                                     'raw_score': {'description': 'Raw '
+                                                                                                  'calculated '
+                                                                                                  'score',
+                                                                                   'type': 'number'},
+                                                                     'site_id_ref': {'description': 'Reference '
+                                                                                                    'to '
+                                                                                                    'site_id',
+                                                                                     'type': 'integer'}},
+                                                      'required': ['site_id_ref',
+                                                                   'raw_score',
+                                                                   'confidence_score',
+                                                                   'confidence_classification'],
+                                                      'type': 'object'},
+                                            'minItems': 1,
+                                            'type': 'array',
+                                            'uniqueItems': True}},
+               'required': ['pdb_res_label', 'aa_type', 'site_data'],
+               'type': 'object'},
+     'minItems': 1,
+     'type': 'array',
+     'uniqueItems': True}
+
+On instance['chains'][4]['residues']:
+    []
+ERROR:client:JSON does not comply with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+INFO:client:JSON complies with FunPDBe schema
+Traceback (most recent call last):
+  File "../funpdbe-client/funpdbe_client.py", line 19, in <module>
+    from funpdbe_client.client import Client
+  File "/export/zfspool1/home/jkleinj/POPS/funpdbe-client/funpdbe_client/client.py", line 16, in <module>
+    import requests
+  File "/home/jkleinj/.local/lib/python3.6/site-packages/requests/__init__.py", line 95, in <module>
+    from urllib3.contrib import pyopenssl
+  File "/home/jkleinj/.local/lib/python3.6/site-packages/urllib3/contrib/pyopenssl.py", line 46, in <module>
+    import OpenSSL.SSL
+  File "/usr/lib/python3/dist-packages/OpenSSL/__init__.py", line 8, in <module>
+    from OpenSSL import crypto, SSL
+  File "/usr/lib/python3/dist-packages/OpenSSL/crypto.py", line 12, in <module>
+    from cryptography import x509
+  File "/usr/lib/python3/dist-packages/cryptography/x509/__init__.py", line 8, in <module>
+    from cryptography.x509.base import (
+  File "/usr/lib/python3/dist-packages/cryptography/x509/base.py", line 16, in <module>
+    from cryptography.x509.extensions import Extension, ExtensionType
+  File "/usr/lib/python3/dist-packages/cryptography/x509/extensions.py", line 13, in <module>
+    from asn1crypto.keys import PublicKeyInfo
+  File "/usr/lib/python3/dist-packages/asn1crypto/keys.py", line 22, in <module>
+    from ._elliptic_curve import (
+  File "/usr/lib/python3/dist-packages/asn1crypto/_elliptic_curve.py", line 51, in <module>
+    from ._int import inverse_mod
+  File "/usr/lib/python3/dist-packages/asn1crypto/_int.py", line 37, in <module>
+    import platform
+  File "/usr/lib/python3.6/platform.py", line 116, in <module>
+    import sys, os, re, subprocess
+  File "/usr/lib/python3.6/subprocess.py", line 50, in <module>
+    import signal
+  File "/usr/lib/python3.6/signal.py", line 10, in <module>
+    lambda name:
+  File "/usr/lib/python3.6/enum.py", line 634, in _convert
+    cls = cls(name, members, module=module)
+  File "/usr/lib/python3.6/enum.py", line 295, in __call__
+    return cls._create_(value, names, module=module, qualname=qualname, type=type, start=start)
+  File "/usr/lib/python3.6/enum.py", line 401, in _create_
+    enum_class = metacls.__new__(metacls, class_name, bases, classdict)
+  File "/usr/lib/python3.6/enum.py", line 214, in __new__
+    if canonical_member._value_ == enum_member._value_:
+KeyboardInterrupt
