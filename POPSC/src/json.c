@@ -30,7 +30,7 @@ void print_json(Arg *arg, Str *pdb, cJSON *json)
 		sprintf(outpath, "%s.json", idOut);
 	}
 	arg->jsonOutFile = safe_open(outpath, "w");
-	fprintf(arg->jsonOutFile, "%s.json", popsOutJson);
+	fprintf(arg->jsonOutFile, "%s", popsOutJson);
 	fclose(arg->jsonOutFile);
 
 	free(popsOutJson);
@@ -196,7 +196,7 @@ void print_jsonb(Arg *arg, Str *pdb, cJSON *jsonb)
 
 	/* print string to file */
 	arg->jsonbOutFile = safe_open(arg->jsonbOutFileName, "w");
-	fprintf(arg->jsonbOutFile, "%s.b.json", popsbOutJson);
+	fprintf(arg->jsonbOutFile, "%s", popsbOutJson);
 	fclose(arg->jsonbOutFile);
 
 	free(popsbOutJson);

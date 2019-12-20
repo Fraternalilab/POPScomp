@@ -19,7 +19,12 @@
 
 	Docker image.
 
+- 3.0.3
+	Correction in JSON output file.
+	Tested JSON output for validity.
+
 - 3.0.2
+Fri 20 Dec 10:00:19 GMT 2019
 	Made PDBML version memory clean; just DLL libraries flag problems in
 	  valgrind, but that is likely a valgrind bug.
 	Added OpenMP support instead of MPI support, but requires code change.
