@@ -63,9 +63,8 @@ mkpops :
 	done
 
 rename :
-	cd ${JSONDIR} ; find ?? -depth -name *[A-Z]*.json | xargs -n 1 rename -v 's/(.*)\/([^\/]*)/$1\/\L$2/' {} ; 
+	cd ${JSONDIR} ; find pp -depth -name *[A-Z]*.json | xargs -n 1 rename -v 'y/A-Z/a-z/' {} 
 
 
 #===============================================================================
-
 
