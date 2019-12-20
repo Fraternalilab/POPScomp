@@ -16,7 +16,10 @@ DBDIR = ${ROOTDIR}/database
 ## home of PDB database
 PDBDIR = ${DBDIR}/XML
 ## PDB subdirectories
-PDBSUBDIR = $(notdir $(shell find ${PDBDIR}/ -type d))
+#PDBSUBDIR = $(notdir $(shell find ${PDBDIR}/ -type d))
+PDBSUBDIR1 = $(notdir $(shell find ${PDBDIR}/[a-h]? -type d))
+PDBSUBDIR2 = $(notdir $(shell find ${PDBDIR}/[i-p]? -type d))
+PDBSUBDIR3 = $(notdir $(shell find ${PDBDIR}/[q-z]? -type d))
 ## home of JSON output files
 JSONDIR = ${DBDIR}/JSON
 ## JSON subdirectories
@@ -35,7 +38,7 @@ JSONSUBDIR = $(notdir $(shell find ${JSONDIR}/ -type d))
 ## Note: PDSUBDIR is also used for JSONDIR, because it is the reference array
 ##         that is completely known from the start
 
-all : pdbupdate jsondir jsonsubdir getstr mkpops rename
+all : pdbupdate jsondir jsonsubdir getstr mkpops1 mkpops2 mkpops3 rename
 
 pdbupdate :
 	rsync -rlpt -v -z --delete rsync.ebi.ac.uk::pub/databases/pdb/data/structures/divided/XML ${DBDIR}/
@@ -55,16 +58,29 @@ linkinput :
 	$(info --- Linking structure files to output directory.)
 	cd ${PDBDIR} ; find ?? -depth -name *.xml.gz | xargs -i bash -c "ln -s ${PDBDIR}/{} ${JSONDIR}/{}"
 
-mkpops : 
+mkpops1 : 
 	$(info --- Run POPS on all structures.)
-	for X in ${PDBSUBDIR} ; do \
+	for X in ${PDBSUBDIR1} ; do \
+		cd ${JSONDIR}/$$X ; \
+		${MAKE} -f ../Makefile.subdir all "ROOTDIR = ${ROOTDIR}" "POPSC = ${POPSC}" "POPSFLAGS = ${POPSFLAGS}"; \
+	done
+
+mkpops2 : 
+	$(info --- Run POPS on all structures.)
+	for X in ${PDBSUBDIR2} ; do \
+		cd ${JSONDIR}/$$X ; \
+		${MAKE} -f ../Makefile.subdir all "ROOTDIR = ${ROOTDIR}" "POPSC = ${POPSC}" "POPSFLAGS = ${POPSFLAGS}"; \
+	done
+
+mkpops3 : 
+	$(info --- Run POPS on all structures.)
+	for X in ${PDBSUBDIR3} ; do \
 		cd ${JSONDIR}/$$X ; \
 		${MAKE} -f ../Makefile.subdir all "ROOTDIR = ${ROOTDIR}" "POPSC = ${POPSC}" "POPSFLAGS = ${POPSFLAGS}"; \
 	done
 
 rename :
-	cd ${JSONDIR} ; find ?? -depth -name *[A-Z]*.json | xargs -n 1 rename -v 's/(.*)\/([^\/]*)/$1\/\L$2/' {} ; 
-
+	cd ${JSONDIR} ; find ?? -depth -name *[A-Z]*.json | xargs -n 1 rename -v 'y/A-Z/a-z/' {}
 
 #===============================================================================
 
