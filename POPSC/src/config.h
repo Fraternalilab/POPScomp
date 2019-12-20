@@ -70,7 +70,7 @@
 #define PACKAGE_NAME "pops"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "pops 3.0.2"
+#define PACKAGE_STRING "pops 3.0.3"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "pops"
@@ -79,7 +79,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "3.0.2"
+#define PACKAGE_VERSION "3.0.3"
 
 /* Define to compile with PROFILING settings. */
 /* #undef PROFILING */
@@ -88,7 +88,7 @@
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "3.0.2"
+#define VERSION "3.0.3"
 
 /* Define to rpl_malloc if the replacement function should be used. */
 /* #undef malloc */
