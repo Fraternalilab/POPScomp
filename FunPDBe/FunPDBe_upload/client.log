@@ -1,0 +1,4 @@
+2018-11-25 20:58:17,216 - client - INFO - POST 5lff.json to popscomp (overwrite=True)
+2018-11-25 20:58:17,216 - client - INFO - JSON parsed
+2018-11-25 20:58:17,416 - client - INFO - JSON complies with FunPDBe schema
+2018-11-25 20:58:21,329 - client - ERROR - [400] FAIL - ["residue numbering is completely mismatched between data and PDB entry"]
