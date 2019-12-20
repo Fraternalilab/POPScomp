@@ -1,0 +1,21 @@
+
+#_______________________________________________________________________________
+
+Before depositing to the live database though, could you please send a few examples just to double-check that everything is matching the schema?
+
+Also, we are working on an alternate deposition system, which will allow a faster data transfer, where we do all the validation and processing locally, circumventing the client. This is still in development, but depending on your data (how many entries, and how many residues on average in each entry) we could use this way instead of pushing via the API.
+
+Sincerely,
+Mihaly 
+
+#_______________________________________________________________________________
+
+Dear Jens,
+
+The username "test-popscomp" is for depositing to the development version of the deposition system. It should work, with password "funpdbe-test" if you specify "--api=dev" when running funpdbe_client.py.
+
+If you would like to deposit to the live deposition system, please note that according to our records your username is "jkleinj".
+
+Sincerely,
+Mihaly 
+
