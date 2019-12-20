@@ -20,8 +20,6 @@ Run POPS over the entire PDB database (in XML format).
 ## Parallelism
 Make is run in parallel by using the '-j' flag:
 ```
-make -j 7 mkpops
+make -j 8 mkpops 2>&1 | tee mkpops.`date +%Y%m%d.%H%M`.log
 ```
-uses 7 cores to run POPS jobs in parallel.
-
 

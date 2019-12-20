@@ -27,8 +27,9 @@ is returned as exit code and shown below the 'run POPScomp' button:
 ## Software
 
 ### Packages
-Since POPScomp 3.0 (04.2019), the modules *POPSC*, *POPSR*, *FunPDBe* and
-*Docker* are part of the POPScomp project.
+Since POPScomp 3.0 (04.2019), the subdirectories *POPSC*, *POPSR*, *FunPDBe* and
+*DockerImage* contain separate components of the POPScomp project that are being
+co-developed to ensure full compatibility of inter-dependencies.
 1. *POPSC*: A GNU Autotools package of the POPS C program that computes SASA
   for a given structure.
 2. *POPSR*: An R package containing an R program that
@@ -37,7 +38,7 @@ Since POPScomp 3.0 (04.2019), the modules *POPSC*, *POPSR*, *FunPDBe* and
     - provides a Shiny server as interface to the POPScomp (POPSC and POPSR) programs.
 3. *FunPDBe*: Scripts to run POPScomp over the PDB database and feed the output into
   the FunPDBe project.
-4. *Docker*: A Docker image is under development and scheduled for version 3.1.
+4. *DockerImage*: A Docker image is under development and scheduled for version 3.1.
 
 ### Source code
 Fraternali lab's
@@ -97,11 +98,11 @@ Kleinjung, J. and Fraternali, F.<br>
 
 
 ## License and Copyright
-Usage of the software and server is free, the code license is GPL3.
+Usage of the software and server is free under the GNU General Public License v3.0.
 
 ### Copyright Holders, Authors and Maintainers 
-- 2002-2019 Franca Fraternali (author, mainatainer) franca.fraternali@kcl.ac.uk
-- 2008-2019 Jens Kleinjung (author maintainer) jens@jkleinj.eu
+- 2002-2019 Franca Fraternali (author, maintainer) franca.fraternali@kcl.ac.uk
+- 2008-2019 Jens Kleinjung (author, maintainer) jens@jkleinj.eu
 
 ### Contributors
 - 2002 Kuang Lin and Valerie Hindie (translation to C)
