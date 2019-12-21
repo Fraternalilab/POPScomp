@@ -18,6 +18,7 @@ JSONFILES := $(patsubst %.xml.gz,%.json,$(wildcard *.xml.gz))
 .SUFFIXES : .json
 
 %.json : %.xml.gz
+	-@ touch $@
 	-@${POPSC} --pdbml $^ ${POPSFLAGS}
 
 #_______________________________________________________________________________

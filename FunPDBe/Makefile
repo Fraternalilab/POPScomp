@@ -16,7 +16,7 @@ DBDIR = ${ROOTDIR}/database
 ## home of PDB database
 PDBDIR = ${DBDIR}/XML
 ## PDB subdirectories
-#PDBSUBDIR = $(notdir $(shell find ${PDBDIR}/ -type d))
+PDBSUBDIR = $(notdir $(shell find ${PDBDIR}/ -type d))
 PDBSUBDIR1 = $(notdir $(shell find ${PDBDIR}/[a-h]? -type d))
 PDBSUBDIR2 = $(notdir $(shell find ${PDBDIR}/[i-p]? -type d))
 PDBSUBDIR3 = $(notdir $(shell find ${PDBDIR}/[q-z]? -type d))
@@ -42,12 +42,9 @@ JSONSUBDIR = $(notdir $(shell find ${JSONDIR}/ -type d))
 ## Note: PDBSUBDIR is also used for JSONDIR, because it is the reference array
 ##         that is completely known from the start.
 
-<<<<<<< HEAD
-all : pdbupdate jsondir jsonsubdir getstr mkpops1 mkpops2 mkpops3 rename
-=======
-all : pdbupdate jsondir jsonsubdir getstr mkpops rename validate
-.PHONY : pdbupdate jsondir jsonsubdir getstr mkpops rename validate
->>>>>>> 706fc7bbcf47e288e95283b67429b47235e80e69
+all : pdbupdate jsondir jsonsubdir getstr mkpops mkpops1 mkpops2 mkpops3 rename
+.PHONY : pdbupdate jsondir jsonsubdir getstr mkpops mkpops1 mkpops2 mkpops3 rename
+
 
 pdbupdate :
 	rsync -rlpt -v -z --delete rsync.ebi.ac.uk::pub/databases/pdb/data/structures/divided/XML ${DBDIR}/
@@ -67,41 +64,39 @@ linkinput :
 	$(info --- Linking structure files to output directory.)
 	cd ${PDBDIR} ; find ?? -depth -name *.xml.gz | xargs -i bash -c "ln -s ${PDBDIR}/{} ${JSONDIR}/{}"
 
-<<<<<<< HEAD
-mkpops1 : 
-=======
 mkpops :
->>>>>>> 706fc7bbcf47e288e95283b67429b47235e80e69
 	$(info --- Run POPS on all structures.)
-	for X in ${PDBSUBDIR1} ; do \
+	for X in ${PDBSUBDIR} ; do \
 		cd ${JSONDIR}/$$X ; \
-		${MAKE} -f ../Makefile.subdir all "ROOTDIR = ${ROOTDIR}" "POPSC = ${POPSC}" "POPSFLAGS = ${POPSFLAGS}"; \
+		${MAKE} -f ../Makefile.subdir all "ROOTDIR = ${ROOTDIR}" "POPSC = ${POPSC}" "POPSFLAGS = ${POPSFLAGS}" ; \
 	done
 
-<<<<<<< HEAD
+mkpops1 :
+	$(info --- Run POPS on structures [a-h]?.)
+	for X in ${PDBSUBDIR1} ; do \
+		cd ${JSONDIR}/$$X ; \
+		${MAKE} -i -f ../Makefile.subdir all "ROOTDIR = ${ROOTDIR}" "POPSC = ${POPSC}" "POPSFLAGS = ${POPSFLAGS}" ; \
+	done
+
 mkpops2 : 
-	$(info --- Run POPS on all structures.)
+	$(info --- Run POPS on structures [i-p]?.)
 	for X in ${PDBSUBDIR2} ; do \
 		cd ${JSONDIR}/$$X ; \
-		${MAKE} -f ../Makefile.subdir all "ROOTDIR = ${ROOTDIR}" "POPSC = ${POPSC}" "POPSFLAGS = ${POPSFLAGS}"; \
+		${MAKE} -i -f ../Makefile.subdir all "ROOTDIR = ${ROOTDIR}" "POPSC = ${POPSC}" "POPSFLAGS = ${POPSFLAGS}" ; \
 	done
 
 mkpops3 : 
-	$(info --- Run POPS on all structures.)
+	$(info --- Run POPS on all structures [q-z]?.)
 	for X in ${PDBSUBDIR3} ; do \
 		cd ${JSONDIR}/$$X ; \
-		${MAKE} -f ../Makefile.subdir all "ROOTDIR = ${ROOTDIR}" "POPSC = ${POPSC}" "POPSFLAGS = ${POPSFLAGS}"; \
+		${MAKE} -i -f ../Makefile.subdir all "ROOTDIR = ${ROOTDIR}" "POPSC = ${POPSC}" "POPSFLAGS = ${POPSFLAGS}" ; \
 	done
 
 rename :
-	cd ${JSONDIR} ; find ?? -depth -name *[A-Z]*.json | xargs -n 1 rename -v 'y/A-Z/a-z/' {}
-=======
-rename :
-	cd ${JSONDIR} ; find pp -depth -name *[A-Z]*.json | xargs -n 1 rename -v 'y/A-Z/a-z/' {} 
+	cd ${JSONDIR} ; find ?? -depth -name *[A-Z]*.json | xargs -n 1 rename -v 'y/A-Z/a-z/' {} 
 
 validate :
 	cd FunPDBe_validate ; validate_all.bash 2>&1 | tee validate_`date +%Y%m%d.%H%M`.log
->>>>>>> 706fc7bbcf47e288e95283b67429b47235e80e69
 
 #===============================================================================
 
