@@ -9,7 +9,9 @@
 #_______________________________________________________________________________
 ## macros
 ## creates .json dependencies from list of *.xml.gz
-JSONFILES := $(patsubst %.xml.gz,%.json,$(wildcard *.xml.gz))
+#JSONFILES := $(patsubst %.xml.gz,%.json,$(wildcard *.xml.gz))
+## creates .json dependencies from list of *.xml.gz using upper file size limit
+JSONFILES := $(patsubst %.xml.gz,%.json,$(shell find ./ -name '*.xml.gz' -size 1M))
 
 #_______________________________________________________________________________
 ## suffix rules
