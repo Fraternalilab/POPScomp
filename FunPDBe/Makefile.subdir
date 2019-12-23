@@ -11,7 +11,7 @@
 ## creates .json dependencies from list of *.xml.gz
 #JSONFILES := $(patsubst %.xml.gz,%.json,$(wildcard *.xml.gz))
 ## creates .json dependencies from list of *.xml.gz using upper file size limit
-JSONFILES := $(patsubst %.xml.gz,%.json,$(shell find ./ -name '*.xml.gz' -size 1M))
+JSONFILES := $(patsubst %.xml.gz,%.json,$(shell find ${PDBDIR}/$X -name '*.xml.gz' -size '-500k' -printf "%f\n"))
 
 #_______________________________________________________________________________
 ## suffix rules
