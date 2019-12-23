@@ -93,7 +93,7 @@ mkpops3 :
 	done
 
 rename :
-	cd ${JSONDIR} ; find ?? -depth -name *[A-Z]*.json | xargs -n 1 rename -v 'y/A-Z/a-z/' {} 
+	cd ${JSONDIR} ; find ?? -depth -name *[A-Z]*.json | xargs -n 1 rename -f -v 'y/A-Z/a-z/' {} 
 
 validate :
 	cd FunPDBe_validate ; validate_all.bash 2>&1 | tee validate_`date +%Y%m%d.%H%M`.log
