@@ -1,8 +1,14 @@
 #===============================================================================
 # Makefile.subdir : POPScomp pipeline for FunPDBe 
-# This is invoked for each subdirectory by the master Makefile.
-# Existing *.xml.gz structure files are POPSed if their JSON output file,
-#   here implied as dependency of 'all' target, needs updating.
+# This script is invoked for each PDBML subdirectory by the master Makefile.
+# Existing *.xml.gz structure files are POPSed if their JSON output file
+# is missing or outdated. The corresponding dependency list is created by
+# the 'JSONFILES' macro and used by the 'all' target.
+# 'JSONFILES' uses a file size cutoff to avoid hang-ups on single files.
+# The 'touch' command is a technicality to avoid re-computing failed POPS runs.
+# Resulting zero-size files will be worked through with patience in a
+# low-throughput mode.
+# 
 # Copyright (C) 2019 Jens Kleinjung
 #===============================================================================
 
@@ -32,7 +38,7 @@ JSONFILES := $(patsubst %.xml.gz,%.json,$(shell find ${PDBDIR}/$X -name '*.xml.g
 
 #_______________________________________________________________________________
 ## targets
-all : ${JSONFILES} 
+all : ${JSONFILES}
 
 #===============================================================================
 
