@@ -1,6 +1,9 @@
 #===============================================================================
 # Makefile : POPScomp pipeline for FunPDBe 
-# Invokes Makefile.subdir for each subdirectory
+# Invokes Makefile.subdir for each subdirectory of PDBML.
+# There are three 'mkpops' targets to improve parallelisation, because the file
+# list per subdirectory lingers obviously on the slowest one in regard to POPS
+# execution and that means only one CPU is used during that time.
 # Copyright (C) 2019 Jens Kleinjung
 #===============================================================================
 
@@ -24,6 +27,12 @@ PDBSUBDIR3 = $(notdir $(shell find ${PDBDIR}/[q-z]? -type d))
 JSONDIR = ${DBDIR}/JSON
 ## JSON subdirectories
 JSONSUBDIR = $(notdir $(shell find ${JSONDIR}/ -type d))
+## home of JSON validation output files
+JSONVALDIR = ${DBDIR}/JSONVAL
+## JSON validation subdirectories
+JSONVALSUBDIR = $(notdir $(shell find ${JSONVALDIR}/ -type d))
+## FunPDBe directory
+FUNPDBEDIR = ${ROOTDIR}/0/POPScomp/FunPDBe
 
 #_______________________________________________________________________________
 ## targets
@@ -42,9 +51,8 @@ JSONSUBDIR = $(notdir $(shell find ${JSONDIR}/ -type d))
 ## Note: PDBSUBDIR is also used for JSONDIR, because it is the reference array
 ##         that is completely known from the start.
 
-all : pdbupdate jsondir jsonsubdir getstr mkpops mkpops1 mkpops2 mkpops3 rename
-.PHONY : pdbupdate jsondir jsonsubdir getstr mkpops mkpops1 mkpops2 mkpops3 rename
-
+all : pdbupdate jsondir jsonsubdir getstr mkpops1 mkpops2 mkpops3 rename jsonvaldir jsonvalsubdir linkoutput validate
+.PHONY : pdbupdate jsondir jsonsubdir getstr mkpops1 mkpops2 mkpops3 rename jsonvaldir jsonvalsubdir linkoutput validate
 
 pdbupdate :
 	rsync -rlpt -v -z --delete rsync.ebi.ac.uk::pub/databases/pdb/data/structures/divided/XML ${DBDIR}/
@@ -64,12 +72,13 @@ linkinput :
 	$(info --- Linking structure files to output directory.)
 	cd ${PDBDIR} ; find ?? -depth -name *.xml.gz | xargs -i bash -c "ln -s ${PDBDIR}/{} ${JSONDIR}/{}"
 
-mkpops :
-	$(info --- Run POPS on all structures.)
-	for X in ${PDBSUBDIR} ; do \
-		cd ${JSONDIR}/$$X ; \
-		${MAKE} -f ../Makefile.subdir all "ROOTDIR = ${ROOTDIR}" "POPSC = ${POPSC}" "POPSFLAGS = ${POPSFLAGS}" ; \
-	done
+
+#.PHONY: mkpops $(PDBSUBDIRS)
+
+#mkpops : $(PDBSUBDIRS)
+
+#$(PDBSUBDIRS) :
+#	${MAKE} -f ../Makefile.subdir all "ROOTDIR = ${ROOTDIR}" "POPSC = ${POPSC}" "POPSFLAGS = ${POPSFLAGS}" "PDBDIR = ${PDBDIR}" $@ 
 
 mkpops1 :
 	$(info --- Run POPS on structures [a-h]?.)
@@ -95,8 +104,30 @@ mkpops3 :
 rename :
 	cd ${JSONDIR} ; find ?? -depth -name *[A-Z]*.json | xargs -n 1 rename -f -v 'y/A-Z/a-z/' {} 
 
-validate :
-	cd FunPDBe_validate ; validate_all.bash 2>&1 | tee validate_`date +%Y%m%d.%H%M`.log
+#_______________________________________________________________________________
+## validation
+jsonvaldir :
+	$(info --- Creating validation output directory.)
+	mkdir -p ${JSONVALDIR}
 
+jsonvalsubdir :
+	$(info --- Creating validation output sub-directories.)
+	cd ${JSONVALDIR} ; \
+	for X in ${PDBSUBDIR} ; do \
+		mkdir -p ${JSONVALDIR}/$$X ; \
+	done
+
+linkoutput :
+	$(info --- Linking POPS output files to validation directory.)
+	cd ${JSONDIR} ; find ?? -depth -name *.json | xargs -i bash -c "ln -s ${JSONDIR}/{} ${JSONVALDIR}/{}"
+
+
+validate :
+	$(info --- Validating all output files.)
+	for X in ${PDBSUBDIR} ; do \
+		cd ${JSONVALDIR}/$$X ; \
+		${MAKE} -i -f ../Makefile.validate all "JSONDIR = ${JSONDIR}" "X = $$X" "FUNPDBEDIR = ${FUNPDBEDIR}" ; \
+	done
+	
 #===============================================================================
 
