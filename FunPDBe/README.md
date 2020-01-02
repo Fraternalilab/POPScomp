@@ -17,6 +17,14 @@ Run POPS over the entire PDB database (in XML format).
 - POPS is invoked for each dependency file.
 - POPS errors are ignored because of the leading '-' in the command call.
 
+## Invoked *Makefile.validate*
+- A macro creates a list of all *JSON* files in the current
+	(sub)directory) and parses \*.json into \*.jsonval dependencies.
+- The python validator *funpdbe\_client.py* is invoked for each
+	dependency file.
+- If validation is successful, a symbolic link \*.jsonval is created
+	that points to \*.json.
+
 ## Parallelism
 Make is run in parallel by using the '-j' flag:
 ```
