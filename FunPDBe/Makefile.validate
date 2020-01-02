@@ -22,8 +22,7 @@ JSONVALFILES := $(patsubst %.json,%.jsonval,$(shell find ${JSONDIR}/$X -name '*.
 .SUFFIXES : .json
 
 %.jsonval : %.json
-	${FUNPDBEDIR}/funpdbe-client/funpdbe_client.py --path=$^ --mode=validate &> $^.log
-#	grep complies $^.log && ln -s $^ $@
+	${FUNPDBEDIR}/funpdbe-client/funpdbe_client.py --path=$^ --mode=validate 2>&1 | grep -q complies && ln -s $^ $@
 
 #_______________________________________________________________________________
 ## targets
