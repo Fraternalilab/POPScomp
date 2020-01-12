@@ -30,7 +30,13 @@ JSONVALFILES := $(patsubst %.json,%.jsonval,$(shell find ${JSONDIR}/$X -name '*.
 #_______________________________________________________________________________
 ## targets
 
-all : ${JSONVALFILES}
+.PHONY : rsyncval
+
+validate : ${JSONVALFILES}
+
+rsyncval :
+	rsync --copy-links -v jkleinj@193.61.207.35:/home/jkleinj/database/JSONVAL/$X/*.jsonval ~/database/JSONVAL/$X/
+	ls -1 ~/database/JSONVAL/$X/*.jsonval | xargs -i bash -c "basename -s .jsonval {}" | xargs -i bash -c "mv ~/database/JSONVAL/$X/{}.jsonval ~/database/JSONVAL/$X/{}.json"
 
 #===============================================================================
 
