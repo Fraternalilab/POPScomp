@@ -18,12 +18,19 @@ Run POPS over the entire PDB database (in XML format).
 - POPS errors are ignored because of the leading '-' in the command call.
 
 ## Invoked *Makefile.validate*
+- Run 'make validate'.
 - A macro creates a list of all *JSON* files in the current
 	(sub)directory) and parses \*.json into \*.jsonval dependencies.
 - The python validator *funpdbe\_client.py* is invoked for each
 	dependency file.
 - If validation is successful, a symbolic link \*.jsonval is created
 	that points to \*.json.
+- Run 'make rsyncval' to create a directory (remote or local) with all
+	validated source *JSON* files. This is to upload the validated
+	output to FunPDBe as one data structure.
+
+## Upload *JSON* output
+
 
 ## Parallelism
 Make is run in parallel by using the '-j' flag:

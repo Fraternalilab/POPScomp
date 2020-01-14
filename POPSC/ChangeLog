@@ -1,15 +1,15 @@
 
 - 4.2
 
-	Docker iage tested on popscomp.org server.
+	Docker image tested on popscomp.org server.
 
 - 4.1
 
-	Docker image.
+	Docker image with POPSCOMP functionality.
 
 - 4.0
 
-	POPSCOMP functionality
+	POPSCOMP functionality.
 
 - 3.2
 
@@ -20,8 +20,11 @@
 	Docker image.
 
 - 3.0.3
-	Correction in JSON output file.
-	Tested JSON output for validity.
+Tue 14 Jan 17:10:01 GMT 2020
+	Makefile pipeline for large-scale run over PDBML.
+	Run over >150000 structures (all <4MB) of PDBML.
+	Validated output.
+	Uploaded to FunPDBe server.
 
 - 3.0.2
 Fri 20 Dec 10:00:19 GMT 2019

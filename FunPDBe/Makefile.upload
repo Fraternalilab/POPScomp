@@ -1,0 +1,26 @@
+#===============================================================================
+# Makefile.upload : POPScomp pipeline for FunPDBe 
+# This script uploads the local validated JSON source files to the
+# FunPDBe site.
+# 
+# Copyright (C) 2020 Jens Kleinjung
+#===============================================================================
+
+#_______________________________________________________________________________
+## suffix rules
+.SUFFIXES :
+
+.SUFFIXES : .json
+
+#_______________________________________________________________________________
+## targets
+
+.PHONY : upload
+
+upload :
+	ftp ftp-private.ebi.ac.uk
+user: pops
+pwd: 2n8BDJiY
+
+#===============================================================================
+
