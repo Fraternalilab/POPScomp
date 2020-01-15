@@ -51,8 +51,8 @@ FUNPDBEDIR = ${ROOTDIR}/0/POPScomp/FunPDBe
 ## Note: PDBSUBDIR is also used for JSONDIR, because it is the reference array
 ##         that is completely known from the start.
 
-all : pdbupdate jsondir jsonsubdir getstr mkpops1 mkpops2 mkpops3 rename jsonvaldir jsonvalsubdir linkoutput validate rsyncval
-.PHONY : pdbupdate jsondir jsonsubdir getstr mkpops1 mkpops2 mkpops3 rename jsonvaldir jsonvalsubdir linkoutput validate rsyncval
+all : pdbupdate jsondir jsonsubdir getstr mkpops1 mkpops2 mkpops3 rename jsonvaldir jsonvalsubdir linkoutput validate rsyncval mkupload
+.PHONY : pdbupdate jsondir jsonsubdir getstr mkpops1 mkpops2 mkpops3 rename jsonvaldir jsonvalsubdir linkoutput validate rsyncval mkupload
 
 pdbupdate :
 	rsync -rlpt -v -z --delete rsync.ebi.ac.uk::pub/databases/pdb/data/structures/divided/XML ${DBDIR}/
@@ -135,6 +135,11 @@ rsyncval :
 		cd ${JSONVALDIR}/$$X ; \
 		${MAKE} -i -f ../Makefile.validate rsyncval "JSONDIR = ${JSONDIR}" "X = $$X" "FUNPDBEDIR = ${FUNPDBEDIR}" ; \
 	done
+
+#_______________________________________________________________________________
+mkupload :
+	$(info --- Uploading validated output files.)
+	${MAKE} -i -f Makefile.upload upload "JSONVALDIR = ${JSONVALDIR}"
 
 
 #===============================================================================
