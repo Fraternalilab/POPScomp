@@ -1,6 +1,6 @@
 /*==============================================================================
 arg.c : parse command line arguments
-Copyright (C) 2007-2019 Jens Kleinjung
+Copyright (C) 2007-2020 Jens Kleinjung
 Read the COPYING file for license information.
 ==============================================================================*/
 
@@ -32,8 +32,8 @@ static void print_header()
 static void print_license()
 {
     fprintf(stdout, "\nCopyright (C) and Contributions\n"
-			"\t2002-2019 Franca Fraternali (author, maintainer)\n"
-			"\t2008-2019 Jens Kleinjung (author, maintainer)\n"
+			"\t2002-2020 Franca Fraternali (author, maintainer)\n"
+			"\t2008-2020 Jens Kleinjung (author, maintainer)\n"
 			"\t2002 Kuang Lin and Valerie Hindie (translation to C)\n"
 			"\t2002 Luigi Cavallo (parametrisation)\n"
 			"POPS* is free software and comes with ABSOLUTELY NO WARRANTY.\n"

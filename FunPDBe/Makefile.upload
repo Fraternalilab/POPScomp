@@ -1,16 +1,15 @@
 #===============================================================================
 # Makefile.upload : POPScomp pipeline for FunPDBe 
 # This script uploads the local validated JSON source files to the
-# FunPDBe site.
+# FunPDBe site. Instead of the too basic 'ftp' program, the 'lftp' capable
+# of sending a directory recursively ('mirror -R') is used.
 # 
 # Copyright (C) 2020 Jens Kleinjung
 #===============================================================================
 
 #_______________________________________________________________________________
-## suffix rules
-.SUFFIXES :
-
-.SUFFIXES : .json
+## modules
+JSONVALDIR = /home/jkleinj/database/JSONVAL/
 
 #_______________________________________________________________________________
 ## targets
@@ -18,9 +17,8 @@
 .PHONY : upload
 
 upload :
-	ftp ftp-private.ebi.ac.uk
-user: pops
-pwd: 2n8BDJiY
+	lftp -e "mirror -R $(JSONVALDIR)/ /upload/" -u pops,2n8BDJiY ftp-private.ebi.ac.uk
+
 
 #===============================================================================
 

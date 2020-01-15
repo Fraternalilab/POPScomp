@@ -1,6 +1,6 @@
 /*==============================================================================
 modstring.c : modify strings
-Copyright (C) 2008 jens Kleinjung
+Copyright (C) 2008 Jens Kleinjung
 Read the COPYING file for license information.
 ==============================================================================*/
 

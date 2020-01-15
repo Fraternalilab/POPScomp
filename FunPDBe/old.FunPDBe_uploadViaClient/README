@@ -1,4 +1,7 @@
 
+This method has been deprecated.
+Uploading is now done using Makefile.upload instead. 
+
 #_______________________________________________________________________________
 
 Before depositing to the live database though, could you please send a few examples just to double-check that everything is matching the schema?

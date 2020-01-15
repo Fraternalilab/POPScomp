@@ -20,11 +20,11 @@
 	Docker image.
 
 - 3.0.3
-Tue 14 Jan 17:10:01 GMT 2020
+Wed 15 Jan 10:01:58 GMT 2020
 	Makefile pipeline for large-scale run over PDBML.
 	Run over >150000 structures (all <4MB) of PDBML.
 	Validated output.
-	Uploaded to FunPDBe server.
+	Uploaded output to FunPDBe server using 'lftp'.
 
 - 3.0.2
 Fri 20 Dec 10:00:19 GMT 2019
