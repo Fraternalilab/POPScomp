@@ -12,13 +12,14 @@ Run POPS over the entire PDB database (in XML format).
 - Loops over all subdirectories, invoking the *Makefile.subdir*.
 
 ## Invoked *Makefile.subdir*
+- Run various targets using *Makefile*.
 - A macro creates a list of all structure files in the current
     (sub)directory and parses *.xml.gz into *.json dependencies.
 - POPS is invoked for each dependency file.
 - POPS errors are ignored because of the leading '-' in the command call.
 
 ## Invoked *Makefile.validate*
-- Run 'make validate'.
+- Run 'make validate' using *Makefile*.
 - A macro creates a list of all *JSON* files in the current
 	(sub)directory) and parses \*.json into \*.jsonval dependencies.
 - The python validator *funpdbe\_client.py* is invoked for each
@@ -29,8 +30,9 @@ Run POPS over the entire PDB database (in XML format).
 	validated source *JSON* files. This is to upload the validated
 	output to FunPDBe as one data structure.
 
-## Upload *JSON* output
-
+## Invoked *Makefile.upload*
+- Run 'make mkupload' using *Makefile*.
+- Uploads add *JSON* output via 'lftp' to FunPDBe site.
 
 ## Parallelism
 Make is run in parallel by using the '-j' flag:
