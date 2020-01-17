@@ -10,12 +10,6 @@ Read the COPYING file for license information.
 #include "config.h"
 #include "sasa.h"
 
-#ifdef MPI
-#include <mpi.h>
-#endif
-extern int nodes;
-extern int my_rank;
-
 /*___________________________________________________________________________*/
 /** compute sphere surface */
 __inline__ static double sphere_surface(double atomRadius, float rSolvent)
@@ -139,14 +133,17 @@ __inline__ static int mod_atom_sasa(Str *pdb, Topol *topol, Type *type, \
     double ci1, cj1, cc2, ci3, cj3, bij, bji;
 	float atomDistance = 0.;
 	float cutoffRadius = 0.;
+	char syscmd[128];
+	int syscmdstat = 0;
 
 	/*___________________________________________________________________________*/
 	/* safety check */   
 	if (i == j) {
-		fprintf(stderr, "Problematic conformation at atoms %d %d\n",
-			pdb->atom[i].atomNumber, pdb->atom[i+1].atomNumber);
-		/*Warning("Atom distances too short? Probably incorrect POPS results!");*/
-		Error("Serious conformational problems in input structure.\nCheck the atom numbers listed above for steric clashes.");
+		sprintf(syscmd, "touch %s.json", pdb->pdbID); 
+		syscmdstat = system(syscmd);
+		fprintf(stderr, "Problem at atoms %d %d ; system exit = %d\n",
+			pdb->atom[i].atomNumber, pdb->atom[i+1].atomNumber, syscmdstat);
+		exit(0);
 	}
 
 	/*___________________________________________________________________________*/
@@ -166,9 +163,11 @@ __inline__ static int mod_atom_sasa(Str *pdb, Topol *topol, Type *type, \
 
 	/* shortest atomic bond length is .74 A in hydrogen molecule H_2 */
 	if (atomDistance < .74) {
-		fprintf(stderr, "Atom distance %d %d = %f Angstrom\n",
-			pdb->atom[i].atomNumber, pdb->atom[j].atomNumber, atomDistance);
-		Warning("Atom distance too short! Probably incorrect POPS results!");
+		sprintf(syscmd, "touch %s.json", pdb->pdbID); 
+		syscmdstat = system(syscmd);
+		fprintf(stderr, "Too short atom distance %d %d = %f A ; system exit = %d\n",
+			pdb->atom[i].atomNumber, pdb->atom[j].atomNumber, atomDistance, syscmdstat);
+		exit(0);
 	}
 
 	/*___________________________________________________________________________*/
@@ -249,35 +248,56 @@ static int compute_atom_sasa(Str *pdb, Topol *topol, Type *type, MolSasa *molSas
 	/*___________________________________________________________________________*/
 	/** 1-2 interactions along bonds 
 		using 1-2 connectivity parameters and identifiers of bond-forming atoms */
+	/*
+	#pragma omp parallel
+	{
+	*/
 	for (i = 0; i < topol->nBond; ++ i) {
         mod_atom_sasa(pdb, topol, type, molSasa, constant_sasa,
 			constant_sasa->connect_12_parameter,
 			topol->ib[i], topol->jb[i], arg->rProbe);
 	}
+	/*}*/
 
 	/*___________________________________________________________________________*/
     /** 1-3 interactions along angles */
+	/*
+	#pragma omp parallel
+	{
+	*/
     for (i = 0; i < topol->nAngle; ++ i) {
         mod_atom_sasa(pdb, topol, type, molSasa, constant_sasa,
 			constant_sasa->connect_13_parameter,
 			topol->it[i], topol->kt[i], arg->rProbe);
 	}
+	/*}*/
 
 	/*___________________________________________________________________________*/
     /* 1-4 interactions along torsion angles */
+	/*
+	#pragma omp parallel
+	{
+	*/
     for (i = 0; i < topol->nTorsion; ++ i) {
 		mod_atom_sasa(pdb, topol, type, molSasa, constant_sasa,
 			constant_sasa->connect_14_parameter,
 			topol->ip[i], topol->lp[i], arg->rProbe);
 	}
+	/*}*/
 
 	/*___________________________________________________________________________*/
     /*  >(1-4) interactions */
+	/*
+	#pragma omp parallel
+	{
+	*/
     for (i = 0; i < topol->nNonBonded; ++ i) {
         mod_atom_sasa(pdb, topol, type, molSasa, constant_sasa,
 			constant_sasa->connect_15_parameter,
 			topol->in[i], topol->jn[i], arg->rProbe);
 	}
+	/*}*/
+
 	return(0);
 }
 
@@ -294,6 +314,8 @@ static int compute_res_chain_mol_sasa(Str *pdb, Type *type, MolSasa *molSasa, \
 	molSasa->resSasa[0].atomRef = 0;
 	molSasa->chainSasa[0].first = 0;
 
+	/*#pragma omp parallel
+	{*/
     for (i = 0, j = 0, k = 0; i < pdb->nAtom; ++ i) { 
 		/*___________________________________________________________________________*/
 		/* first (==0) residue index */
@@ -355,6 +377,7 @@ static int compute_res_chain_mol_sasa(Str *pdb, Type *type, MolSasa *molSasa, \
 		molSasa->philicbSasa += molSasa->atomSasa[i].philicbSasa;
 		molSasa->bSasa += molSasa->atomSasa[i].phobicbSasa + molSasa->atomSasa[i].philicbSasa;
 	}
+	/*}*/
 	molSasa->chainSasa[k].last = i - 1;
 
 	return(0);

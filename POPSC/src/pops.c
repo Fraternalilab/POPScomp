@@ -1,7 +1,7 @@
 /*=============================================================================
 POPS* : Parameter OPtimised Surface of proteins and nucleic acids
-Copyright (C) 2002-2018 Franca Fraternali (program author, parametrisation)
-Copyright (C) 2008-2018 Jens Kleinjung (modular C code)
+Copyright (C) 2002-2020 Franca Fraternali (program author, parametrisation)
+Copyright (C) 2008-2020 Jens Kleinjung (modular C code)
 Copyright (C) 2002 Luigi Cavallo (parametrisation)
 Copyright (C) 2002 Kuang Lin and Valerie Hindie (translation to C)
 
@@ -32,17 +32,6 @@ Kleinjung, J. and Fraternali, F.
 
 #include "config.h"
 #include "pops.h"
-
-/*____________________________________________________________________________*/
-/* global variables */
-#ifdef MPI
-#include <mpi.h>
-    int my_rank; /* rank of 'this' node */
-    int nodes; /* number of nodes */
-#else
-    int my_rank = 0; 
-    int nodes = 1; 
-#endif
 
 /*____________________________________________________________________________*/
 int main(int argc, char *argv[])
@@ -81,15 +70,6 @@ int main(int argc, char *argv[])
 		ErrorSpec("Exiting", "JSONb object returned NULL");
     }
 
-    /*________________________________________________________________________*/
-    /* MPI */
-#ifdef MPI
-    /* initialize MPI routines */
-    MPI_Init(&argc, &argv);
-    MPI_Comm_size(MPI_COMM_WORLD, &nodes);
-    MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
-#endif
-
     /*____________________________________________________________________________*/
     /** parse command line arguments */
     parse_args(argc, &(argv[0]), &arg, &argpdb);
@@ -114,6 +94,7 @@ int main(int argc, char *argv[])
     /*____________________________________________________________________________*/
     /** read input structure, either XML format or classic PDB format */
 	if (! arg.silent) fprintf(stdout, "Input structure\n");
+	strcpy(pdb.pdbID, "");
 	if (arg.pdbml) {
 		read_structure_xml(&arg, &argpdb, &pdb);
 	} else {
@@ -156,7 +137,7 @@ int main(int argc, char *argv[])
 		/** print JSON output */
 		if (! arg.silent) fprintf(stdout, "SASA Output:\n");
 		make_resSasaJson(&arg, &pdb, molSasa.resSasa, resSasaJson);
-		print_json(&arg, resSasaJson);
+		print_json(&arg, &pdb, resSasaJson);
 		if (! arg.silent) fprintf(stdout, "bSASA Output:\n");
 		/* disabled, because not validated against PDBe server */
 		/* make_resbSasaJson(&arg, &pdb, molSasa.resSasa, resSasaJsonb);
@@ -165,8 +146,9 @@ int main(int argc, char *argv[])
 		/** print tabulated output */
 		if (! arg.silent) fprintf(stdout, "SASA Output:\n");
 		print_sasa(&arg, &argpdb, &pdb, &type, &topol, &molSasa, constant_sasa, -1);
-		if (! arg.silent) fprintf(stdout, "bSASA Output:\n");
-		print_bsasa(&arg, &argpdb, &pdb, &type, &topol, &molSasa, constant_sasa, -1);
+		if (! arg.silent && ! arg.rout) fprintf(stdout, "bSASA Output:\n");
+		if (! arg.rout)
+			print_bsasa(&arg, &argpdb, &pdb, &type, &topol, &molSasa, constant_sasa, -1);
 	}
 
     /*____________________________________________________________________________*/
@@ -177,9 +159,10 @@ int main(int argc, char *argv[])
     
     /*____________________________________________________________________________*/
 	/** print Solvation Free Energy */
-	if (! arg.silent) fprintf(stdout, "SFE Output:\n");
+	if (! arg.silent && ! argpdb.coarse && ! arg.jsonOut && ! arg.rout)
+		fprintf(stdout, "SFE Output:\n");
 	/* we don't have SFEs for residues yet */
-	if (! argpdb.coarse && ! arg.jsonOut)
+	if (! argpdb.coarse && ! arg.jsonOut && ! arg.rout)
 		print_sfe(&arg, &argpdb, &pdb, &type, &topol, &molSFE, constant_sigma, -1);
 
     /*____________________________________________________________________________*/
@@ -243,13 +226,6 @@ int main(int argc, char *argv[])
 	/* JSON object */
 	cJSON_Delete(resSasaJson);
 	cJSON_Delete(resSasaJsonb);
-
-    /*________________________________________________________________________*/
-    /* MPI */
-#ifdef MPI
-    /* stop MPI processes */
-    MPI_Finalize();
-#endif
 
     /*____________________________________________________________________________*/
 	/* terminate */

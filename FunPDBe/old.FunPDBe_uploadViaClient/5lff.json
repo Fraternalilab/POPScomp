@@ -1,0 +1,159 @@
+{
+	"data_resource":	"popscomp",
+	"resource_version":	"2.3.0",
+	"software_version":	"2.3.0",
+	"resource_entry_url":	"https://github.com/Fraternalilab/POPSCOMP",
+	"release_date":	"04/11/2018",
+	"pdb_id":	"1f3r",
+	"chains":	[{
+			"chain_label":	"A",
+			"residues":	[{
+					"pdb_res_label":	"1",
+					"aa_type":	"ARG",
+					"site_data":	[{
+							"site_id_ref":	1,
+							"raw_score":	190.9609,
+							"confidence_score":	0.9,
+							"confidence_classification":	"high"
+						}, {
+							"site_id_ref":	2,
+							"raw_score":	96.4534,
+							"confidence_score":	0.9,
+							"confidence_classification":	"high"
+						}, {
+							"site_id_ref":	3,
+							"raw_score":	287.4144,
+							"confidence_score":	0.9,
+							"confidence_classification":	"high"
+						}]
+				}, {
+					"pdb_res_label":	"2",
+					"aa_type":	"ALA",
+					"site_data":	[{
+							"site_id_ref":	1,
+							"raw_score":	31.8969,
+							"confidence_score":	0.9,
+							"confidence_classification":	"high"
+						}, {
+							"site_id_ref":	2,
+							"raw_score":	98.2416,
+							"confidence_score":	0.9,
+							"confidence_classification":	"high"
+						}, {
+							"site_id_ref":	3,
+							"raw_score":	130.1385,
+							"confidence_score":	0.9,
+							"confidence_classification":	"high"
+						}]
+				}, {
+					"pdb_res_label":	"3",
+					"aa_type":	"CYS",
+					"site_data":	[{
+							"site_id_ref":	1,
+							"raw_score":	16.7687,
+							"confidence_score":	0.9,
+							"confidence_classification":	"high"
+						}, {
+							"site_id_ref":	2,
+							"raw_score":	28.0099,
+							"confidence_score":	0.9,
+							"confidence_classification":	"high"
+						}, {
+							"site_id_ref":	3,
+							"raw_score":	44.7786,
+							"confidence_score":	0.9,
+							"confidence_classification":	"high"
+						}]
+				}, {
+					"pdb_res_label":	"4",
+					"aa_type":	"ARG",
+					"site_data":	[{
+							"site_id_ref":	1,
+							"raw_score":	133.1744,
+							"confidence_score":	0.9,
+							"confidence_classification":	"high"
+						}, {
+							"site_id_ref":	2,
+							"raw_score":	86.4653,
+							"confidence_score":	0.9,
+							"confidence_classification":	"high"
+						}, {
+							"site_id_ref":	3,
+							"raw_score":	219.6397,
+							"confidence_score":	0.9,
+							"confidence_classification":	"high"
+						}]
+				}, {
+					"pdb_res_label":	"5",
+					"aa_type":	"PHE",
+					"site_data":	[{
+							"site_id_ref":	1,
+							"raw_score":	20.7211,
+							"confidence_score":	0.9,
+							"confidence_classification":	"high"
+						}, {
+							"site_id_ref":	2,
+							"raw_score":	120.732,
+							"confidence_score":	0.9,
+							"confidence_classification":	"high"
+						}, {
+							"site_id_ref":	3,
+							"raw_score":	141.4531,
+							"confidence_score":	0.9,
+							"confidence_classification":	"high"
+						}]
+				}, {
+					"pdb_res_label":	"6",
+					"aa_type":	"PHE",
+					"site_data":	[{
+							"site_id_ref":	1,
+							"raw_score":	14.3348,
+							"confidence_score":	0.9,
+							"confidence_classification":	"high"
+						}, {
+							"site_id_ref":	2,
+							"raw_score":	147.5843,
+							"confidence_score":	0.9,
+							"confidence_classification":	"high"
+						}, {
+							"site_id_ref":	3,
+							"raw_score":	161.9191,
+							"confidence_score":	0.9,
+							"confidence_classification":	"high"
+						}]
+				}, {
+					"pdb_res_label":	"7",
+					"aa_type":	"CYS",
+					"site_data":	[{
+							"site_id_ref":	1,
+							"raw_score":	66.739,
+							"confidence_score":	0.9,
+							"confidence_classification":	"high"
+						}, {
+							"site_id_ref":	2,
+							"raw_score":	66.5146,
+							"confidence_score":	0.9,
+							"confidence_classification":	"high"
+						}, {
+							"site_id_ref":	3,
+							"raw_score":	133.2536,
+							"confidence_score":	0.9,
+							"confidence_classification":	"high"
+						}]
+				}]
+		}],
+	"sites":	[{
+			"site_id":	1,
+			"label":	"hydrophobic SASA [A^2]"
+		}, {
+			"site_id":	2,
+			"label":	"hydrophilic SASA [A^2]"
+		}, {
+			"site_id":	3,
+			"label":	"total SASA [A^2]"
+		}],
+	"evidence_code_ontology":	[{
+			"eco_term":	"computational combinatorial evidence used in automatic assertion",
+			"eco_code":	"ECO_0000246"
+		}]
+}

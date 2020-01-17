@@ -6,12 +6,6 @@ Read the COPYING file for license information.
 
 #include "putsasa.h"
 
-#ifdef MPI
-#include <mpi.h>
-#endif
-extern int nodes;
-extern int my_rank;
-
 /*____________________________________________________________________________*/
 /** print molecule composition */
 static void print_composition(FILE *sasaOutFile, Arg *arg, Argpdb *argpdb, Str *pdb)
@@ -170,7 +164,7 @@ static void print_residue_sasa(FILE *sasaOutFile, Arg *arg, Str *pdb, MolSasa *m
 		fprintf(sasaOutFile, "\n=== RESIDUE SASAs ===\n");
 	}
 	if (! arg->noHeaderOut || arg->rout) {
-		fprintf(sasaOutFile, "ResidNe\tChain\tResidNr\tiCode\tPhob/A^2\t\tPhil/A^2\tTotal/A^2\t\tQ(SASA)\tN(overl)\tSurf/A^2\n");
+		fprintf(sasaOutFile, "ResidNe\tChain\tResidNr\tiCode\tPhob/A^2\t\tPhil/A^2\tSASA/A^2\t\tQ(SASA)\tN(overl)\tSurf/A^2\n");
 	}
 
     for (i = 0; i < pdb->nAllResidue; ++ i) { 
@@ -210,7 +204,7 @@ static void print_chain_sasa(FILE *sasaOutFile, Arg *arg, Str *pdb, MolSasa *mol
 		fprintf(sasaOutFile, "\n=== CHAIN SASAs ===\n(Atom Range excluding hydrogen atoms)\n");
 	}
 	if (! arg->noHeaderOut || arg->rout) {
-		fprintf(sasaOutFile, "Chain\tId\tAtomRange\tResidRange\t\tPhob/A^2\t\tPhil/A^2\t\tTotal/A^2\n");
+		fprintf(sasaOutFile, "Chain\tId\tAtomRange\tResidRange\t\tPhob/A^2\t\tPhil/A^2\t\tSASA/A^2\n");
 	}
 
     for (i = 0; i < pdb->nChain; ++ i)
@@ -234,7 +228,7 @@ void print_mol_sasa(FILE *sasaOutFile, Arg *arg, MolSasa *molSasa)
 		fprintf(sasaOutFile, "\n=== MOLECULE SASAs ===\n");
 	}
 	if (! arg->noHeaderOut || arg->rout) {
-		fprintf(sasaOutFile, "Phob/A^2\t\tPhil/A^2\t\tTotal/A^2\n");
+		fprintf(sasaOutFile, "Phob/A^2\t\tPhil/A^2\t\tSASA/A^2\n");
 	}
 
     fprintf(sasaOutFile, "%10.2f\t%10.2f\t%10.2f\n",
@@ -363,7 +357,8 @@ void print_sasa(Arg *arg, Argpdb *argpdb, Str *pdb, Type *type, Topol *topol, \
 	/* atom SASA */
 	if (arg->atomOut && ! argpdb->coarse) {
 		if (arg->rout) {
-			sprintf(rpopsOutFileName, "%s.%s", arg->sasaOutFileName, "rpopsAtom");
+			sprintf(rpopsOutFileName, "%s/%s.%s",
+				arg->outDirName, arg->pdbIn, "rpopsAtom");
 			rpopsOutFile = safe_open(rpopsOutFileName, "w");
 			print_atom_sasa(rpopsOutFile, arg, pdb, molSasa);
 			fclose(rpopsOutFile);
@@ -375,7 +370,8 @@ void print_sasa(Arg *arg, Argpdb *argpdb, Str *pdb, Type *type, Topol *topol, \
 	/* residue SASA */
 	if (arg->residueOut) {
 		if (arg->rout) {
-			sprintf(rpopsOutFileName, "%s.%s", arg->sasaOutFileName, "rpopsResidue");
+			sprintf(rpopsOutFileName, "%s/%s.%s",
+				arg->outDirName, arg->pdbIn, "rpopsResidue");
 			rpopsOutFile = safe_open(rpopsOutFileName, "w");
 			print_residue_sasa(rpopsOutFile, arg, pdb, molSasa);
 			fclose(rpopsOutFile);
@@ -387,7 +383,8 @@ void print_sasa(Arg *arg, Argpdb *argpdb, Str *pdb, Type *type, Topol *topol, \
 	/* chain SASA */
 	if (arg->chainOut) {
 		if (arg->rout) {
-			sprintf(rpopsOutFileName, "%s.%s", arg->sasaOutFileName, "rpopsChain");
+			sprintf(rpopsOutFileName, "%s/%s.%s",
+				arg->outDirName, arg->pdbIn, "rpopsChain");
 			rpopsOutFile = safe_open(rpopsOutFileName, "w");
 			print_chain_sasa(rpopsOutFile, arg, pdb, molSasa);
 			fclose(rpopsOutFile);
@@ -399,7 +396,8 @@ void print_sasa(Arg *arg, Argpdb *argpdb, Str *pdb, Type *type, Topol *topol, \
 	/* molecule SASA */
 	if (! arg->noTotalOut) {
 		if (arg->rout) {
-			sprintf(rpopsOutFileName, "%s.%s", arg->sasaOutFileName, "rpopsMolecule");
+			sprintf(rpopsOutFileName, "%s/%s.%s",
+				arg->outDirName, arg->pdbIn, "rpopsMolecule");
 			rpopsOutFile = safe_open(rpopsOutFileName, "w");
 			print_mol_sasa(rpopsOutFile, arg, molSasa);
 			fclose(rpopsOutFile);

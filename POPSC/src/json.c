@@ -9,24 +9,26 @@ Read the COPYING file for license information.
 #include "json.h"
 #include "cJSON.h"
 
-#ifdef MPI
-#include <mpi.h>
-#endif
-extern int nodes;
-extern int my_rank;
-
 /*____________________________________________________________________________*/
-void print_json(Arg *arg, cJSON *json)
+void print_json(Arg *arg, Str *pdb, cJSON *json)
 {
 	char outpath[256];
 	/* print JSON object to string */
 	char *popsOutJson = cJSON_Print(json);
+	char *idOut;
+
+	/* use input file basename as pdbID output name */
+	idOut = pdb->pdbID;
 
 	if (! arg->silent)
-		fprintf(stdout, "\tSASA of input molecule: %s\n", arg->jsonOutFileName);
+		fprintf(stdout, "\tSASA of input molecule: %s.json\n", idOut);
 
 	/* print string to file */
-	sprintf(outpath, "%s/%s", arg->outDirName, arg->jsonOutFileName);
+	if (arg->outDirName) {
+		sprintf(outpath, "%s/%s.json", arg->outDirName, idOut);
+	} else {
+		sprintf(outpath, "%s.json", idOut);
+	}
 	arg->jsonOutFile = safe_open(outpath, "w");
 	fprintf(arg->jsonOutFile, "%s", popsOutJson);
 	fclose(arg->jsonOutFile);
@@ -42,7 +44,6 @@ void print_json(Arg *arg, cJSON *json)
 void make_resSasaJson(Arg *arg, Str *pdb, ResSasa *resSasa, cJSON *json)
 {
 	char reslab[8];
-
 	/* 'json' is the root object to which everything else will be attached */
 
 	/* indices to iterate through arrays defined below */
@@ -51,12 +52,12 @@ void make_resSasaJson(Arg *arg, Str *pdb, ResSasa *resSasa, cJSON *json)
 	unsigned int r = 0; /* residue index */
 
 	/* header: attached to 'json' */
-	cJSON_AddStringToObject(json, "data_resource", "popscomp");
-	cJSON_AddStringToObject(json, "resource_version", "2.3.0");
-	cJSON_AddStringToObject(json, "software_version", "2.3.0");
-	cJSON_AddStringToObject(json, "resource_entry_url", "https://github.com/Fraternalilab/POPSCOMP");
-	cJSON_AddStringToObject(json, "release_date", "04/11/2018");
-	cJSON_AddStringToObject(json, "pdb_id", "1f3r");
+	cJSON_AddStringToObject(json, "data_resource", "POPScomp_PDBML");
+	cJSON_AddStringToObject(json, "resource_version", "20191123");
+	cJSON_AddStringToObject(json, "software_version", "3.0.1");
+	cJSON_AddStringToObject(json, "resource_entry_url", "https://github.com/Fraternalilab/POPScomp");
+	cJSON_AddStringToObject(json, "release_date", "23/11/2019");
+	cJSON_AddStringToObject(json, "pdb_id", pdb->pdbID);
 
 	/* add Chain array */
 	cJSON *chains = cJSON_AddArrayToObject(json, "chains");
@@ -179,13 +180,19 @@ void make_resSasaJson(Arg *arg, Str *pdb, ResSasa *resSasa, cJSON *json)
 }
 
 /*____________________________________________________________________________*/
-void print_jsonb(Arg *arg, cJSON *jsonb)
+void print_jsonb(Arg *arg, Str *pdb, cJSON *jsonb)
 {
 	/* print JSON object to string */
 	char *popsbOutJson = cJSON_Print(jsonb);
+	char *idOut;
+
+	/* use input file basename as pdbID output name */
+	idOut = pdb->pdbID;
+	
+	sprintf(arg->jsonbOutFileName, "%s/%s.b.json", arg->outDirName, idOut);
 
 	if (! arg->silent)
-		fprintf(stdout, "\tbSASA of input molecule: %s\n", arg->jsonbOutFileName);
+		fprintf(stdout, "\tbSASA of input molecule: %s.b.json\n", idOut);
 
 	/* print string to file */
 	arg->jsonbOutFile = safe_open(arg->jsonbOutFileName, "w");

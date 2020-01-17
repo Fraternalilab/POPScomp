@@ -6,12 +6,6 @@ Read the COPYING file for license information.
 
 #include "safe.h"
 
-#ifdef MPI
-#include <mpi.h>
-#endif
-extern int nodes;
-extern int my_rank;
-
 /*___________________________________________________________________________*/
 /** safe file opening */
 FILE *safe_open(const char *name, const char *mode)
