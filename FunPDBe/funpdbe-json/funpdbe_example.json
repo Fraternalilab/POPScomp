@@ -1,0 +1,45 @@
+{
+  "data_resource": "TestGroup",
+  "resource_version": "1.0.0",
+  "software_version": "1.0.0",
+  "resource_entry_url": "https://partnerdb.org/0001",
+  "release_date": "10/10/2010",
+  "pdb_id": "1abc",
+  "chains": [
+    {
+      "chain_label": "A",
+      "additional_chain_annotations": {},
+      "residues": [
+        {
+          "pdb_res_label": ,
+          "aa_type": "ALA",
+          "additional_residue_annotations": {},
+          "site_data": [
+            {
+              "site_id_ref": 1,
+              "raw_score": 0.7,
+              "confidence_score": 0.9,
+              "confidence_classification": "high"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "sites": [
+    {
+      "site_id": 1,
+      "label": "ligand_binding_site",
+      "source_database": "pdb",
+      "source_accession": "1abc",
+      "source_release_date": "01/01/2017"
+    }
+  ],
+  "additional_entry_annotations": {},
+  "evidence_code_ontology": [
+    {
+      "eco_term": "computational combinatorial evidence used in automatic assertion",
+      "eco_code": "ECO_0000246"
+    }
+  ]
+}

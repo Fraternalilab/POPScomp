@@ -1,7 +1,7 @@
 /*=============================================================================
 topol : molecular topology
-Copyright (C) 2002-2018 Franca Fraternali
-Copyright (C) 2008-2018 Jens Kleinjung
+Copyright (C) 2002 Franca Fraternali
+Copyright (C) 2008 Jens Kleinjung
 Copyright (C) 2002 Luigi Cavallo
 Copyright (C) 2002 Kuang Lin and Valerie Hindie
 Read the COPYING file for license information.
@@ -9,12 +9,6 @@ Read the COPYING file for license information.
 
 #include "config.h"
 #include "topol.h"
-
-#ifdef MPI
-#include <mpi.h>
-#endif
-extern int nodes;
-extern int my_rank;
 
 /*___________________________________________________________________________*/
 /** print bonded and non-bonded atom pair */
@@ -51,33 +45,6 @@ __inline__ static void print_torsion(Str *pdb, int t1, int t2, int t3, int t4)
 void init_topology(Str *pdb, Topol *topol)
 {
 	unsigned int i;
-#ifdef MPI
-    int dimx = (int)ceil(pdb->nAtom / nodes); /* dimension of MPI loop */
-    int nodeBondState[dimx]; /* vectors holding results of this node */
-    int nodeNeighbourState[dimx];
-    float nodeNeighbourPar[dimx];
-
-	/* assuming an upper limit of 63 bonded interactions per atom */
-	topol->bondState = alloc_mat2D_int(topol->bondState, (dimx * nodes), 64);
-	/* assuming an upper limit of 255 non-bonded interactions per atom */
-	topol->neighbourState = alloc_mat2D_int(topol->neighbourState, (dimx * nodes), 1024);
-	/* assuming an upper limit of 255 neighbours per atom */
-	topol->neighbourPar = alloc_mat2D_float(topol->neighbourPar, (dimx * nodes), 1024);
-	topol->neighbourPar = alloc_mat2D_float(topol->neighbourPar, (dimx * nodes), 1024);
-
-    for (i = 0; i < dimx; ++ i) {
-        /* skip excess loops */
-        /*if (((my_rank * dimx) + i) < pdb->nAtom) {*/
-		nodeBondState[i] = 0;
-		nodeNeighbourState[i] = 0;
-		nodeNeighbourPar[i] = 0.;
-	}
-
-	/* communicate data between all nodes */
-    MPI_Allgather(nodeBondState, dimx, MPI_FLOAT, topol->bondState, dimx, MPI_FLOAT, MPI_COMM_WORLD);
-    MPI_Allgather(nodeNeighbourState, dimx, MPI_FLOAT, topol->neighbourState, dimx, MPI_FLOAT, MPI_COMM_WORLD);
-    MPI_Allgather(nodeNeighbourPar, dimx, MPI_FLOAT, topol->neighbourPar, dimx, MPI_FLOAT, MPI_COMM_WORLD);
-#else
 	/* assuming an upper limit of 63 bonded interactions per atom */
 	topol->bondState = alloc_mat2D_int(topol->bondState, pdb->nAtom, 64);
 	/* assuming an upper limit of 255 non-bonded interactions per atom */
@@ -96,19 +63,14 @@ void init_topology(Str *pdb, Topol *topol)
 		topol->interfaceNn[i] = -1; /* no nearest neighbour recorded */
 		topol->interfaceNnDist[i] = FLT_MAX; /* distance to nearest neighbour */
 	}
-#endif
 }
 
 /*___________________________________________________________________________*/
 /** free topology */
 void free_topology(Str *pdb, Topol *topol)
 {
-#ifdef MPI
-	int dimx = (int)ceil(pdb->nAtom / nodes);
-	int dimMat2D = dimx * nodes;
-#else
 	int dimMat2D = pdb->nAtom;
-#endif
+
 	/* topol */
 	free(topol->ib); /* bond */
 	free(topol->jb);
@@ -189,88 +151,6 @@ int get_bonds(Str *pdb, Type *type, Topol *topol, ConstantSasa *constant_sasa, A
 	float cutoffFactor; /* pre-factor for cutoff radius calculation */
 
 	/*___________________________________________________________________________*/
-	/* MPI */
-#ifdef MPI
-	int xy;
-	int *node_ib = safe_malloc(allocated * sizeof(int));
-	int *node_jb = safe_malloc(allocated * sizeof(int));
-	int node_nBond = 0;
-	int nodes_nBond[nodes];
-	/* total loop space is 1-dimensional square matrix of dimension (pdb->nAtom - 1) */
-	int dimxy = (int)ceil((pdb->nAtom - 1) * (pdb->nAtom - 1) / nodes);
-
-	/* for all pairwise atom combinations (as one-dimensional loop) */
-	for (xy = 0; xy < dimxy; ++ xy) {
-		/* to read in atom data, we need to refer to the original indices */
-		/* matrix row index i */
-		int i = floor(((my_rank * (pdb->nAtom - 1)) + xy) / (pdb->nAtom - 1));
-		/* matrix column index j */
-		int j = xy % (pdb->nAtom - 1);
-
-		/* coarse grained 'P' needs a more generous cutoff */
-		if (argpdb->coarse && (strncmp(pdb->atom[i].atomName, " P  ", 4) == 0))
-			cutoffFactor = 0.7;
-		else
-			cutoffFactor = 0.5;
-
-		/* if atoms i,j in the same or proximate residue */
-		if (((pdb->atom[j].residueNumber == pdb->atom[i].residueNumber) || \
-			(pdb->atom[j].residueNumber == pdb->atom[i].residueNumber + 1)) && \
-			 strcmp(pdb->atom[j].chainIdentifier, pdb->atom[i].chainIdentifier) == 0) {
-
-			/* add bond if atom distance shorter than cutoff */
-			/* atoms bonded if dist =< 0.5 * (atomRadius_i + atomRadius_j) */
-			atomDistance = atom_distance(pdb, i, j);
-			cutoffRadius = (cutoffFactor * \
-							(constant_sasa[0].atomDataSasa[type->residueType[i]][type->atomType[i]].radius + \
-							 constant_sasa[0].atomDataSasa[type->residueType[j]][type->atomType[j]].radius));
-
-			if (atomDistance < cutoffRadius) {
-				/* assign arrays of bonded atoms ib-jb */
-				node_ib[node_nBond] = i;
-				node_jb[node_nBond] = j;
-
-				++ node_nBond; /* increment bond index */
-
-				/* record 1,2-bond in bondState matrix */
-				/* first index is atom number, second index is mixed:
-					array element '0' records the total number of bonded atoms,
-					then each bonded atom's ID number is added to that array position;
-					the result is a list of all bonded atom IDs and their total number at '0' */
-/*
-				++ topol->bondState[i][0];
-				topol->bondState[i][topol->bondState[i][0]] = j;
-				++ topol->bondState[j][0];
-				topol->bondState[j][topol->bondState[j][0]] = i;
-*/
-				/*print_pair(pdb, i, j);*/
-
-				/* add memory if needed */ 
-				if (node_nBond == allocated) {
-					allocated += 64;
-					node_ib = safe_realloc(node_ib, allocated * sizeof(int));
-					node_jb = safe_realloc(node_jb, allocated * sizeof(int));
-				}
-
-				/* warn if atoms too close */
-				if (atomDistance < 0.5)
-					fprintf(stderr, "Warning: Atoms %d %d too close\n", i, j);
-			}
-		}
-	}
-
-	MPI_Allgather(&node_nBond, 1, MPI_INT, nodes_nBond, 1, MPI_INT, MPI_COMM_WORLD);
-
-	/* assert that allocation is equal across nodes,
-		otherwise make it equal */
-	MPI_Allgather(node_ib, 1, MPI_INT, nodes_ib, 1, MPI_INT, MPI_COMM_WORLD);
-	MPI_Allgather(node_jb, 1, MPI_INT, nodes_jb, 1, MPI_INT, MPI_COMM_WORLD);
-
-	/* construct 'topol' arrays from results on nodes */
-
-	/*___________________________________________________________________________*/
-	/* non-MPI */
-#else
 	unsigned int i, j;
 	/* allocate memory */
 	topol->ib = safe_malloc(allocated * sizeof(int));
@@ -331,8 +211,6 @@ int get_bonds(Str *pdb, Type *type, Topol *topol, ConstantSasa *constant_sasa, A
 			}
         }
     }
-#endif
-
 	return(0);
 }
 
@@ -688,8 +566,15 @@ int nonbonded_overlaps(Str *pdb, Type *type, Topol *topol, ConstantSasa *constan
 /** derive molecular topology */
 int get_topology(Str *pdb, Type *type, Topol *topol, ConstantSasa *constant_sasa, Argpdb *argpdb, Arg *arg)
 {
-	if (pdb->nAtom < 2)
-		Error("Need at least 2 atoms! Try to run POPS* using the '--coarse' switch.");
+	char syscmd[128];
+	int syscmdstat = 0;
+
+	if (pdb->nAtom < 2) {
+		sprintf(syscmd, "touch %s.json", pdb->pdbID); 
+		syscmdstat = system(syscmd);
+		fprintf(stderr, "< 2 atoms: try '--coarse' switch ; system exit = %d\n",
+			syscmdstat);
+	}
 
 	/* the bondState matrix records, which atom pairs are bonded 
 	   (bond distances 1,2 1,3 1,4); the rest has non-bonded interactions 
@@ -703,22 +588,37 @@ int get_topology(Str *pdb, Type *type, Topol *topol, ConstantSasa *constant_sasa
 #if DEBUG>1
 	fprintf(stderr, "%s:%d: nBond = %d\n", __FILE__, __LINE__, topol->nBond);
 #endif
-	if (topol->nBond < 2)
-		Error("Need at least 2 bonds! Try to run POPS* using the '--coarse' switch.");
+	if (topol->nBond < 2) {
+		sprintf(syscmd, "touch %s.json", pdb->pdbID); 
+		syscmdstat = system(syscmd);
+		fprintf(stderr, "< 2 bonds: try '--coarse' switch ; system exit = %d\n",
+			syscmdstat);
+		exit(0);
+	}
 
 	get_angles(pdb, topol); /* calculate angles (from bonds) */
 #if DEBUG>1
 	fprintf(stderr, "%s:%d: nAngle = %d\n", __FILE__, __LINE__, topol->nAngle);
 #endif
-	if (topol->nAngle < 2)
-		Error("Need at least 2 angles! Try to run POPS* using the '--coarse' switch.\n");
+	if (topol->nAngle < 2) {
+		sprintf(syscmd, "touch %s.json", pdb->pdbID); 
+		syscmdstat = system(syscmd);
+		fprintf(stderr, "< 2 angles: try '--coarse' switch ; system exit = %d\n",
+			syscmdstat);
+		exit(0);
+	}
 
 	get_torsions(pdb, type, topol, constant_sasa); /* calculate torsions (from angles) */
 #if DEBUG>1
 	fprintf(stderr, "%s:%d: nTorsion = %d\n", __FILE__, __LINE__, topol->nTorsion);
 #endif
-	if (topol->nTorsion < 2)
-		Error("Need at least 2 torsions! Try to run POPS* using the '--coarse' switch.\n");
+	if (topol->nTorsion < 2) {
+		sprintf(syscmd, "touch %s.json", pdb->pdbID); 
+		syscmdstat = system(syscmd);
+		fprintf(stderr, "< 2 torsions: try '--coarse' switch ; system exit = %d\n",
+			syscmdstat);
+		exit(0);
+	}
 
 	nonbonded_overlaps(pdb, type, topol, constant_sasa, arg); /* calculate overlapping atoms */
 #if DEBUG>1

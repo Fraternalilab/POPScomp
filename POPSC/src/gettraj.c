@@ -6,12 +6,6 @@ Read the COPYING file for license information.
 
 #include "gettraj.h"
 
-#ifdef MPI
-#include <mpi.h>
-#endif
-extern int nodes;
-extern int my_rank;
-
 /*____________________________________________________________________________*/
 /** compile pattern trajectory */
 static void compile_pattern_trajectory(regex_t *regex)

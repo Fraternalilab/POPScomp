@@ -1,0 +1,42 @@
+#===============================================================================
+# Makefile.validate : POPScomp pipeline for FunPDBe 
+# This script is invoked for each PDBML subdirectory by the master Makefile.
+# POPSed PDBML files (i.e. *.json files in the 'JSON/' output database)
+# are validated using a python script.
+# Only non-zero size files are checked and those that pass are flagged by
+# a new '%.jsonval -> %.json' symbolic link. That way, the JSONVAL database
+# contains only %.jsonval files that are (going to be) uploaded to the official
+# FunPDBe repository and serves as a local reference mirror.
+# 
+# Copyright (C) 2019 Jens Kleinjung
+#===============================================================================
+
+#_______________________________________________________________________________
+## macros
+JSONVALFILES := $(patsubst %.json,%.jsonval,$(shell find ${JSONDIR}/$X -name '*.json' -size '+0c' -printf "%f\n"))
+
+#_______________________________________________________________________________
+## suffix rules
+.SUFFIXES :
+
+.SUFFIXES : .json
+
+%.jsonval : %.json
+	@echo $^
+	@sleep 1
+	-@${FUNPDBEDIR}/funpdbe-client/funpdbe_client.py --path=$^ --mode=validate 2>&1 | grep -q complies && ln -s $^ $@
+	@sleep 1
+
+#_______________________________________________________________________________
+## targets
+
+.PHONY : rsyncval
+
+validate : ${JSONVALFILES}
+
+rsyncval :
+	rsync --copy-links -v jkleinj@193.61.207.35:/home/jkleinj/database/JSONVAL/$X/*.jsonval ~/database/JSONVAL/$X/
+	ls -1 ~/database/JSONVAL/$X/*.jsonval | xargs -i bash -c "basename -s .jsonval {}" | xargs -i bash -c "mv ~/database/JSONVAL/$X/{}.jsonval ~/database/JSONVAL/$X/{}.json"
+
+#===============================================================================
+

@@ -1,7 +1,11 @@
 #! /usr/bin/R
 
 #===============================================================================
-# POPSCOMP in R, first version specific for PKM2 
+# POPSR package
+# popscompR: Processing of complex structures to compute SASA difference values
+# Returns a list of POPS output files of single-chain and pair-chain structures
+#   plus a list of per-chain difference values.
+# (C) 2019 Jens Kleinjung and Franca Fraternali
 #===============================================================================
 
 library("bio3d");
@@ -9,140 +13,139 @@ library("bio3d");
 ## http://thegrantlab.org/bio3d/tutorials/structure-analysis
 
 library("parallel");
-## number of cores
-nCore = detectCores() - 1;
-
-## all PDB structures
-inFileDir = ".";
-inFileName = list.files(path = inFileDir, full.names = FALSE, pattern = 'centroid.pdb$');
-
-## general output directory
-outDir = "popscomp";
-dir.create(file.path(".", outDir), showWarnings = FALSE);
 
 #_______________________________________________________________________________
-## process domains 
-for (i in 1:length(inFileName)) {
-	pdb = read.pdb(paste(inFileDir, inFileName[i], sep = "/"));
+#' sasa : An S4 class for SASA data
+#' @slot valueAtomPairchain: SASA values of paired chain at atom resolution
+#' @slot valueAtomChain1: same for the first isolated chain
+#' @slot valueAtomChain2: same for the second isolated chain
+#' ... equally for the other resolutions 'Residue', 'Chain' and 'Molecule'
+#' @slot diffAtomChain1: SASA differences of chain 1 at atom resolution
+#' @slot diffAtomChain2: SASA differences of chain 2 at atom resolution
+#' ... equally for the other resolutions 'Residue' and 'Chain'
+sasa <- setClass(
+  "sasa",
 
-	## structure-specific output directory
-	outStrDir = substr(inFileName[i], 1, nchar(inFileName[i]) - 4);
-	dir.create(file.path(outDir, outStrDir), showWarnings = FALSE);
+  slots = c(
+    valueAtomPairchain = "data.frame",
+    valueAtomChain1 = "data.frame",
+    valueAtomChain2 = "data.frame",
+    valueResiduePairchain = "data.frame",
+    valueResidueChain1 = "data.frame",
+    valueResidueChain2 = "data.frame",
+    valueChainPairchain = "data.frame",
+    valueChainChain1 = "data.frame",
+    valueChainChain2 = "data.frame",
+    valueMoleculePairchain = "data.frame",
+    valueMoleculeChain1 = "data.frame",
+    valueMoleculeChain2 = "data.frame",
+    diffAtomChain1 = "data.frame",
+    diffAtomChain2 = "data.frame",
+    diffResidueChain1 = "data.frame",
+    diffResidueChain2 = "data.frame",
+    diffChainChain1 = "data.frame",
+    diffChainChain2 = "data.frame"
+  )
+)
 
-	#_______________________________________________________________________________
-	## rename chains of domains
-	## rename chain of N-terminal domain (first residue set to 1, min is 1)
-	pdb$atom$chain[pdb$atom$resno %in% c(1:47)] = "N";
-	## create PDB of N-terminal domain
-	chainN = atom.select(pdb, resno = c(1:47));
-    pdbChainN = trim.pdb(pdb, chainN);
+#_______________________________________________________________________________
+## POPScomp function implemented in R
+##+++++
+## It might be better to split popscomp.R into a shell-oritend part and two
+##   other functions that return the sasa values and differences
+##+++++
+popscompR = function(inputPDB, outdir) {
+	## number of cores
+	nCore = detectCores() - 1;
 
-	## rename chain of A domain
-	pdb$atom$chain[pdb$atom$resno %in% c(48:116, 221:388)] = "A";
-	## create PDB of A domain
-	chainA = atom.select(pdb, resno = c(48:116, 221:388));
-    pdbChainA = trim.pdb(pdb, chainA);
+	#________________________________________________________________________________
+	## split input PDB into chains
+	chain.files = pdbsplit(paste(outdir, inputPDB, sep = "/"),  path = outdir, multi = FALSE);
+	## short names
+	chain.files.short = sub('\\.pdb$', '', basename(chain.files));
 
-	## rename chain of B domain
-	pdb$atom$chain[pdb$atom$resno %in% c(117:220)] = "B";
-	## create PDB of B domain
-	chainB = atom.select(pdb, resno = c(117:220));
-    pdbChainB = trim.pdb(pdb, chainB);
+	#________________________________________________________________________________
+	## run POPS over all single chains via system (= shell) call
+	sapply(1:length(chain.files), function(x) {
+	  command = paste0("pops --outDirName ", outdir,
+	                   " --rout --atomOut --residueOut --chainOut ",
+	                   "--pdb ", chain.files[x], " 1> ", outdir, "/POPScomp_chain", x, ".o",
+	                   " 2> ", outdir, "/POPScomp_chain", x, ".e");
+	  system_status = system(command);
+	  paste("Exit code:", system_status);
+	});
 
-	## rename chain of C domain (last residue set to 550, max is 533)
-	pdb$atom$chain[pdb$atom$resno %in% c(389:550)] = "C";
-	## create PDB of C domain
-	chainC = atom.select(pdb, resno = c(389:550));
-    pdbChainC = trim.pdb(pdb, chainC);
+	#________________________________________________________________________________
+	## create PDB files for all pairwise chain combinations
+	pair.cmbn = combn(length(chain.files), 2);
+	chainpair.files = list();
+	chainpair.files = sapply(1:dim(pair.cmbn)[2], function(x) {
+	  chainpair.files[[x]] = paste0(outdir, "/",
+	                          chain.files.short[pair.cmbn[1, x]], "-",
+	                          chain.files.short[pair.cmbn[2, x]], ".pdb");
+	  command = paste("cat", chain.files[pair.cmbn[1, x]],
+	                         chain.files[pair.cmbn[2, x]], ">",
+	                         chainpair.files[[x]]);
+	  system_status = system(command);
+	  paste("Chain pair:", x, "; Exit code:", system_status);
+	  return(chainpair.files);
+	});
 
-	#_______________________________________________________________________________
-	## write out complete PDB structure: all domains with renamed chain(s)
-	outFileNameComplete = paste("pdb", ".complete", ".pdb", sep = "");
-	write.pdb(pdb, file = paste(outDir, outStrDir, outFileNameComplete, sep = "/"));
+	#________________________________________________________________________________
+	## run POPS over all pairwise chain combinations via system (= shell) call
+	sapply(1:length(chainpair.files), function(x) {
+	  command = paste0("pops --outDirName ", outdir,
+	                  " --rout --atomOut --residueOut --chainOut ",
+	                  "--pdb ", chainpair.files[x], " 1> ", outdir, "/POPScomp_chainpair", x, ".o",
+                                                  " 2> ", outdir, "/POPScomp_chainpair", x, ".e");
+	  system_status = system(command);
+	  paste("Exit code:", system_status);
+	});
 
-	#_______________________________________________________________________________
-	## write out single domains
-	## N-terminal domain
-	outFileNameDom = list();
-	doms = list(pdbChainN, pdbChainA, pdbChainB, pdbChainC);
-	domsName = c("Ndom", "Adom", "Bdom", "Cdom");
+	#________________________________________________________________________________
+	## read SASA files
+  ## the structure will be a list (all chain pairs) of lists (chainpair12, chain1, chain2)
+	rpopsLevel = c(".rpopsAtom", ".rpopsResidue", ".rpopsChain", ".rpopsMolecule");
+  ## sasapair.level is a list with elements at resolutions: atom, residue, chain, molecule
+	sasapair.level.files = lapply(1:length(rpopsLevel), function(y) {
+	  ## 'sasapair' is a list with a chain pair SASA and the two single chain SASAs as elements
+	  sasapair.files = lapply(1:dim(pair.cmbn)[2], function(x) {
+      sasa.files = list();
+      sasa.files[[1]] = read.table(paste0(chainpair.files[x], rpopsLevel[y]), header = TRUE);
+      sasa.files[[2]] = read.table(paste0(outdir, "/", chain.files.short[pair.cmbn[1, x]],
+                                          ".pdb", rpopsLevel[y]), header = TRUE);
+      sasa.files[[3]] = read.table(paste0(outdir, "/", chain.files.short[pair.cmbn[2, x]],
+                                          ".pdb", rpopsLevel[y]), header = TRUE);
+      names(sasa.files) = c(paste0(sasa.files[[2]][1, "Chain"], sasa.files[[3]][1, "Chain"]),
+                            as.character(sasa.files[[2]][1, "Chain"]),
+                            as.character(sasa.files[[3]][1, "Chain"]));
+      return(sasa.files);
+    });
+  });
+	names(sasapair.level.files) = rpopsLevel;
 
-	outFileNameDom[[1]] = paste(domsName[1], "pdb", sep = ".");
-	write.pdb(doms[[1]], file = paste(outDir, outStrDir, outFileNameDom[1], sep = "/"));
+	#________________________________________________________________________________
+	## compute SASA differences (POPScomp values)
+	## merging first the single-chain with the pair-chain values
+	## by using the 'AtomNr' (atom serial number), because that refers to the line of
+	##   the coordinate entry and is therefore unique and contiguous
+	bynameLevel = c("AtomNr", "Chain", "Id");
+	sasadiff.level.tables = lapply(1:(length(rpopsLevel) - 1), function(y) {
+	  ## sasadiff is a list of SASA difference values for two chains as list elements
+		sasadiff.tables = lapply(1:dim(pair.cmbn)[2], function(x) {
+	    sasa.diff = list();
+	    ## SASA difference first chain
+	    sasa.diff[[1]] = merge(sasapair.level.files[[y]][[x]][[2]], sasapair.level.files[[y]][[x]][[1]],
+	                           by = bynameLevel[y], all = FALSE);
+	    sasa.diff[[1]]$diff = sasa.diff[[1]]$SASA.A.2.x - sasa.diff[[1]]$SASA.A.2.y;
+	    ## SASA difference second chain
+	    sasa.diff[[2]] = merge(sasapair.level.files[[y]][[x]][[3]], sasapair.level.files[[y]][[x]][[1]],
+	                           by = bynameLevel[y], all = FALSE);
+	    sasa.diff[[2]]$diff = sasa.diff[[2]]$SASA.A.2.x - sasa.diff[[2]]$SASA.A.2.y;
+	  });
+	});
 
-	## A domain
-	outFileNameDom[[2]] = paste(domsName[2], "pdb", sep = ".");
-	write.pdb(doms[[2]], file = paste(outDir, outStrDir, outFileNameDom[[2]], sep = "/"));
-
-	## B domain
-	outFileNameDom[[3]] = paste(domsName[3], "pdb", sep = ".");
-	write.pdb(doms[[3]], file = paste(outDir, outStrDir, outFileNameDom[[3]], sep = "/"));
-
-	## C domain
-	outFileNameDom[[4]] = paste(domsName[4], "pdb", sep = ".");
-	write.pdb(doms[[4]], file = paste(outDir, outStrDir, outFileNameDom[[4]], sep = "/"));
-
-	#_______________________________________________________________________________
-	## write out all domain pairs
-	pair.cbn = combn(1:4, 2, simplify = FALSE);
-	outFileNameDomPair = list();
-
-	for (j in 1:length(pair.cbn)) {
-		## concatenate domains
-		domPair = cat.pdb(doms[[pair.cbn[[j]][1]]], doms[[pair.cbn[[j]][2]]],
-							renumber = TRUE, rechain = FALSE);
-		outFileNameDomPair[[j]] = paste(
-						domsName[pair.cbn[[j]][1]],
-						domsName[pair.cbn[[j]][2]],
-						"pdb", sep = ".");
-		write.pdb(domPair, file = paste(outDir, outStrDir, outFileNameDomPair[[j]], sep = "/"));
-	}
-
-	#_______________________________________________________________________________
-	## POPS all of the above structures (complete, single domain, paired domains)
-	## all filenames
-	outFileNameAll = list(outFileNameComplete, outFileNameDom, outFileNameDomPair);
-	## simplify list structure
-	outFileNameAll.l = as.list(unlist(outFileNameAll));
-	outFileNameDirAll.l = as.list(paste(outDir, outStrDir, unlist(outFileNameAll), sep = "/"));
-
-	#_______________________________________________________________________________
-	## parallelisation
-	## initiate cluster for parallel computation 
-	#clu = makeCluster(nCore);
-	## make parallel functions see predefined variables
-	#clusterExport(clu, c("outFileNameDirAll.l"));
-
-	#_______________________________________________________________________________
-	## POPS all derived structures of one input structure
-	#parLapply(clu, outFileNameDirAll.l, function(x) {
-	#	print(paste("./pops --pdb ", x, " --popsOut ", x, ".out", " --popsbOut ", x, ".bout", " --sigmaOut ", x, ".sout", sep = "")); });
-	lapply(outFileNameDirAll.l, function(x) {
-		system(paste("./pops --pdb ", x, " --popsOut ", x, ".out", " --popsbOut ", x, ".bout", " --sigmaOut ", x, ".sout", " --coarse --rout", sep = "")); });
-		#print(paste("./pops --pdb ", x, " --popsOut ", x, ".out", " --popsbOut ", x, ".bout", " --sigmaOut ", x, ".sout", " --coarse --rout", sep = "")); });
-
-	## release memory of parallelised structure
-	#stopCluster(clu);
-
-	#_______________________________________________________________________________
-	## POPSCOMP : compute $DeltaSASA in complex [(X + Y) - XY]
-	## for all domain pairs
-	outFileNameDeltaSasa = list();
-	for (j in 1:length(pair.cbn)) {
-		domXY.molSasa.outFileName = paste(outFileNameDomPair[[j]], "out.rpopsMolecule", sep = ".");
-		domXY.molSasa = read.table(paste(outDir, outStrDir, domXY.molSasa.outFileName, sep = "/"), header = TRUE);
-		domX.molSasa.outFileName = paste(outFileNameDom[[pair.cbn[[j]][1]]], "out.rpopsMolecule", sep = ".");
-		domX.molSasa = read.table(paste(outDir, outStrDir, domX.molSasa.outFileName, sep = "/"), header = TRUE);
-		domY.molSasa.outFileName = paste(outFileNameDom[[pair.cbn[[j]][2]]], "out.rpopsMolecule", sep = ".");
-		domY.molSasa = read.table(paste(outDir, outStrDir, domY.molSasa.outFileName, sep = "/"), header = TRUE);
-		## deltaSASA
-		delta.molSasa = (domX.molSasa + domY.molSasa) - domXY.molSasa; 
-		outFileNameDeltaSasa[[j]] = paste(
-						domsName[pair.cbn[[j]][1]],
-						domsName[pair.cbn[[j]][2]],
-						"dsasaMolecule", sep = ".");
-		write.table(delta.molSasa, file = paste(outDir, outStrDir, outFileNameDeltaSasa[[j]], sep = "/"));
-	}
+	return(list(sasapair.level.files, sasadiff.level.tables));
 }
 
 #===============================================================================

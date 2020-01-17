@@ -6,12 +6,6 @@ Read the COPYING file for license information.
 
 #include "atomgroup.h"
 
-#ifdef MPI
-#include <mpi.h>
-#endif
-extern int nodes;
-extern int my_rank;
-
 /*____________________________________________________________________________*/
 /** assign atom group ID number */
 /* assign atom group number to atom type *

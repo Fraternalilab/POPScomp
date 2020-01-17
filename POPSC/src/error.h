@@ -1,6 +1,6 @@
 /*==============================================================================
 error.h : error msg routines
-Copyright (C) 2008 Jens Kleinjung and Alessandro pandini
+Copyright (C) 2008 Jens Kleinjung and Alessandro Pandini
 Read the COPYING file for license information.
 ==============================================================================*/
 
