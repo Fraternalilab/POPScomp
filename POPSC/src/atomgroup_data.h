@@ -60,7 +60,7 @@ Atomgroup constAtomGroup[] = {
 			/*DT */ 22, 
 			/*DU */ 20,
 			/* unknown polymer residue */
-			/*UNK*/ 5,
+			/*UNK*/ 8,
 			/* ligand */
 			/*HET*/ 9,
 			/* unknown ligand */
@@ -551,8 +551,11 @@ Atomgroup constAtomGroup[] = {
 				/*O4   DU*/	  {"DU",  "O4", 0, 0},
 				/*C5   DU*/	  {"DU",  "C5", 0, 0},
 				/*C6   DU*/	  {"DU",  "C6", 0, 0}},
-			{	/*C   UNK*/   {"UNK", "C",  0, 0},
-				/*N   UNK*/   {"UNK", "N",  0, 3},
+			{	/*N   UNK*/   {"UNK", "N",  0, 3},
+				/*CA  UNK*/   {"UNK", "CA", 12, 5},
+				/*CB  UNK*/   {"UNK", "CB", 14, 5},
+				/*CG  UNK*/   {"UNK", "CG", 12, 5},
+				/*C   UNK*/   {"UNK", "C",  0, 0},
 				/*O   UNK*/   {"UNK", "O",  0, 3},
 				/*P   UNK*/   {"UNK", "P",  0, 0},
 				/*S   UNK*/   {"UNK", "S",  0, 0}},

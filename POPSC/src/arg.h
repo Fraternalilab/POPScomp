@@ -1,6 +1,6 @@
 /*==============================================================================
 arg.h : parse command line arguments
-Copyright (C) 2007 Jens Kleinjung
+Copyright (C) 2007-2020 Jens Kleinjung
 Read the COPYING file for license information.
 ==============================================================================*/
 
@@ -9,6 +9,7 @@ Read the COPYING file for license information.
 
 #include <assert.h>
 #include <getopt.h>
+#include <libgen.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -26,6 +27,7 @@ typedef struct
     FILE *pdbInFile;
 	char *pdbInFileName;
 	char *pdbmlInFileName;
+	char *pdbIn;
 	int pdbml;
 	int zipped;
     FILE *trajInFile;

@@ -16,11 +16,12 @@ Read the COPYING file for license information.
 #include "getpdb.h"
 #include "sasa.h"
 #include "sasa_const.h"
+#include "type.h"
 
 void make_resSasaJson(Arg *arg, Str *pdb, ResSasa *resSasa, cJSON *json);
-void print_json(Arg *arg, cJSON *json);
+void print_json(Arg *arg, Str *pdb, cJSON *json);
 void make_resbSasaJson(Arg *arg, Str *pdb, ResSasa *resSasa, cJSON *jsonb);
-void print_jsonb(Arg *arg, cJSON *jsonb);
+void print_jsonb(Arg *arg, Str *pdb, cJSON *jsonb);
 
 #endif
 

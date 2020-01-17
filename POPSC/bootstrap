@@ -5,3 +5,5 @@ rm -f config.cache \
 && automake --add-missing --copy \
 && autoconf
 
+#autoreconf -v -d -W all
+

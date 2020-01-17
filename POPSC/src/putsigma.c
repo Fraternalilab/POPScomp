@@ -6,12 +6,6 @@ Read the COPYING file for license information.
 
 #include "putsigma.h"
 
-#ifdef MPI
-#include <mpi.h>
-#endif
-extern int nodes;
-extern int my_rank;
-
 /*___________________________________________________________________________*/
 /** print atom SFE */
 static void print_atom_sfe(FILE *sigmaOutFile, Arg *arg, Str *pdb, MolSFE *molSFE)
