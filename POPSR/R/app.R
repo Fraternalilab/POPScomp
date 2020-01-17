@@ -94,7 +94,7 @@ ui <- fluidPage(
           p("* 255* - Exit status out of range")
         ),
         tabPanel("About",
-            h5("This is version 3.0.0 of the", a("POPScomp server",
+            h5("This is version 3.0.3 of the", a("POPScomp server",
                                     href="http://popscom.org:3838")),
             p("The POPScomp server is based on two software packages:"),
             p("1. A GNU Autotools package of the POPS C program."),
