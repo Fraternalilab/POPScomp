@@ -6,12 +6,6 @@ Read the COPYING file for license information.
 
 #include "getpdb.h"
 
-#ifdef MPI
-#include <mpi.h>
-#endif
-extern int nodes;
-extern int my_rank;
-
 /*____________________________________________________________________________*/
 /* match PDB residue name against constant residue name array */
 __inline__ static char scan_array(char *code3, char *residue_array[], int shift)
@@ -161,7 +155,7 @@ int read_pdb(FILE *pdbInFile, gzFile *pdbgzInFile, Arg *arg, Argpdb *argpdb, Str
 	/* allowed HETATM atom types (standard N,CA,C,O) and elements (any N,C,O,P,S) */
 	const int nHetAtom = 9;
 	char hetAtomPattern[9][32] = {{" N  "},{" CA "},{" C  "},{" O  "},{".{1}C[[:print:]]{1,3}"},{".{1}N[[:print:]]{1,3}"},{".{1}O[[:print:]]{1,3}"},{".{1}P[[:print:]]{1,3}"},{".{1}S[[:print:]]{1,3}"}};
-	char hetAtomNewname[9][32] = {{" N  "},{" CA "},{" C  "},{" O  "},{" C_ "},{" N_ "},{" O_ "},{" P_ "},{" S_ "}};
+	/*char hetAtomNewname[9][32] = {{" N  "},{" CA "},{" C  "},{" O  "},{" C_ "},{" N_ "},{" O_ "},{" P_ "},{" S_ "}};*/
 
 	/*____________________________________________________________________________*/
 	/* initialise/allocate memory for set of (64) selected (CA) atom entries */
@@ -275,8 +269,8 @@ int read_pdb(FILE *pdbInFile, gzFile *pdbgzInFile, Arg *arg, Argpdb *argpdb, Str
 		str->atom[str->nAtom].atomName[j] = '\0';
 
 		/* alternative location */
-		/*str->atom[str->nAtom].alternativeLocation[0] = line[16];	
-		str->atom[str->nAtom].alternativeLocation[1] = '\0';*/
+		str->atom[str->nAtom].alternativeLocation[0] = line[16];
+		str->atom[str->nAtom].alternativeLocation[1] = '\0';
 
 		/* residue name */
 		for (i = 17, j = 0; i < 20; ) {
@@ -337,12 +331,18 @@ int read_pdb(FILE *pdbInFile, gzFile *pdbgzInFile, Arg *arg, Argpdb *argpdb, Str
 
 		/*____________________________________________________________________________*/
 		/* check conditions to record this entry */
-		/* if no hydrogens set, skip hydrogen lines */
+		/* if no hydrogens set, skip hydrogen lines, including deuterium */
 		if (! argpdb->hydrogens) {
 			strip_char(str->atom[str->nAtom].atomName, &(atomName[0]));
 			/* skip patterns 'H...' and '?H..', where '?' is a digit */
 			if ((atomName[0] == 'H') || \
 				((atomName[0] >= 48) && (atomName[0] <= 57) && (atomName[1] == 'H'))) {
+				++ str->nAllAtom;
+				continue;
+			}
+			/* same for D (deuterium)*/
+			if ((atomName[0] == 'D') || \
+				((atomName[0] >= 48) && (atomName[0] <= 57) && (atomName[1] == 'D'))) {
 				++ str->nAllAtom;
 				continue;
 			}
@@ -355,9 +355,12 @@ int read_pdb(FILE *pdbInFile, gzFile *pdbgzInFile, Arg *arg, Argpdb *argpdb, Str
 	
 		/* process HETATM entries */
 		if (strncmp(line, "HETATM", 6) == 0) {
+			/* HETATM disabled
 			if (process_het(str, &(line[0]), regexPattern, &(hetAtomNewname[0]), nHetAtom) != 0) {
 				continue;
 			}
+			*/
+			continue;
 		}
 
 		/* detect CA and N3 atoms of standard residues for residue allocation */

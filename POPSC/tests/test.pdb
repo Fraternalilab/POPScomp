@@ -1,0 +1,6 @@
+HEADER    test molecule
+TITLE     energy minimised (GROMOS) lysozyme
+ATOM      3  N   LYSH    1      35.295  22.294 -12.026
+ATOM      5  CA  LYSH    1      35.850  21.040 -11.496
+ATOM      6  CB  LYSH    1      36.898  21.408 -10.444
+END

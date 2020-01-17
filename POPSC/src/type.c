@@ -9,12 +9,6 @@ Read the COPYING file for license information.
 
 #include "type.h"
 
-#ifdef MPI
-#include <mpi.h>
-#endif
-extern int nodes;
-extern int my_rank;
-
 /*____________________________________________________________________________*/
 /** get atom and residue types */
 int get_types(Str *pdb, Type *type, ConstantSasa *constant_sasa)

@@ -1,0 +1,59 @@
+
+22/10/2018, 11:41
+
+Dear everyone,
+
+Following the EBI guideline, we are migrating all the Git repositories of FunPDBe from GitHub to EBI-hosted GitLab:
+https://gitlab.ebi.ac.uk/pdbe-kb/funpdbe
+
+Please update your remotes for the FunPDBe client, or re-clone "git@gitlabci.ebi.ac.uk:pdbe-kb/funpdbe/funpdbe-client.git" to continue using the deposition client.
+
+We also have a new tool you can use to validate your FunPDBe JSONs - it performs all the validation steps that the client and deposition system does, so you can validate against the complete deposition process. (The FunPDBe client --mode=validate option only performs the client-side validations). The validator is available at:
+https://gitlab.ebi.ac.uk/pdbe-kb/funpdbe/funpdbe-validator
+
+Sincerely,
+Mihaly/Misi 
+
+
+---------- Forwarded message ----------
+From: Mihaly Varadi <mvaradi@ebi.ac.uk>
+Date: 8 May 2018 at 13:57
+Subject: FunPDBe deposition client and app ready for testing
+To: Franca Fraternali <franca.fraternali@googlemail.com>
+
+
+Dear Franca,
+
+The FunPDBe deposition system is ready for external testing. Could you please do the following:
+* Prepare and send us a sample JSON file for your data, that follows the JSON specification (an example is at https://github.com/funpdbe-consortium/funpdbe_schema/blob/master/funpdbe_example.json)
+* Download the FunPDBe deposition client from https://github.com/funpdbe-consortium/funpdbe-client and try to submit your JSON using this client
+
+For the purpose of testing, your username is test-popscomp and the password is funpdbe-test
+
+An example of using the client is provided in the README.md file, but I also copy it here:
+
+If you had a file with your data for PDB entry 1CBS, you could run the following:
+./funpdbe_client.py --user=test_popscomp --pwd=funpdbe-test --mode=post --path=path/to/your/json/file.json --resource=popscomp
+
+This would validate your JSON file and if it is valid, it would deposit it in FunPDBe.
+
+Another thing that might be userful is to run:
+./funpdbe_client.py --mode=validate --path=path/to/your/json/file.json
+
+This would validate your JSON so you will know if something is not okay with your format.
+
+Please don't hesitate to contact me if you need help, clarifications or have suggestions,
+Kind regards,
+Misi
+
+-- 
+Mihaly Varadi, PhD
+Scientific Programmer
+
+European Bioinformatics Institute (EMBL-EBI)
+Main Building, A2-32, Wellcome Trust Genome Campus, Hinxton, Cambridge, UK
+Office: +44 (0)1223 494 278
+E-mail: mvaradi@ebi.ac.uk
+Website: www.ebi.ac.uk/about/people/mihaly-varadi
+
+

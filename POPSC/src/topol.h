@@ -1,7 +1,7 @@
 /*=============================================================================
 topol : molecular topology
-Copyright (C) 2002-2018 Franca Fraternali
-Copyright (C) 2008-2018 Jens Kleinjung
+Copyright (C) 2002 Franca Fraternali
+Copyright (C) 2008 Jens Kleinjung
 Copyright (C) 2002 Luigi Cavallo
 Copyright (C) 2002 Kuang Lin and Valerie Hindie
 Read the COPYING file for license information.
