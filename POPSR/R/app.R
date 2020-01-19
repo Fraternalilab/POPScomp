@@ -100,8 +100,7 @@ ui <- fluidPage(
           p("In case the server does not work as expected or server-related issues
 		        need clarification, please email the maintainers:
 			      Jens Kleinjung (jens@jkleinj.eu) and
-            Franca Fraternali (franca.fraternali@kcl.ac.uk)",
-          )
+            Franca Fraternali (franca.fraternali@kcl.ac.uk).")
         ),
         tabPanel("About",
 			    h3("Server"),
