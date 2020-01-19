@@ -59,39 +59,39 @@ ui <- fluidPage(
         tabPanel("Atom",
           tabsetPanel(
             tabPanel("Input Structure",
-              DT::dataTableOutput("popsAtom"),
+              DT::dataTableOutput("popsAtom")
             ),
             tabPanel("DeltaSASA",
-                     p("This is reserved for DeltaSSASA"),
+              p("This is reserved for DeltaSSASA")
             ),
             tabPanel("Isolated Chains",
-              p("This is reserved for Isolated Chains"),
+              p("This is reserved for Isolated Chains")
             )
           )
         ),
         tabPanel("Residue",
           tabsetPanel(
             tabPanel("Input Structure",
-              DT::dataTableOutput("popsResidue"),
+              DT::dataTableOutput("popsResidue")
             ),
             tabPanel("DeltaSASA",
-              p("This is reserved for DeltaSSASA"),
+              p("This is reserved for DeltaSSASA")
             ),
             tabPanel("Isolated Chains",
-              p("This is reserved for Isolated Chains"),
+              p("This is reserved for Isolated Chains")
             )
           )
         ),
         tabPanel("Chain",
           tabsetPanel(
             tabPanel("Input Structure",
-              DT::dataTableOutput("popsChain"),
+              DT::dataTableOutput("popsChain")
             ),
             tabPanel("DeltaSASA",
-              p("This is reserved for DeltaSSASA"),
+              p("This is reserved for DeltaSSASA")
             ),
             tabPanel("Isolated Chains",
-              p("This is reserved for Isolated Chains"),
+              p("This is reserved for Isolated Chains")
             )
           )
         ),
