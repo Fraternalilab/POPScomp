@@ -57,13 +57,43 @@ ui <- fluidPage(
     mainPanel(
       tabsetPanel(
         tabPanel("Atom",
-          DT::dataTableOutput("popsAtom")
+          tabsetPanel(
+            tabPanel("Input Structure",
+              DT::dataTableOutput("popsAtom"),
+            ),
+            tabPanel("DeltaSASA",
+                     p("This is reserved for DeltaSSASA"),
+            ),
+            tabPanel("Isolated Chains",
+              p("This is reserved for Isolated Chains"),
+            )
+          )
         ),
         tabPanel("Residue",
-          DT::dataTableOutput("popsResidue")
+          tabsetPanel(
+            tabPanel("Input Structure",
+              DT::dataTableOutput("popsResidue"),
+            ),
+            tabPanel("DeltaSASA",
+              p("This is reserved for DeltaSSASA"),
+            ),
+            tabPanel("Isolated Chains",
+              p("This is reserved for Isolated Chains"),
+            )
+          )
         ),
         tabPanel("Chain",
-          DT::dataTableOutput("popsChain")
+          tabsetPanel(
+            tabPanel("Input Structure",
+              DT::dataTableOutput("popsChain"),
+            ),
+            tabPanel("DeltaSASA",
+              p("This is reserved for DeltaSSASA"),
+            ),
+            tabPanel("Isolated Chains",
+              p("This is reserved for Isolated Chains"),
+            )
+          )
         ),
         tabPanel("Molecule",
           DT::dataTableOutput("popsMolecule")
@@ -83,11 +113,18 @@ ui <- fluidPage(
             The tables are initialised without any values; therefore, before 'run POPScomp' execution,
             the user sees only the table header and below the notice 'Showing 0 to 0 of 0 entries'.
             After selecting a PDB file and pressing 'run POPScomp', the server runs
-            the POPS program on the selected PDB file. The output are SASA tables, which are
-            automatically loaded into the respective tabs.
+            the POPS program on the selected PDB file. The output is SASA tables,
+            which are automatically loaded into the respective tabs.
             Because that computation is a shell command, the success of the computation is
             returned as exit code and shown below the 'run POPScomp' button.
-            See 'Exit Codes' tab for details."
+            See 'Exit Codes' tab for details.
+            The tabs for atom, residue and chain have a nested layer of tabs to accommodate
+            the POPSCOMP functionality.
+            'Input Strucure': SASA values of the PDB structure as input.
+            'DeltaSASA': The SASA difference between isolated chains and chain pair complexes.
+            'Isolated Chains': SASA values of isolated chains.
+            Only structures containing multiple chains will yield values for the
+            'DeltaSASA' and 'Isolated Chains'."
           ),
 		      h3("Help"),
           p("In case the server does not work as expected or server-related issues
@@ -98,51 +135,53 @@ ui <- fluidPage(
         tabPanel("About",
 			    h3("Server"),
 			    h4("Software"),
-          h5("This is version 3.0.4 of the", a("POPScomp server",
-                                href="http://popscom.org:3838")),
+          p("This is version 3.0.4 of the", a("POPScomp server", href="http://popscom.org:3838")),
           p("The POPScomp server is based on two software packages:"),
           p("1. A GNU Autotools package of the POPS C program."),
           p("2. An R package containing this Shiny server
              to interface the POPS program and POPSCOMP functionality."),
           p("Since April 2019, the POPS program (POPSC) and the
              POPScomp Shiny server (POPSR) are being co-developed."),
-			    h5("Source code and detailed information can be found on
-              Fraternali Lab's ", a("POPScomp GitHub page",
-                                href="https://github.com/Fraternalilab/POPScomp")),
+			    p("Source code and detailed information will be released in 2020
+			        on Fraternali Lab's GitHub page as ",
+			        a("POPScomp repository", href="https://github.com/Fraternalilab/POPScomp")),
+			    p("The legacy codes of POPS and POPSCOMP are available as repositories
+			      'POPSlegacy' and 'POPSCOMPlegacy' on ",
+			        a("Fraternali Lab's GitHub page", href="https://github.com/Fraternalilab")),
 			    h4("EBI PDBe-KB"),
-          h5("POPScomp is part of the ", a("FunPDBe resources",
-                                href="https://www.ebi.ac.uk/pdbe/funpdbe/deposition")),
+          p("POPScomp is part of the ",
+              a("FunPDBe resources", href="https://www.ebi.ac.uk/pdbe/funpdbe/deposition")),
 			    h3("References"),
-			    h5("Users publishing results obtained with the program and
+			    p("Users publishing results obtained with the program and
 			        its applications should acknowledge its use by citation."),
 			    h4("Implicit solvent"),
-			    h5("Fraternali, F. and van Gunsteren, W.F.
+			    p("Fraternali, F. and van Gunsteren, W.F.
 			        An efficient mean solvation force model for use in
 			        molecular dynamics simulations of proteins in aqueous solution.
 			        Journal of Molecular Biology 256 (1996) 939-948."),
 			    h4("POPS method"),
-			    h5("Fraternali, F. and Cavallo, L.
+			    p("Fraternali, F. and Cavallo, L.
 			        Parameter optimized surfaces (POPS): analysis of key interactions
 			        and conformational changes in the ribosome.
 			        Nucleic Acids Research 30 (2002) 2950-2960."),
 			    h4("POPS server"),
-			    h5("Cavallo, L., Kleinjung, J. and Fraternali, F.
+			    p("Cavallo, L., Kleinjung, J. and Fraternali, F.
 			        POPS: A fast algorithm for solvent accessible surface areas
 			        at atomic and residue level.
 			        Nucleic Acids Research 31 (2003) 3364-3366."),
 			    h4("POPSCOMP server"),
-			    h5("Kleinjung, J. and Fraternali, F.
+			    p("Kleinjung, J. and Fraternali, F.
 			        POPSCOMP: an automated interaction analysis of biomolecular complexes.
 			        Nucleic Acids Research 33 (2005) W342-W346."),
 			    h3("License"),
-			    h5("Usage of the software and server is free under the
+			    p("Usage of the software and server is free under the
 			        GNU General Public License v3.0."),
 			    h4("Copyright Holders, Authors and Maintainers"),
-			    h5("2002-2020 Franca Fraternali (author, maintainer)"),
-			    h5("2008-2020 Jens Kleinjung (author, maintainer)"),
+			    p("2002-2020 Franca Fraternali (author, maintainer)"),
+			    p("2008-2020 Jens Kleinjung (author, maintainer)"),
 			    h4("Contributors"),
-			    h5("2002 Kuang Lin and Valerie Hindie (translation to C)"),
-			    h5("2002 Luigi Cavallo (parametrisation)")
+			    p("2002 Kuang Lin and Valerie Hindie (translation to C)"),
+			    p("2002 Luigi Cavallo (parametrisation)")
         ),
         tabPanel("Exit Codes",
           h3("Shiny exit codes"),
