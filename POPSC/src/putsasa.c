@@ -366,6 +366,15 @@ void print_sasa(Arg *arg, Argpdb *argpdb, Str *pdb, Type *type, Topol *topol, \
 			print_atom_sasa(arg->sasaOutFile, arg, pdb, molSasa);
 		}
 	}
+	
+	/* print '0' to pops.out.rpopsAtom for Shiny reactive file reader */
+	if (argpdb->coarse && arg->rout) {
+		sprintf(rpopsOutFileName, "%s/%s",
+			arg->outDirName, "pops.out.rpopsAtom");
+		rpopsOutFile = safe_open(rpopsOutFileName, "w");
+		fprintf(rpopsOutFile, "%d\n", 0);
+		fclose(rpopsOutFile);
+	}
 
 	/* residue SASA */
 	if (arg->residueOut) {
