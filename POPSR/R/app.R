@@ -69,16 +69,21 @@ ui <- fluidPage(
           DT::dataTableOutput("popsMolecule")
         ),
         tabPanel("Readme",
-          p("The POPS program computes the Solvent Accessible Surface Area (SASA)
-            of a given PDB structure. If the structure was composed of more than one chain
-            containing protein or RNA/DNA, POPScomp creates internally all pair combinations
-            of chains to compute the buried SASA upon complexation. Details of the procedure
-            are explained in the published papers on POPS and POPSCOMP."),
-          br(),
-          p("POPScomp shows tabs for atom, residue, chain and molecule SASAs.
+		  h3("Method"),
+          p("The POPScomp server invokes the POPS program to compute the
+		    Solvent Accessible Surface Area (SASA) of a given PDB structure.
+			If the structure was composed of more than one chain
+            containing protein or RNA/DNA, the POPScomp server creates internally
+			all pair combinations of chains to compute the buried SASA upon complexation,
+			a method referred to as POPSCOMP (POPS for COMPlexes).
+			Details of the procedure are explained in the published papers
+			on POPS and POPSCOMP, see 'About' tab."),
+          
+		  h3("Results"),
+          p("The POPScomp Shiny app shows tabs for atom, residue, chain and molecule SASAs.
             The tables are initialised without any values and therefore the user sees
             the table header and below the notice 'Showing 0 to 0 of 0 entries'.
-            After selecting a PDB file and pressing 'run POPScomp', the sever runs
+            After selecting a PDB file and pressing 'run POPScomp', the server runs
             the POPS program on components of the PDB file. Because that computation
             is a system call, the success of the computation is returned
             as exit code and shown below the 'run POPScomp' button:"
@@ -91,9 +96,18 @@ ui <- fluidPage(
           p("* 128 - Invalid argument to exit"),
           p("* 128+n - Fatal error signal 'n'"),
           p("* 130 - Script terminated by Control-C"),
-          p("* 255* - Exit status out of range")
+          p("* 255* - Exit status out of range"),
+          
+		  h3("Help"),
+          p("In case the server does not work as expected or server-related issues
+		     need clarification, please email the maintainers:
+			 Jens Kleinjung (jens@jkleinj.eu) and
+             Franca Fraternali (franca.fraternali@kcl.ac.uk)",
+          )
         ),
         tabPanel("About",
+			h3("Server"),
+			h4("Software"),
             h5("This is version 3.0.4 of the", a("POPScomp server",
                                     href="http://popscom.org:3838")),
             p("The POPScomp server is based on two software packages:"),
@@ -102,16 +116,44 @@ ui <- fluidPage(
               "to interface the POPS program and POPSCOMP functionality."),
             p("Since April 2019, the POPS program (POPSC) and the",
               "POPScomp Shiny server (POPSR) are being co-developed."),
-            h5("Source code and detailed information can be found on
+			h5("Source code and detailed information can be found on
                Fraternali Lab's", a("POPScomp GitHub page",
                                     href="https://github.com/Fraternalilab/POPScomp")),
-            br(),
-            h5("POPScomp is part of the FunPDBe", a("FunPDBe resources",
+			h4("EBI PDBe-KB"),
+            h5("POPScomp is part of the ", a("FunPDBe resources",
                                     href="https://www.ebi.ac.uk/pdbe/funpdbe/deposition")),
-            br(),
-            p("Authors:",
-              "Franca Fraternali (franca.fraternali@kcl.ac.uk)",
-              "and Jens Kleinjung (jens@jkleinj.eu)")
+			h3("References"),
+			h5("Users publishing results obtained with the program and
+			    its applications should acknowledge its use by citation."),
+			h4("Implicit solvent"),
+			h5("Fraternali, F. and van Gunsteren, W.F.
+			An efficient mean solvation force model for use in
+			molecular dynamics simulations of proteins in aqueous solution.
+			Journal of Molecular Biology 256 (1996) 939-948."),
+			h4("POPS method"),
+			h5("Fraternali, F. and Cavallo, L.
+			Parameter optimized surfaces (POPS): analysis of key interactions
+			and conformational changes in the ribosome.
+			Nucleic Acids Research 30 (2002) 2950-2960."),
+			h4("POPS server"),
+			h5("Cavallo, L., Kleinjung, J. and Fraternali, F.
+			POPS: A fast algorithm for solvent accessible surface areas
+			at atomic and residue level.
+			Nucleic Acids Research 31 (2003) 3364-3366."),
+			h4("POPSCOMP server"),
+			h5("Kleinjung, J. and Fraternali, F.
+			POPSCOMP: an automated interaction analysis of biomolecular complexes.
+			Nucleic Acids Research 33 (2005) W342-W346."),
+
+			h3("License"),
+			h5("Usage of the software and server is free under the
+			GNU General Public License v3.0."),
+			h4("Copyright Holders, Authors and Maintainers"),
+			h5("2002-2020 Franca Fraternali (author, maintainer)"),
+			h5("2008-2020 Jens Kleinjung (author, maintainer)"),
+			h4("Contributors"),
+			h5("2002 Kuang Lin and Valerie Hindie (translation to C)"),
+			h5("2002 Luigi Cavallo (parametrisation)")
         )
       )
     )
