@@ -123,8 +123,8 @@ ui <- fluidPage(
             'Input Strucure': SASA values of the PDB structure as input.
             'DeltaSASA': The SASA difference between isolated chains and chain pair complexes.
             'Isolated Chains': SASA values of isolated chains.
-            Only structures containing multiple chains will yield values for the
-            'DeltaSASA' and 'Isolated Chains'."
+            Only structures containing multiple chains will yield values for
+            'DeltaSASA' and 'Isolated Chains' tabs."
           ),
 		      h3("Help"),
           p("In case the server does not work as expected or server-related issues
@@ -261,9 +261,15 @@ server <- function(input, output) {
     }
 
     ## run POPS as system command
-    command = paste("/usr/local/bin/pops --outDirName", outdir,
-                    "--rout --atomOut --residueOut --chainOut",
-                    "--pdb", inputPDB, "1> POPScomp.o 2> POPScomp.e");
+    if (input$popsmode == "atomistic") {
+      command = paste("/usr/local/bin/pops --outDirName", outdir,
+                      "--rout --atomOut --residueOut --chainOut",
+                      "--pdb", inputPDB, "1> POPScomp.o 2> POPScomp.e");
+    } else if (input$popsmode == "coarse") {
+      command = paste("/usr/local/bin/pops --outDirName", outdir,
+                      "--rout --coarse --chainOut --residueOut --chainOut",
+                      "--pdb", inputPDB, "1> POPScomp.o 2> POPScomp.e");
+    }
     system_status = system(command)
     paste("Exit code:", system_status)
   })
@@ -271,7 +277,7 @@ server <- function(input, output) {
   ## o5 display POPS output for atoms, residues, chains and molecule
   ## atom
   ## empty dataframe with column names
-  ## that wil show up as empty table before POPS has been run
+  ## that will show up as empty table before POPS has finished
   atom_null.df = data.frame(
                       AtomNr = integer(),
                       AtomNe = character(),
