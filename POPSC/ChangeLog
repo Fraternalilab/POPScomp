@@ -19,6 +19,11 @@
 
 	Docker image.
 
+- 3.0.4
+Sun 19 Jan 00:08:40 GMT 2020
+	Corrected output file names for --rout.
+	  Previous names broke Shiny app.
+
 - 3.0.3
 Wed 15 Jan 10:01:58 GMT 2020
 	Makefile pipeline for large-scale run over PDBML.

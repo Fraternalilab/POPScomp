@@ -1,7 +1,7 @@
 #! /usr/bin/R
 #===============================================================================
-## shiny application for R interface of POPS
-# (C) 2019 Jens Kleinjung
+# Shiny application as interface of POPS & POPSCOMP
+# (C) 2019 -2020 Jens Kleinjung and Franca Fraternali
 #===============================================================================
 
 library(shiny)
@@ -80,7 +80,7 @@ ui <- fluidPage(
             the table header and below the notice 'Showing 0 to 0 of 0 entries'.
             After selecting a PDB file and pressing 'run POPScomp', the sever runs
             the POPS program on components of the PDB file. Because that computation
-            is a system call, the success of the computation is returned 
+            is a system call, the success of the computation is returned
             as exit code and shown below the 'run POPScomp' button:"
           ),
           p("* 0 - Success"),
@@ -94,7 +94,7 @@ ui <- fluidPage(
           p("* 255* - Exit status out of range")
         ),
         tabPanel("About",
-            h5("This is version 3.0.3 of the", a("POPScomp server",
+            h5("This is version 3.0.4 of the", a("POPScomp server",
                                     href="http://popscom.org:3838")),
             p("The POPScomp server is based on two software packages:"),
             p("1. A GNU Autotools package of the POPS C program."),
@@ -139,8 +139,12 @@ server <- function(input, output) {
 
   ## o4 download PDB entry or upload input file
   ## run POPS on specified PDB file
-  ## Comment: The 'fileInput' function returns the object 'input$file1',
-  ##  a list of four elements, of which the fourth element is the
+  ## Comments:
+  ## - Expects 'pops' binary as /usr/local/bin/pops.
+  ## - The App will set its own working directory to a temporary directory,
+  ## to which the specified PDB file will be up/down-loaded.
+  ## - For uploaded files: The 'fileInput' function returns the object 'input$file1',
+  ##  a list of four elements, of which the fourth element contains the
   ##  path to the temporary file.
   output$nil <- eventReactive(input$popscomp, {
     ## to proceed, we require one PDB identifier or uploaded PDB file
@@ -150,7 +154,6 @@ server <- function(input, output) {
     validate(need(((input$pdbentry == "") || (is.null(input$PDBfile))),
           message = "Two PDB sources input!"))
 
-    ## set output directory
     mainDir = "/tmp"
     ## creates random string based on subsecond time
     subDir = paste0("POPScomp_", digest(format(Sys.time(), "%H:%M:%OS3")))
@@ -158,7 +161,7 @@ server <- function(input, output) {
     dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
     setwd(file.path(mainDir, subDir))
 
-    ## download/copy PDB structure
+    ## download (PDB database) or upload (local file system) the PDB structure
     if (input$pdbentry != "") {
       ## get.pdb downloads the PDB structure from the database
       get.pdb(input$pdbentry, path = outdir);
@@ -171,7 +174,7 @@ server <- function(input, output) {
     }
 
     ## run POPS as system command
-    command = paste("pops --outDirName", outdir,
+    command = paste("/usr/local/bin/pops --outDirName", outdir,
                     "--rout --atomOut --residueOut --chainOut",
                     "--pdb", inputPDB, "1> POPScomp.o 2> POPScomp.e");
     system_status = system(command)
