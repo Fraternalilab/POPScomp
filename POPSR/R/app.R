@@ -135,7 +135,7 @@ ui <- fluidPage(
         tabPanel("About",
 			    h3("Server"),
 			    h4("Software"),
-          p("This is version 3.0.4 of the", a("POPScomp server", href="http://popscom.org:3838")),
+          p("This is version 3.0.5 of the", a("POPScomp server", href="http://popscom.org:3838")),
           p("The POPScomp server is based on two software packages:"),
           p("1. A GNU Autotools package of the POPS C program."),
           p("2. An R package containing this Shiny server
