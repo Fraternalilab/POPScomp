@@ -143,6 +143,11 @@ ui <- fluidPage(
 			    h5("2002 Luigi Cavallo (parametrisation)")
         ),
         tabPanel("Exit Codes",
+          h3("Shiny exit codes"),
+          p("* No PDB source input! - Enter PDB identifier or upload PDB file from local file system
+            at the top of the side panel."),
+          p("* Two PDB sources input! - Only one PDB source is accepted per computation. Refresh the
+            browser page and either speficy a PDB identifier or upload a PDB file, not both."),
           h3("Shell command exit codes"),
           p("* 0 - Success"),
           p("* 1 - Catchall for general errors"),
