@@ -83,8 +83,10 @@ ui <- fluidPage(
             The tables are initialised without any values; therefore, before 'run POPScomp' execution,
             the user sees only the table header and below the notice 'Showing 0 to 0 of 0 entries'.
             After selecting a PDB file and pressing 'run POPScomp', the server runs
-            the POPS program on the selected PDB file. Because that computation is a shell command,
-            the success of the computation is returned as exit code and shown below the 'run POPScomp' button.
+            the POPS program on the selected PDB file. The output are SASA tables, which are
+            automatically loaded into the respective tabs.
+            Because that computation is a shell command, the success of the computation is
+            returned as exit code and shown below the 'run POPScomp' button.
             See 'Exit Codes' tab for details."
           ),
 		      h3("Help"),
@@ -100,7 +102,7 @@ ui <- fluidPage(
                                 href="http://popscom.org:3838")),
           p("The POPScomp server is based on two software packages:"),
           p("1. A GNU Autotools package of the POPS C program."),
-          p("2. An R package containing a Shiny server
+          p("2. An R package containing this Shiny server
              to interface the POPS program and POPSCOMP functionality."),
           p("Since April 2019, the POPS program (POPSC) and the
              POPScomp Shiny server (POPSR) are being co-developed."),
