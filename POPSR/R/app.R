@@ -72,30 +72,21 @@ ui <- fluidPage(
 		      h3("Method"),
           p("The POPScomp server invokes the POPS program to compute the
 		      Solvent Accessible Surface Area (SASA) of a given PDB structure.
-			    If the structure was composed of more than one chain
-          containing protein or RNA/DNA, the POPScomp server creates internally
-			    all pair combinations of chains to compute the buried SASA upon complexation,
-			    a method referred to as POPSCOMP (POPS for COMPlexes).
-			    Details of the procedure are explained in the published papers
-			    on POPS and POPSCOMP, see 'About' tab."),
+			    This is the POPS functionality, which has been currently implemented.
+			    Soon to come: The POPSCOMP functionality for protein or RNA/DNA complexes,
+			    where the POPScomp server creates internally
+			    all pair combinations of chains to compute the buried SASA upon complexation.
+			    Details of those functionalities are explained in the published papers
+			    on POPS and POPSCOMP, see 'About' tab for the list of publications."),
 		      h3("Results"),
           p("The POPScomp Shiny app shows tabs for atom, residue, chain and molecule SASAs.
-            The tables are initialised without any values and therefore the user sees
-            the table header and below the notice 'Showing 0 to 0 of 0 entries'.
+            The tables are initialised without any values; therefore, before 'run POPScomp' execution,
+            the user sees only the table header and below the notice 'Showing 0 to 0 of 0 entries'.
             After selecting a PDB file and pressing 'run POPScomp', the server runs
-            the POPS program on components of the PDB file. Because that computation
-            is a system call, the success of the computation is returned
-            as exit code and shown below the 'run POPScomp' button:"
+            the POPS program on the selected PDB file. Because that computation is a shell command,
+            the success of the computation is returned as exit code and shown below the 'run POPScomp' button.
+            See 'Exit Codes' tab for details."
           ),
-          p("* 0 - Success"),
-          p("* 1 - Catchall for general errors"),
-          p("* 2 - Misuse of shell builtins (according to Bash documentation"),
-          p("* 126 - Command invoked cannot execute"),
-          p("* 127 - Command not found"),
-          p("* 128 - Invalid argument to exit"),
-          p("* 128+n - Fatal error signal 'n'"),
-          p("* 130 - Script terminated by Control-C"),
-          p("* 255* - Exit status out of range"),
 		      h3("Help"),
           p("In case the server does not work as expected or server-related issues
 		        need clarification, please email the maintainers:
@@ -150,6 +141,18 @@ ui <- fluidPage(
 			    h4("Contributors"),
 			    h5("2002 Kuang Lin and Valerie Hindie (translation to C)"),
 			    h5("2002 Luigi Cavallo (parametrisation)")
+        ),
+        tabPanel("Exit Codes",
+          h3("Shell command exit codes"),
+          p("* 0 - Success"),
+          p("* 1 - Catchall for general errors"),
+          p("* 2 - Misuse of shell builtins (according to Bash documentation"),
+          p("* 126 - Command invoked cannot execute"),
+          p("* 127 - Command not found"),
+          p("* 128 - Invalid argument to exit"),
+          p("* 128+n - Fatal error signal 'n'"),
+          p("* 130 - Script terminated by Control-C"),
+          p("* 255* - Exit status out of range")
         )
       )
     )
