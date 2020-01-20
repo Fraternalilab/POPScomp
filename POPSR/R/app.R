@@ -264,11 +264,11 @@ server <- function(input, output) {
     if (input$popsmode == "atomistic") {
       command = paste("/usr/local/bin/pops --outDirName", outdir,
                       "--rout --atomOut --residueOut --chainOut",
-                      "--pdb", inputPDB, "1> POPScomp.o 2> POPScomp.e");
+                      "--rProbe", input$rprobe, "--pdb", inputPDB, "1> POPScomp.o 2> POPScomp.e");
     } else if (input$popsmode == "coarse") {
       command = paste("/usr/local/bin/pops --outDirName", outdir,
                       "--rout --coarse --chainOut --residueOut --chainOut",
-                      "--pdb", inputPDB, "1> POPScomp.o 2> POPScomp.e");
+                      "--rProbe", input$rprobe, "--pdb", inputPDB, "1> POPScomp.o 2> POPScomp.e");
     }
     system_status = system(command)
     paste("Exit code:", system_status)
