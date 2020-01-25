@@ -23,6 +23,8 @@
 ## -1000k : 0.5-2 min
 ## -2000k : 2-8 min
 ## -4000k : 8-30 min
+## ~8000k : ? min
+## -16000 : 80-260 min
 
 JSONFILES := $(patsubst %.xml.gz,%.json,$(shell find ${PDBDIR}/$X -name '*.xml.gz' -size '-4000k' -printf "%f\n"))
 
