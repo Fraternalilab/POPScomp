@@ -20,37 +20,40 @@ ui <- fluidPage(
     sidebarPanel(
       ## i1.1
       textInput(inputId = "pdbentry",
-                label = "Enter PDB entry:",
+                label = "Enter PDB ID (4 characters):",
                 value = ""),
+
       ## i1.2
       fileInput("PDBfile", "OR upload PDB file",
                 multiple = FALSE,
                 accept = c("text/csv",
                            "text/comma-separated-values,text/plain",
                            ".pdb")),
-
-      # horizontal line
+      ## horizontal line
       tags$hr(),
 
       ## i2
       selectInput(inputId = "popsmode",
                 label = "Resolution:",
                 choices = c("atomistic", "coarse")),
+
       ## i3
       numericInput(inputId = "rprobe",
                    label = "Solvent radius [Angstrom]:",
                    value = 1.4),
-
-      # horizontal line
       tags$hr(),
 
       # i4 action button
       actionButton("popscomp", label = "run POPScomp", class = "btn-primary"),
-
       textOutput("nil"),
+      tags$hr(),
 
-      # horizontal line
-      tags$hr()
+      ## result link button
+      downloadLink('reloadResults', 'Reload Results'),
+      tags$hr(),
+
+      ## download button
+      downloadLink('downloadResults', 'Download Results')
     ),
 
     ## main panel for output
@@ -59,7 +62,9 @@ ui <- fluidPage(
         tabPanel("Atom",
           tabsetPanel(
             tabPanel("Input Structure",
-              DT::dataTableOutput("popsAtom")
+              DT::dataTableOutput("popsAtom"),
+              tags$hr(),
+              downloadLink('downloadAtomSASA', 'Download Atom SASA')
             ),
             tabPanel("DeltaSASA",
               p("This is reserved for DeltaSSASA")
@@ -72,7 +77,9 @@ ui <- fluidPage(
         tabPanel("Residue",
           tabsetPanel(
             tabPanel("Input Structure",
-              DT::dataTableOutput("popsResidue")
+              DT::dataTableOutput("popsResidue"),
+              tags$hr(),
+              downloadLink('downloadResidueSASA', 'Download Residue SASA')
             ),
             tabPanel("DeltaSASA",
               p("This is reserved for DeltaSSASA")
@@ -85,7 +92,9 @@ ui <- fluidPage(
         tabPanel("Chain",
           tabsetPanel(
             tabPanel("Input Structure",
-              DT::dataTableOutput("popsChain")
+              DT::dataTableOutput("popsChain"),
+              tags$hr(),
+              downloadLink('downloadChainSASA', 'Download Chain SASA')
             ),
             tabPanel("DeltaSASA",
               p("This is reserved for DeltaSSASA")
@@ -96,7 +105,9 @@ ui <- fluidPage(
           )
         ),
         tabPanel("Molecule",
-          DT::dataTableOutput("popsMolecule")
+          DT::dataTableOutput("popsMolecule"),
+          tags$hr(),
+          downloadLink('downloadMoleculeSASA', 'Download Molecule SASA')
         ),
         tabPanel("Readme",
 		      h3("Method"),
@@ -108,34 +119,40 @@ ui <- fluidPage(
 			    all pair combinations of chains to compute the buried SASA upon complexation.
 			    Details of those functionalities are explained in the published papers
 			    on POPS and POPSCOMP, see 'About' tab for the list of publications."),
-		      h3("Results"),
-          p("The POPScomp Shiny app shows tabs for atom, residue, chain and molecule SASAs.
-            The tables are initialised without any values; therefore, before 'run POPScomp' execution,
+		      h3("Run"),
+          p("SASA tables are initialised without any values; therefore, before 'run POPScomp' execution,
             the user sees only the table header and below the notice 'Showing 0 to 0 of 0 entries'.
             After selecting a PDB file and pressing 'run POPScomp', the server runs
             the POPS program on the selected PDB file. The output is SASA tables,
             which are automatically loaded into the respective tabs.
             Because that computation is a shell command, the success of the computation is
             returned as exit code and shown below the 'run POPScomp' button.
-            See 'Exit Codes' tab for details.
-            The tabs for atom, residue and chain have a nested layer of tabs to accommodate
-            the POPSCOMP functionality.
-            'Input Strucure': SASA values of the PDB structure as input.
+            It should normally read 'Exit code: 0', otherwise consult the 'Exit Codes' tab."),
+		      h3("Results"),
+		      p("The SASA result tabs are 'Atom', 'Residue', 'Chain' and 'Molecule'.
+            Except for 'Molecule', they all contain a second layer of tabs to accommodate
+            the POPSCOMP functionality, as follows.
+            'Input Structure': SASA values of the PDB structure as input.
             'DeltaSASA': The SASA difference between isolated chains and chain pair complexes.
             'Isolated Chains': SASA values of isolated chains.
             Only structures containing multiple chains will yield values for
-            'DeltaSASA' and 'Isolated Chains' tabs."
-          ),
+            'DeltaSASA' and 'Isolated Chains' tabs."),
+		      p("Results will be kept for one day on the server. Please use the address given in the
+		        'Link Results' button to return to the result page in case the server connection times out
+		        and download results via the 'Download Results' button if you wished to keep them."),
 		      h3("Help"),
           p("In case the server does not work as expected or server-related issues
 		        need clarification, please email the maintainers:
 			      Jens Kleinjung (jens@jkleinj.eu) and
-            Franca Fraternali (franca.fraternali@kcl.ac.uk).")
+            Franca Fraternali (franca.fraternali@kcl.ac.uk).
+            For software and output errors, feature suggestions and similar topics,
+            please add an entry to the ",
+            a("Issues tab on the POPScomp GitHub page", href="https://github.com/Fraternalilab/POPScomp/issues"), ".")
         ),
         tabPanel("About",
 			    h3("Server"),
 			    h4("Software"),
-          p("This is version 3.0.5 of the", a("POPScomp server", href="http://popscom.org:3838")),
+          p("This is version 3.0.5 of the", a("POPScomp server", href="http://popscom.org:3838"), "."),
           p("The POPScomp server is based on two software packages:"),
           p("1. A GNU Autotools package of the POPS C program."),
           p("2. An R package containing this Shiny server
@@ -144,13 +161,13 @@ ui <- fluidPage(
              POPScomp Shiny server (POPSR) are being co-developed."),
 			    p("Source code and detailed information will be released in 2020
 			        on Fraternali Lab's GitHub page as ",
-			        a("POPScomp repository", href="https://github.com/Fraternalilab/POPScomp")),
+			        a("POPScomp repository", href="https://github.com/Fraternalilab/POPScomp"), "."),
 			    p("The legacy codes of POPS and POPSCOMP are available as repositories
 			      'POPSlegacy' and 'POPSCOMPlegacy' on ",
-			        a("Fraternali Lab's GitHub page", href="https://github.com/Fraternalilab")),
+			        a("Fraternali Lab's GitHub page", href="https://github.com/Fraternalilab"), "."),
 			    h4("EBI PDBe-KB"),
           p("POPScomp is part of the ",
-              a("FunPDBe resources", href="https://www.ebi.ac.uk/pdbe/funpdbe/deposition")),
+              a("FunPDBe resources", href="https://www.ebi.ac.uk/pdbe/funpdbe/deposition"), "."),
 			    h3("References"),
 			    p("Users publishing results obtained with the program and
 			        its applications should acknowledge its use by citation."),
@@ -198,7 +215,11 @@ ui <- fluidPage(
           p("* 128 - Invalid argument to exit"),
           p("* 128+n - Fatal error signal 'n'"),
           p("* 130 - Script terminated by Control-C"),
-          p("* 255* - Exit status out of range")
+          p("* 255* - Exit status out of range"),
+          h3("Troubleshooting Errors"),
+          h4("Exit code: 1 AND Error: Cannot open the connection"),
+          p("The PDB file could not be read, most possibly because something went wrong during up/down-loading.
+            If you used the 'Enter PDB entry' field, check your internet connection.")
         )
       )
     )
@@ -350,6 +371,68 @@ server <- function(input, output) {
   output$popsMolecule = DT::renderDataTable({
     moleculeOutput$data = moleculeOutputData()
   })
+
+  ## d1 reload results
+  output$reloadResults <- downloadHandler(
+    filename = function() {
+      paste('data-', Sys.Date(), '.csv', sep='')
+    },
+    content = function(con) {
+      write.csv(data, con)
+    }
+  )
+
+  ## d2 download results
+  output$downloadResults <- downloadHandler(
+    filename = function() {
+      paste(subDir, ".tgj", sep = '')
+    },
+    content = function(con) {
+      command = paste("tar -jcvf ", outdir, ".tgj ", outdir, sep = '');
+      system(command)
+    },
+    contentType = "application/tar"
+  )
+
+  ## d3 download atom SASA
+  output$downloadAtomSASA <- downloadHandler(
+    filename = function() {
+      paste('atomSASA_', format(Sys.time(), "%Y%m%d%H%M"), '.csv', sep = '')
+    },
+    content = function(fname) {
+      write.csv(atomOutputData(), fname)
+    }
+  )
+
+  ## d4 download residue SASA
+  output$downloadResidueSASA <- downloadHandler(
+    filename = function() {
+      paste('residueSASA_', format(Sys.time(), "%Y%m%d%H%M"), '.csv', sep = '')
+    },
+    content = function(fname) {
+      write.csv(residueOutputData(), fname)
+    }
+  )
+
+  ## d5 download chain SASA
+  output$downloadChainSASA <- downloadHandler(
+    filename = function() {
+      paste('chainSASA_', format(Sys.time(), "%Y%m%d%H%M"), '.csv', sep = '')
+    },
+    content = function(fname) {
+      write.csv(chainOutputData(), fname)
+    }
+  )
+
+  ## d6 download molecule SASA
+  output$downloadMoleculeSASA <- downloadHandler(
+    filename = function() {
+      paste('moleculeSASA_', format(Sys.time(), "%Y%m%d%H%M"), '.csv', sep = '')
+    },
+    content = function(fname) {
+      write.csv(moleculeOutputData(), fname)
+    }
+  )
 }
 
 #_______________________________________________________________________________
