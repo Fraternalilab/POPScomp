@@ -4,9 +4,9 @@
 # POPSR package
 # popscomp.R: Implementation of the POPSCOMP functionality,
 # i.e. processing of complex structures to compute SASA difference values.
-# Implementation of the legacy POPSCOMP functionality.
-# Returns a list of POPS output files of single-chain and pair-chain structures
-#   plus a list of per-chain difference values.
+# Returns a list of POPS output files for single-chain and pair-chain structures
+#   plus a list of buried SASA values.
+#
 # (C) 2019-2020 Jens Kleinjung and Franca Fraternali
 #===============================================================================
 
