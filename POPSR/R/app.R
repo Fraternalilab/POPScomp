@@ -62,45 +62,57 @@ ui <- fluidPage(
         tabPanel("Atom",
           tabsetPanel(
             tabPanel("Input Structure",
-              DT::dataTableOutput("popsAtom"),
+              DT::dataTableOutput("popsSASAAtom"),
               tags$hr(),
               downloadLink('downloadAtomSASA', 'Download Atom SASA')
             ),
             tabPanel("DeltaSASA",
-              p("This is reserved for DeltaSSASA")
+              DT::dataTableOutput("popsDeltaSASAAtom"),
+              tags$hr(),
+              downloadLink('downloadAtomDeltaSASA', 'Download Atom DeltaSASA')
             ),
             tabPanel("Isolated Chains",
-              p("This is reserved for Isolated Chains")
+              DT::dataTableOutput("popsIsoSASAAtom"),
+              tags$hr(),
+              downloadLink('downloadAtomIsoSASA', 'Download Isolated-Chains Atom SASA')
             )
           )
         ),
         tabPanel("Residue",
           tabsetPanel(
             tabPanel("Input Structure",
-              DT::dataTableOutput("popsResidue"),
+              DT::dataTableOutput("popsSASAResidue"),
               tags$hr(),
               downloadLink('downloadResidueSASA', 'Download Residue SASA')
             ),
             tabPanel("DeltaSASA",
-              p("This is reserved for DeltaSSASA")
+              DT::dataTableOutput("popsDeltaSASAResidue"),
+              tags$hr(),
+              downloadLink('downloadResidueDeltaSASA', 'Download Residue DeltaSASA')
             ),
             tabPanel("Isolated Chains",
-              p("This is reserved for Isolated Chains")
+              DT::dataTableOutput("popsIsoSASAResidue"),
+              tags$hr(),
+              downloadLink('downloadResidueIsoSASA', 'Download Isolated-Chains Residue SASA')
             )
           )
         ),
         tabPanel("Chain",
           tabsetPanel(
             tabPanel("Input Structure",
-              DT::dataTableOutput("popsChain"),
+              DT::dataTableOutput("popsSASAChain"),
               tags$hr(),
               downloadLink('downloadChainSASA', 'Download Chain SASA')
             ),
             tabPanel("DeltaSASA",
-              p("This is reserved for DeltaSSASA")
+              DT::dataTableOutput("popsDeltaSASAChain"),
+              tags$hr(),
+              downloadLink('downloadChainDeltaSASA', 'Download Chain DeltaSASA')
             ),
             tabPanel("Isolated Chains",
-              p("This is reserved for Isolated Chains")
+              DT::dataTableOutput("popsIsoSASAChain"),
+              tags$hr(),
+              downloadLink('downloadChainIsoSASA', 'Download Isolated-Chains Chain SASA')
             )
           )
         ),
@@ -295,11 +307,58 @@ server <- function(input, output) {
     paste("Exit code:", system_status)
   })
 
-  ## o5 display POPS output for atoms, residues, chains and molecule
-  ## atom
+  ## o5.1.1 atom SASA
   ## empty dataframe with column names
   ## that will show up as empty table before POPS has finished
-  atom_null.df = data.frame(
+  atom_sasa_null.df = data.frame(
+    AtomNr = integer(),
+    AtomNe = character(),
+    Residue = character(),
+    Chain = character(),
+    ResidNr = integer(),
+    iCode = integer(),
+    SASA = double(),
+    Q = double(),
+    N = integer(),
+    AtomTp = integer(),
+    AtomGp = integer(),
+    Surf = double()
+  )
+  write.table(atom_sasa_null.df, file = "pops.out.rpopsAtom")
+  ## reactive data: update output when file content changes
+  atomSASAOutput = reactiveValues(highlight = NULL, data = NULL)
+  atomSASAOutputData = reactiveFileReader(2000, NULL, "pops.out.rpopsAtom",
+                                      read.table, header = TRUE)
+  ## render output data as table
+  output$popsSASAAtom = DT::renderDataTable({
+    atomSASAOutput$data = atomSASAOutputData()
+  })
+
+  ## o5.1.2 atom DeltaSASA
+  atom_deltasasa_null.df = data.frame(
+    AtomNr = integer(),
+    AtomNe = character(),
+    Residue = character(),
+    Chain = character(),
+    ResidNr = integer(),
+    iCode = integer(),
+    SASA = double(),
+    Q = double(),
+    N = integer(),
+    AtomTp = integer(),
+    AtomGp = integer(),
+    Surf = double()
+  )
+  write.table(atom_deltasasa_null.df, file = "pops.out.rpopsAtom")
+  atomDeltaSASAOutput = reactiveValues(highlight = NULL, data = NULL)
+  atomDeltaSASAOutputData = reactiveFileReader(2000, NULL, "pops.out.rpopsAtom",
+                                      read.table, header = TRUE)
+  output$popsDeltaSASAAtom = DT::renderDataTable({
+    atomDeltaSASAOutput$data = atomDeltaSASAOutputData()
+  })
+
+  ## o5.1.3 atom isolated-chain SASA
+  atom_isosasa_null.df = data.frame(
                       AtomNr = integer(),
                       AtomNe = character(),
                       Residue = character(),
@@ -313,19 +372,58 @@ server <- function(input, output) {
                       AtomGp = integer(),
                       Surf = double()
   )
-  write.table(atom_null.df, file = "pops.out.rpopsAtom")
-  ## reactive data: update output when file content changes
-  atomOutput = reactiveValues(highlight = NULL, data = NULL)
-  atomOutputData = reactiveFileReader(2000, NULL, "pops.out.rpopsAtom",
+  write.table(atom_isosasa_null.df, file = "pops.out.rpopsAtom")
+  atomIsoSASAOutput = reactiveValues(highlight = NULL, data = NULL)
+  atomIsoSASAOutputData = reactiveFileReader(2000, NULL, "pops.out.rpopsAtom",
                                          read.table, header = TRUE)
-  ## render output data as table
-  output$popsAtom = DT::renderDataTable({
-    atomOutput$data = atomOutputData()
+  output$popsIsoSASAAtom = DT::renderDataTable({
+    atomIsoSASAOutput$data = atomIsoSASAOutputData()
   })
 
-  ## residue
-  ## create empty dataframe in r with column names
-  residue_null.df = data.frame(
+  ## o5.2.1 residue SASA
+  residue_sasa_null.df = data.frame(
+    ResidNe = character(),
+    Chain = character(),
+    ResidNr = integer(),
+    iCode = integer(),
+    Phob = double(),
+    Phil = double(),
+    Total = double(),
+    Q = double(),
+    N = integer(),
+    Surf = double()
+  )
+  write.table(residue_sasa_null.df, file = "pops.out.rpopsResidue")
+  residueSASAOutput = reactiveValues(highlight = NULL, data = NULL)
+  residueSASAOutputData = reactiveFileReader(2000, NULL, "pops.out.rpopsResidue",
+                                         read.table, header = TRUE)
+  output$popsSASAResidue = DT::renderDataTable({
+    residueSASAOutput$data = residueSASAOutputData()
+  })
+
+  ## o5.2.2 residue DeltaSASA
+  residue_deltasasa_null.df = data.frame(
+    ResidNe = character(),
+    Chain = character(),
+    ResidNr = integer(),
+    iCode = integer(),
+    Phob = double(),
+    Phil = double(),
+    Total = double(),
+    Q = double(),
+    N = integer(),
+    Surf = double()
+  )
+  write.table(residue_deltasasa_null.df, file = "pops.out.rpopsResidue")
+  residueDeltaSASAOutput = reactiveValues(highlight = NULL, data = NULL)
+  residueDeltaSASAOutputData = reactiveFileReader(2000, NULL, "pops.out.rpopsResidue",
+                                         read.table, header = TRUE)
+  output$popsDeltaSASAResidue = DT::renderDataTable({
+    residueDeltaSASAOutput$data = residueDeltaSASAOutputData()
+  })
+
+  ## o5.2.3 residue isolated-chain SASA
+  residue_isosasa_null.df = data.frame(
                       ResidNe = character(),
                       Chain = character(),
                       ResidNr = integer(),
@@ -337,39 +435,65 @@ server <- function(input, output) {
                       N = integer(),
                       Surf = double()
   )
-  write.table(residue_null.df, file = "pops.out.rpopsResidue")
-  residueOutput = reactiveValues(highlight = NULL, data = NULL)
-  residueOutputData = reactiveFileReader(2000, NULL, "pops.out.rpopsResidue",
+  write.table(residue_isosasa_null.df, file = "pops.out.rpopsResidue")
+  residueIsoSASAOutput = reactiveValues(highlight = NULL, data = NULL)
+  residueIsoSASAOutputData = reactiveFileReader(2000, NULL, "pops.out.rpopsResidue",
                                       read.table, header = TRUE)
-  output$popsResidue = DT::renderDataTable({
-    residueOutput$data = residueOutputData()
+  output$popsIsoSASAResidue = DT::renderDataTable({
+    residueIsoSASAOutput$data = residueIsoSASAOutputData()
   })
 
-  ## chain
-  chain_null.df = data.frame(
+  ## o5.3.1 chain SASA
+  chain_sasa_null.df = data.frame(
+    ChainNr = integer(),
+    ChainNe = character()
+  )
+  write.table(chain_sasa_null.df, file = "pops.out.rpopsChain")
+  chainSASAOutput = reactiveValues(highlight = NULL, data = NULL)
+  chainSASAOutputData = reactiveFileReader(2000, NULL, "pops.out.rpopsChain",
+                                       read.table, header = TRUE)
+  output$popsSASAChain = DT::renderDataTable({
+    chainSASAOutput$data = chainSASAOutputData()
+  })
+
+  ## o5.3.2 chain DeltaSASA
+  chain_deltasasa_null.df = data.frame(
+    ChainNr = integer(),
+    ChainNe = character()
+  )
+  write.table(chain_deltasasa_null.df, file = "pops.out.rpopsChain")
+  chainDeltaSASAOutput = reactiveValues(highlight = NULL, data = NULL)
+  chainDeltaSASAOutputData = reactiveFileReader(2000, NULL, "pops.out.rpopsChain",
+                                       read.table, header = TRUE)
+  output$popsDeltaSASAChain = DT::renderDataTable({
+    chainDeltaSASAOutput$data = chainDeltaSASAOutputData()
+  })
+
+  ## o5.3.3 chain isolated-chain SASA
+  chain_isosasa_null.df = data.frame(
                     ChainNr = integer(),
                     ChainNe = character()
   )
-  write.table(chain_null.df, file = "pops.out.rpopsChain")
-  chainOutput = reactiveValues(highlight = NULL, data = NULL)
-  chainOutputData = reactiveFileReader(2000, NULL, "pops.out.rpopsChain",
+  write.table(chain_isosasa_null.df, file = "pops.out.rpopsChain")
+  chainIsoSASAOutput = reactiveValues(highlight = NULL, data = NULL)
+  chainIsoSASAOutputData = reactiveFileReader(2000, NULL, "pops.out.rpopsChain",
                                       read.table, header = TRUE)
-  output$popsChain = DT::renderDataTable({
-    chainOutput$data = chainOutputData()
+  output$popsIsoSASAChain = DT::renderDataTable({
+    chainIsoSASAOutput$data = chainIsoSASAOutputData()
   })
 
-  ## molecule
-  molecule_null.df = data.frame(
+  ## o5.4 molecule
+  molecule_sasa_null.df = data.frame(
                       Phob = double(),
                       Phil = double(),
                       Total = double()
   )
-  write.table(molecule_null.df, file = "pops.out.rpopsMolecule")
-  moleculeOutput = reactiveValues(highlight = NULL, data = NULL)
-  moleculeOutputData = reactiveFileReader(2000, NULL, "pops.out.rpopsMolecule",
+  write.table(molecule_sasa_null.df, file = "pops.out.rpopsMolecule")
+  moleculeSAASOutput = reactiveValues(highlight = NULL, data = NULL)
+  moleculeSASAOutputData = reactiveFileReader(2000, NULL, "pops.out.rpopsMolecule",
                                       read.table, header = TRUE)
-  output$popsMolecule = DT::renderDataTable({
-    moleculeOutput$data = moleculeOutputData()
+  output$popsSASAMolecule = DT::renderDataTable({
+    moleculeSASAOutput$data = moleculeSASAOutputData()
   })
 
   ## d1 reload results
@@ -394,33 +518,93 @@ server <- function(input, output) {
     contentType = "application/tar"
   )
 
-  ## d3 download atom SASA
+  ## d3.1 download atom SASA
   output$downloadAtomSASA <- downloadHandler(
     filename = function() {
       paste('atomSASA_', format(Sys.time(), "%Y%m%d%H%M"), '.csv', sep = '')
     },
     content = function(fname) {
-      write.csv(atomOutputData(), fname)
+      write.csv(atomSASAOutputData(), fname)
     }
   )
 
-  ## d4 download residue SASA
+  ## d3.2 download atom DeltaSASA
+  output$downloadAtomDeltaSASA <- downloadHandler(
+    filename = function() {
+      paste('atomDeltaSASA_', format(Sys.time(), "%Y%m%d%H%M"), '.csv', sep = '')
+    },
+    content = function(fname) {
+      write.csv(atomDeltaSASAOutputData(), fname)
+    }
+  )
+
+  ## d3.3 download atom isolated-chains SASA
+  output$downloadAtomIsoSASA <- downloadHandler(
+    filename = function() {
+      paste('atomIsoSASA_', format(Sys.time(), "%Y%m%d%H%M"), '.csv', sep = '')
+    },
+    content = function(fname) {
+      write.csv(atomIsoSASAOutputData(), fname)
+    }
+  )
+
+  ## d4.1 download residue SASA
   output$downloadResidueSASA <- downloadHandler(
     filename = function() {
       paste('residueSASA_', format(Sys.time(), "%Y%m%d%H%M"), '.csv', sep = '')
     },
     content = function(fname) {
-      write.csv(residueOutputData(), fname)
+      write.csv(residueSASAOutputData(), fname)
     }
   )
 
-  ## d5 download chain SASA
+  ## d4.2 download residue DeltaSASA
+  output$downloadResidueDeltaSASA <- downloadHandler(
+    filename = function() {
+      paste('residueDeltaSASA_', format(Sys.time(), "%Y%m%d%H%M"), '.csv', sep = '')
+    },
+    content = function(fname) {
+      write.csv(residueDeltaSASAOutputData(), fname)
+    }
+  )
+
+  ## d4.1 download residue isolated-chains SASA
+  output$downloadResidueIsoSASA <- downloadHandler(
+    filename = function() {
+      paste('residueIsoSASA_', format(Sys.time(), "%Y%m%d%H%M"), '.csv', sep = '')
+    },
+    content = function(fname) {
+      write.csv(residueIsoSASAOutputData(), fname)
+    }
+  )
+
+  ## d5.1 download chain SASA
   output$downloadChainSASA <- downloadHandler(
     filename = function() {
       paste('chainSASA_', format(Sys.time(), "%Y%m%d%H%M"), '.csv', sep = '')
     },
     content = function(fname) {
-      write.csv(chainOutputData(), fname)
+      write.csv(chainSASAOutputData(), fname)
+    }
+  )
+
+  ## d5.2 download chain DeltaSASA
+  output$downloadChainDeltaSASA <- downloadHandler(
+    filename = function() {
+      paste('chainDeltaSASA_', format(Sys.time(), "%Y%m%d%H%M"), '.csv', sep = '')
+    },
+    content = function(fname) {
+      write.csv(chainDeltaSASAOutputData(), fname)
+    }
+  )
+
+  ## d5.1 download chain isolated-chains SASA
+  output$downloadChainIsoSASA <- downloadHandler(
+    filename = function() {
+      paste('chainIsoSASA_', format(Sys.time(), "%Y%m%d%H%M"), '.csv', sep = '')
+    },
+    content = function(fname) {
+      write.csv(chainIsoSASAOutputData(), fname)
     }
   )
 
@@ -430,7 +614,7 @@ server <- function(input, output) {
       paste('moleculeSASA_', format(Sys.time(), "%Y%m%d%H%M"), '.csv', sep = '')
     },
     content = function(fname) {
-      write.csv(moleculeOutputData(), fname)
+      write.csv(moleculeSASAOutputData(), fname)
     }
   )
 }
