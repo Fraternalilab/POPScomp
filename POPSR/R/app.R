@@ -48,12 +48,8 @@ ui <- fluidPage(
       textOutput("nil"),
       tags$hr(),
 
-      ## result link button
-      downloadLink('reloadResults', 'Reload Results'),
-      tags$hr(),
-
       ## download button
-      downloadLink('downloadResults', 'Download Results')
+      downloadLink('downloadAllResults', 'Download All Results')
     ),
 
     ## main panel for output
@@ -149,9 +145,9 @@ ui <- fluidPage(
             'Isolated Chains': SASA values of isolated chains.
             Only structures containing multiple chains will yield values for
             'DeltaSASA' and 'Isolated Chains' tabs."),
-		      p("Results will be kept for one day on the server. Please use the address given in the
-		        'Link Results' button to return to the result page in case the server connection times out
-		        and download results via the 'Download Results' button if you wished to keep them."),
+		      p("Results will be kept for one day on the server. Please use the 'Download ...' buttons
+		        under the tables to save their content in 'csv' format. The 'Download All Results'
+		        link on the side panel returns the zipped content of the output directory."),
 		      h3("Help"),
           p("In case the server does not work as expected or server-related issues
 		        need clarification, please email the maintainers:
@@ -262,10 +258,11 @@ server <- function(input, output) {
   ## Comments:
   ## - Expects 'pops' binary as /usr/local/bin/pops.
   ## - The App will set its own working directory to a temporary directory,
-  ## to which the specified PDB file will be up/down-loaded.
+  ##     to which the specified PDB file will be up/down-loaded.
   ## - For uploaded files: The 'fileInput' function returns the object 'input$file1',
-  ##  a list of four elements, of which the fourth element contains the
-  ##  path to the temporary file.
+  ##     a list of four elements, of which the fourth element contains the
+  ##     path to the temporary file.
+  ## - POPS will be run on the PDB file and the output will be zipped.
   output$nil <- eventReactive(input$popscomp, {
     ## to proceed, we require one PDB identifier or uploaded PDB file
     validate(need(((input$pdbentry != "") || (! is.null(input$PDBfile))),
@@ -276,35 +273,40 @@ server <- function(input, output) {
 
     mainDir = "/tmp"
     ## creates random string based on subsecond time
-    subDir = paste0("POPScomp_", digest(format(Sys.time(), "%H:%M:%OS3")))
-    outdir = paste(mainDir, subDir, sep = "/")
+    rndString = as.character(digest(format(Sys.time(), "%H:%M:%OS3")))
+    subDir = paste0("POPScomp_", rndString)
+    outDir = paste(mainDir, subDir, sep = "/")
     dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
     setwd(file.path(mainDir, subDir))
 
     ## download (PDB database) or upload (local file system) the PDB structure
     if (input$pdbentry != "") {
       ## get.pdb downloads the PDB structure from the database
-      get.pdb(input$pdbentry, path = outdir);
+      get.pdb(input$pdbentry, path = outDir);
       inputPDB = paste(input$pdbentry, "pdb", sep = ".")
     } else {
       ## move uploaded PDB file from its temporary directory to output directory
-      system(paste("mv ", input$PDBfile[[4]], " ", outdir, "/",
+      system(paste("mv ", input$PDBfile[[4]], " ", outDir, "/",
                    input$PDBfile[[1]],  sep = ""))
       inputPDB = input$PDBfile[[1]]
     }
 
     ## run POPS as system command
     if (input$popsmode == "atomistic") {
-      command = paste("/usr/local/bin/pops --outDirName", outdir,
+      command = paste("/usr/local/bin/pops --outDirName", outDir,
                       "--rout --atomOut --residueOut --chainOut",
                       "--rProbe", input$rprobe, "--pdb", inputPDB, "1> POPScomp.o 2> POPScomp.e");
     } else if (input$popsmode == "coarse") {
-      command = paste("/usr/local/bin/pops --outDirName", outdir,
+      command = paste("/usr/local/bin/pops --outDirName", outDir,
                       "--rout --coarse --chainOut --residueOut --chainOut",
                       "--rProbe", input$rprobe, "--pdb", inputPDB, "1> POPScomp.o 2> POPScomp.e");
     }
     system_status = system(command)
     paste("Exit code:", system_status)
+    ## zip output directory
+    command1 = paste("zip ", outDir, ".zip ", outDir, sep = '')
+    system(command1)
+    return(outDir)
   })
 
   ## o5.1.1 atom SASA
@@ -496,26 +498,14 @@ server <- function(input, output) {
     moleculeSASAOutput$data = moleculeSASAOutputData()
   })
 
-  ## d1 reload results
-  output$reloadResults <- downloadHandler(
-    filename = function() {
-      paste('data-', Sys.Date(), '.csv', sep='')
+  ## d1 function removed
+  ## d2 download all results
+  output$downloadAllResults <- downloadHandler(
+    filename = "/tmp/POPScomp_results.zip",
+    content = function(cont) {
+      zip("/tmp/POPScomp_results.zip", outDir)
     },
-    content = function(con) {
-      write.csv(data, con)
-    }
-  )
-
-  ## d2 download results
-  output$downloadResults <- downloadHandler(
-    filename = function() {
-      paste(subDir, ".tgj", sep = '')
-    },
-    content = function(con) {
-      command = paste("tar -jcvf ", outdir, ".tgj ", outdir, sep = '');
-      system(command)
-    },
-    contentType = "application/tar"
+    contentType = "application/zip"
   )
 
   ## d3.1 download atom SASA
