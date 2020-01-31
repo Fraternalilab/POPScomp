@@ -238,6 +238,12 @@ ui <- fluidPage(
 # server routines
 server <- function(input, output) {
 
+  ## random output paths
+  rndString = as.character(digest(format(Sys.time(), "%H:%M:%OS3")))
+  mainDir = "/tmp"
+  subDir = paste0("POPScomp_", rndString)
+  outDir = paste(mainDir, subDir, sep = "/")
+
   ## o1.1 display input PDB entry
   output$pdbentry <- renderText({
     input$pdbentry
@@ -271,11 +277,10 @@ server <- function(input, output) {
     validate(need(((input$pdbentry == "") || (is.null(input$PDBfile))),
           message = "Two PDB sources input!"))
 
-    mainDir = "/tmp"
-    ## creates random string based on subsecond time
-    rndString = as.character(digest(format(Sys.time(), "%H:%M:%OS3")))
-    subDir = paste0("POPScomp_", rndString)
-    outDir = paste(mainDir, subDir, sep = "/")
+    #mainDir = "/tmp"
+    #rndString = as.character(digest(format(Sys.time(), "%H:%M:%OS3")))
+    #subDir = paste0("POPScomp_", rndString)
+    #outDir = paste(mainDir, subDir, sep = "/")
     dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
     setwd(file.path(mainDir, subDir))
 
@@ -302,11 +307,8 @@ server <- function(input, output) {
                       "--rProbe", input$rprobe, "--pdb", inputPDB, "1> POPScomp.o 2> POPScomp.e");
     }
     system_status = system(command)
+    zip(paste0(mainDir, "/", subDir, ".zip"), outDir)
     paste("Exit code:", system_status)
-    ## zip output directory
-    command1 = paste("zip ", outDir, ".zip ", outDir, sep = '')
-    system(command1)
-    return(outDir)
   })
 
   ## o5.1.1 atom SASA
@@ -501,9 +503,11 @@ server <- function(input, output) {
   ## d1 function removed
   ## d2 download all results
   output$downloadAllResults <- downloadHandler(
-    filename = "/tmp/POPScomp_results.zip",
-    content = function(cont) {
-      zip("/tmp/POPScomp_results.zip", outDir)
+    filename = function() {
+      paste0(mainDir, "/", subDir, ".zip")
+    },
+    content = function(file) {
+      file.copy(paste0(mainDir, "/", subDir, ".zip"), file)
     },
     contentType = "application/zip"
   )
