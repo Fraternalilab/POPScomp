@@ -48,8 +48,8 @@ ui <- fluidPage(
       textOutput("nil"),
       tags$hr(),
 
-      ## download button
-      downloadLink('downloadAllResults', 'Download All Results')
+      ## i5 download button
+      downloadButton('downloadAllResults', 'Download All Results')
     ),
 
     ## main panel for output
@@ -60,17 +60,17 @@ ui <- fluidPage(
             tabPanel("Input Structure",
               DT::dataTableOutput("popsSASAAtom"),
               tags$hr(),
-              downloadLink('downloadAtomSASA', 'Download Atom SASA')
+              downloadButton('downloadAtomSASA', 'Download Atom SASA')
             ),
             tabPanel("DeltaSASA",
               DT::dataTableOutput("popsDeltaSASAAtom"),
               tags$hr(),
-              downloadLink('downloadAtomDeltaSASA', 'Download Atom DeltaSASA')
+              downloadButton('downloadAtomDeltaSASA', 'Download Atom DeltaSASA')
             ),
             tabPanel("Isolated Chains",
               DT::dataTableOutput("popsIsoSASAAtom"),
               tags$hr(),
-              downloadLink('downloadAtomIsoSASA', 'Download Isolated-Chains Atom SASA')
+              downloadButton('downloadAtomIsoSASA', 'Download Isolated-Chains Atom SASA')
             )
           )
         ),
@@ -79,17 +79,17 @@ ui <- fluidPage(
             tabPanel("Input Structure",
               DT::dataTableOutput("popsSASAResidue"),
               tags$hr(),
-              downloadLink('downloadResidueSASA', 'Download Residue SASA')
+              downloadButton('downloadResidueSASA', 'Download Residue SASA')
             ),
             tabPanel("DeltaSASA",
               DT::dataTableOutput("popsDeltaSASAResidue"),
               tags$hr(),
-              downloadLink('downloadResidueDeltaSASA', 'Download Residue DeltaSASA')
+              downloadButton('downloadResidueDeltaSASA', 'Download Residue DeltaSASA')
             ),
             tabPanel("Isolated Chains",
               DT::dataTableOutput("popsIsoSASAResidue"),
               tags$hr(),
-              downloadLink('downloadResidueIsoSASA', 'Download Isolated-Chains Residue SASA')
+              downloadButton('downloadResidueIsoSASA', 'Download Isolated-Chains Residue SASA')
             )
           )
         ),
@@ -98,24 +98,24 @@ ui <- fluidPage(
             tabPanel("Input Structure",
               DT::dataTableOutput("popsSASAChain"),
               tags$hr(),
-              downloadLink('downloadChainSASA', 'Download Chain SASA')
+              downloadButton('downloadChainSASA', 'Download Chain SASA')
             ),
             tabPanel("DeltaSASA",
               DT::dataTableOutput("popsDeltaSASAChain"),
               tags$hr(),
-              downloadLink('downloadChainDeltaSASA', 'Download Chain DeltaSASA')
+              downloadButton('downloadChainDeltaSASA', 'Download Chain DeltaSASA')
             ),
             tabPanel("Isolated Chains",
               DT::dataTableOutput("popsIsoSASAChain"),
               tags$hr(),
-              downloadLink('downloadChainIsoSASA', 'Download Isolated-Chains Chain SASA')
+              downloadButton('downloadChainIsoSASA', 'Download Isolated-Chains Chain SASA')
             )
           )
         ),
         tabPanel("Molecule",
           DT::dataTableOutput("popsMolecule"),
           tags$hr(),
-          downloadLink('downloadMoleculeSASA', 'Download Molecule SASA')
+          downloadButton('downloadMoleculeSASA', 'Download Molecule SASA')
         ),
         tabPanel("Readme",
 		      h3("Method"),
@@ -307,7 +307,9 @@ server <- function(input, output) {
                       "--rProbe", input$rprobe, "--pdb", inputPDB, "1> POPScomp.o 2> POPScomp.e");
     }
     system_status = system(command)
+    ## zip output directory for potential All-Result download
     zip(paste0(mainDir, "/", subDir, ".zip"), outDir)
+    ## return exit code of POPS command
     paste("Exit code:", system_status)
   })
 
