@@ -1,0 +1,286 @@
+
+- 4.2
+
+	Docker image tested on popscomp.org server.
+
+- 4.1
+
+	Docker image with POPSCOMP functionality.
+
+- 4.0
+
+	POPSCOMP functionality.
+
+- 3.2
+
+	Docker image tested on popscomp.org server.
+
+- 3.1
+
+	POPScomp functionality.
+	Docker image.
+
+- 3.0.5
+Sat  1 Feb 21:45:36 GMT 2020
+	Added download buttons to Shiny interface.
+
+- 3.0.4
+Sun 19 Jan 00:08:40 GMT 2020
+	Corrected output file names for --rout.
+	  Previous names broke Shiny app.
+
+- 3.0.3
+Wed 15 Jan 10:01:58 GMT 2020
+	Makefile pipeline for large-scale run over PDBML.
+	Run over >150000 structures (all <4MB) of PDBML.
+	Validated output.
+	Uploaded output to FunPDBe server using 'lftp'.
+
+- 3.0.2
+Fri 20 Dec 10:00:19 GMT 2019
+	Made PDBML version memory clean; just DLL libraries flag problems in
+	  valgrind, but that is likely a valgrind bug.
+	Added OpenMP support instead of MPI support, but requires code change.
+	  topol.c:nonbonded memory allocation outside loop, for example
+	Removed MPI support
+	Changed to error exit=0 and empty <pdbID>.json output
+
+- 3.0.1
+Sat 23 Nov 15:34:37 GMT 2019
+	Fixed bug: Now PDB identifier is read correctly from XML file.
+	Removed HET atom matching until POPSCOMP functionality reinstated.
+	Added recognition of alternative locations: only 'A' sites accepted.
+	Corrected nucleotide residue matching.
+	Release of new POPScomp_PDBML data resource.
+
+- 3.0
+Mon 22 Apr 22:53:52 BST 2019
+	Launched POPScomp as R Shiny server popscomp.org:3838.
+	Development of POPSC and POPSR synchronised under
+	https://github.com/Fraternalilab/POPScomp.
+
+- 2.3
+Sat 18 Aug 15:47:57 BST 2018
+	master branch: adding capability to read gzipped files
+	configure.ac checks presence of zlib (system) library
+	HET residues and atoms are output with original names
+	HET nucleotides are now recognised by N3 (instead of P)
+
+- 2.2
+Sat 18 Aug 15:48:07 BST 2018
+	PDBML branch: PDBML formatted files can be read as input
+	configure.ac checks presence of libxml2 (system) library
+
+- 2.1
+Sat 24 Feb 15:27:07 GMT 2018
+	json branch: Implementation of JSON output for Elixir in the branch 'json'.
+	https://github.com/DaveGamble/cJSON
+
+- 2.0
+Sun 15 Oct 23:32:59 BST 2017
+	Rout branch: Making the transition to R-based post-processing of SASA data
+	  in branch 'Rout'.
+
+- 1.8.1
+Thu Jul 21 15:18:43 BST 2016
+	Added Calpha to bSASA calculation
+
+- 1.8.0
+Mon Jun 13 00:11:54 BST 2016
+	New feature: Output of a nearest neighbour list between
+	distinct chains, where only the contact residue with the shortest
+	distance is listed. The default output is 'interface.out'.
+	To enable with the switch --intefaceOut.
+
+- 1.7.0
+Fri Jun  3 11:35:12 BST 2016
+	New feature: Output of the buried SASA (bSASA).
+	Assuming SASA is calculated for residue 'i',
+	bSASA is summed only over side-chain atoms to form bSASA_phil and
+	bSASA_phob, depending upon the hydrophilic or hydrophobic
+	nature of the contacting atom. bSASA default output is 'popsb.out'.
+
+- 1.6.5
+Sat May 28 17:17:42 BST 2016
+	Bug fix: Now considering PDB format column
+	'27 AChar Code for insertion of residues'.
+
+- 1.6.4.
+Sun Apr 12 12:59:43 BST 2015
+	Corrected output annotatation and format of %SASA to Q(SASA).
+	Changed output format of molecule SASA.
+
+- 1.6.3
+Sun Apr 12 12:59:08 BST 2015
+	Few weeks ago, changed wrong return status back to zero.
+
+- 1.6.2
+Wed Nov  6 17:48:11 GMT 2013
+	Added suggestion if no bonds are found: use '--coarse'.
+	Now exiting when the same atom is used for distance calculations because
+	of atom clashes. This leads to segmentation faults otherwise.
+
+- 1.6.1
+Tue Oct  8 15:15:03 BST 2013
+	Bug fix for 20130925: Relative residue SASA returned as 'nan'.
+							'neli.out' not linked by web server.
+	Bug fix for 20130806: Web server gives error code for Se and S_ hetero atoms.
+	Modified output headers for consistency.
+
+- 1.6.0
+Sat Mar  2 09:32:54 GMT 2013
+	MPI version.
+
+- 1.5.5
+Fri Sep 28 13:40:34 BST 2012
+	Added --enable-debug and --enable-profiling configure options.
+
+- 1.5.4
+Thu May 31 18:12:10 BST 2012
+	Removed bug in %SASA calculation.
+
+- 1.5.3
+Wed May  2 18:40:55 BST 2012
+	Modified trajectory SASA calculation: now the output goes to a separate
+	file for each trajectory structure and the output per structure is
+	using the same parameter settings as the main output.
+
+- 1.5.2
+Tue Oct 25 15:20:21 BST 2011
+	Bug fix: surface calculation works now for coarse grained.
+
+- 1.5.1
+Thu Oct 13 16:28:15 BST 2011
+	Added fractional SASA to output.
+
+- 1.5.0
+Mon Sep 26 11:11:57 BST 2011
+	Added computation of solvation free energies.
+
+- 1.4.0
+Thu Aug  4 18:20:46 BST 2011
+	Added printout of date-time and command line argument values.
+
+Mon Apr  4 16:35:16 BST 2011
+	POPS is now under Git control.
+	Created branch 'trajectory'.
+
+	Added trajectory input. A GROMOS96 trajectory is provided with switch --traj
+	and POPS* is performed on each frame. The total SASA output is listed
+	in pops.traj.out.
+
+- 1.3.2 : released
+Tue Mar 15 16:38:37 GMT 2011
+	Command line argument rProbe was not used in program, but the constant_sasa
+	value instead. Fixed that, but segmentation faults appeared for rProbe > 4.
+	Increased allocation of topol->neighbourState and topol->neighbourPar
+	to 1024 and added assertion '< 1024' to neighbour list construction.
+
+- 1.3.1 : released 07.03.11
+Fri Mar  4 14:46:37 GMT 2011
+	Modified output of neighbour list to match the PDB numbering.
+
+- 1.3.0 : released 01.02.2011	
+Tue Feb  1 20:26:48 GMT 2011
+	Addded modified cutoff for 'P' atoms in coarse grained mode.
+	Improved warning for format error and added format examples to README.
+
+- 1.2.4 : released 22.10.2010
+Thu Oct 21 08:26:45 BST 2010
+	Added check for non-standard residue types for all ATOM entries,
+	not only for CA/P atoms.
+
+Thu Jan 21 13:20:44 GMT 2010
+	Added GROMOS atom types to 'atomgroup_data.h'.
+	Added output file name to stdout.
+
+Fri Dec 11 13:42:24 GMT 2009
+	Added external variable 'status' which is the return value of 'main', 
+	to indicate 0=error-free, -1=warning or 1=error.
+
+- 1.2.3
+Fri Dec  4 15:53:17 GMT 2009
+	Modified default behaviour for short atoms.
+Fri Dec  4 12:19:49 GMT 2009
+	Added correction function 'standardise_name'
+	to 'getpdb.c' routines to deal with atom name deviations.
+
+- 1.2.2
+Mon Oct 12 18:08:53 BST 2009
+	Added pattern matching for HETATM residues and
+	improved treatment of HETATM entries in SASA calculation.
+
+- 1.2.1
+Wed Sep 30 00:47:31 BST 2009
+	Added O1 and O2 C-terminal atoms (not PDB style).
+Thu Sep  3 13:24:30 BST 2009
+	Updated configure.ac to current Automake style.
+Sat Aug 22 20:28:28 BST 2009
+	Corrected number of atoms of DT from 22 to 21
+Wed Jun 24 16:43:09 BST 2009
+	Removed duplicated 'input file' line in output.
+
+- 1.2.0
+Mon May 25 10:58:40 BST 2009
+	Changed compilation to GNU Build System
+
+- 1.1.5
+Thu Jan 29 16:46:16 GMT 2009
+	Modified 'atomgroup_data.h' to match the new 'sasa_data.h'.
+Thu Jan 29 14:09:33 GMT 2009
+	Adaptation to modified vector library functions and addition of 'argpdb.h' header.
+Thu Jan 29 11:22:47 GMT 2009
+	Ticket #6 'POPSc fails with DNA : 1DSZ.pdb'
+	PDB format 3.0 defines DNA residues as DC, DG, DA, DT, DU and DI and
+	replaces the '*' in saccharide atom names with '''.
+	Added residues DI (2'-DEOXYINOSINE-5'-MONOPHOSPHATE) and I (INOSINIC ACID).
+	Residue DN and N seem to be obsolete, but are kept for backward compatibility.
+	Added residue definitions for unknown polymer residue UNK and
+	unknown ligand residue UNL.
+Wed Dec 17 15:08:55 GMT 2008
+	Added '--padding' option.
+Wed Dec 17 14:30:25 GMT 2008
+	Added '--silent' and '--noHeaderOut' options.
+Fri Dec 12 17:15:37 GMT 2008
+	Modified 'README' as main page of Doxygen output.
+Fri Dec 12 16:07:28 GMT 2008
+	Added '--noTotalOut' option
+
+- 1.1.4
+Wed Dec  3 00:10:04 GMT 2008
+	Ticket#3 'nan' result for ASTRAL-SCOP domains 
+	'd1bd8__' and 'd1gsma1'. This is caused by too short atom distances, which
+	create 'circular' diheder angles. Addded error handling for that case: 
+	"Problematic conformation at atom 1168
+	Error: Check input structure for too short atom distances!"
+	Exits with error code 1.
+
+- 1.1.3
+Fri Oct 24 14:25:26 BST 2008
+	Added atom group code.
+Fri Oct 24 14:24:56 BST 2008
+	Added neighbour list output.
+
+- 1.1.2
+Tue Jul 15 16:02:33 BST 2008
+	Returns error code 2 if too few (<2)
+	atoms, bonds, angles or torsions. Updated README.
+
+- 1.1.1
+Tue Jul  8 00:37:47 BST 2008
+	Correction in residue assignment to chains.
+
+- 1.1.0
+Sun Jun 29 13:08:19 BST 2008
+	Added 'chainOut' option.
+Sun Jun 29 11:57:41 BST 2008
+	Modified 'atomOut' format.
+Sat Jun 28 15:05:34 BST 2008
+	Adjusted aromatic ring parameters.
+Sat Jun 28 13:34:11 BST 2008
+	Parameter GLY C changed from 1.90 to 1.72.
+
+- 1.0.0
+Mon May 12 18:58:53 BST 2008
+	first release for testing.
+
