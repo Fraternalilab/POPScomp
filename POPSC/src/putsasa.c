@@ -357,8 +357,8 @@ void print_sasa(Arg *arg, Argpdb *argpdb, Str *pdb, Type *type, Topol *topol, \
 	/* atom SASA */
 	if (arg->atomOut && ! argpdb->coarse) {
 		if (arg->rout) {
-			sprintf(rpopsOutFileName, "%s/%s",
-				arg->outDirName, "pops.out.rpopsAtom");
+			sprintf(rpopsOutFileName, "%s/%s.%s",
+				arg->outDirName, arg->routPrefix, "rpopsAtom");
 			rpopsOutFile = safe_open(rpopsOutFileName, "w");
 			print_atom_sasa(rpopsOutFile, arg, pdb, molSasa);
 			fclose(rpopsOutFile);
@@ -367,10 +367,11 @@ void print_sasa(Arg *arg, Argpdb *argpdb, Str *pdb, Type *type, Topol *topol, \
 		}
 	}
 	
-	/* print '0' to pops.out.rpopsAtom for Shiny reactive file reader */
+	/* print '0' to pops.out.rpopsAtom for Shiny reactive file reader
+	     when no atom SASAs are being computed under '--coarse' */
 	if (argpdb->coarse && arg->rout) {
-		sprintf(rpopsOutFileName, "%s/%s",
-			arg->outDirName, "pops.out.rpopsAtom");
+		sprintf(rpopsOutFileName, "%s/%s.%s",
+			arg->outDirName, arg->routPrefix, "rpopsAtom");
 		rpopsOutFile = safe_open(rpopsOutFileName, "w");
 		fprintf(rpopsOutFile, "%d\n", 0);
 		fclose(rpopsOutFile);
@@ -379,8 +380,8 @@ void print_sasa(Arg *arg, Argpdb *argpdb, Str *pdb, Type *type, Topol *topol, \
 	/* residue SASA */
 	if (arg->residueOut) {
 		if (arg->rout) {
-			sprintf(rpopsOutFileName, "%s/%s",
-				arg->outDirName, "pops.out.rpopsResidue");
+			sprintf(rpopsOutFileName, "%s/%s.%s",
+				arg->outDirName, arg->routPrefix, "rpopsResidue");
 			rpopsOutFile = safe_open(rpopsOutFileName, "w");
 			print_residue_sasa(rpopsOutFile, arg, pdb, molSasa);
 			fclose(rpopsOutFile);
@@ -392,8 +393,8 @@ void print_sasa(Arg *arg, Argpdb *argpdb, Str *pdb, Type *type, Topol *topol, \
 	/* chain SASA */
 	if (arg->chainOut) {
 		if (arg->rout) {
-			sprintf(rpopsOutFileName, "%s/%s",
-				arg->outDirName, "pops.out.rpopsChain");
+			sprintf(rpopsOutFileName, "%s/%s.%s",
+				arg->outDirName, arg->routPrefix, "rpopsChain");
 			rpopsOutFile = safe_open(rpopsOutFileName, "w");
 			print_chain_sasa(rpopsOutFile, arg, pdb, molSasa);
 			fclose(rpopsOutFile);
@@ -405,8 +406,8 @@ void print_sasa(Arg *arg, Argpdb *argpdb, Str *pdb, Type *type, Topol *topol, \
 	/* molecule SASA */
 	if (! arg->noTotalOut) {
 		if (arg->rout) {
-			sprintf(rpopsOutFileName, "%s/%s",
-				arg->outDirName, "pops.out.rpopsMolecule");
+			sprintf(rpopsOutFileName, "%s/%s.%s",
+				arg->outDirName, arg->routPrefix, "rpopsMolecule");
 			rpopsOutFile = safe_open(rpopsOutFileName, "w");
 			print_mol_sasa(rpopsOutFile, arg, molSasa);
 			fclose(rpopsOutFile);
