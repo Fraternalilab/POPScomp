@@ -20,8 +20,13 @@
 	POPScomp functionality.
 	Docker image.
 
+- 3.0.6
+Sun  2 Feb 19:00:11 GMT 2020
+	Added --routPrefix switch to identify POPSCOMP output.
+
 - 3.0.5
 Sat  1 Feb 21:45:36 GMT 2020
+	Added logo to Shiny interface.
 	Added download buttons to Shiny interface.
 
 - 3.0.4

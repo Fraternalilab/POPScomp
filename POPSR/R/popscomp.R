@@ -16,6 +16,9 @@ library("bio3d");
 
 library("parallel");
 
+get.pdb("1f3r", path = "/tmp");
+pdb = read.pdb("/tmp/1f3r.pdb");
+
 #_______________________________________________________________________________
 #' sasa : An S4 class for SASA data
 #' @slot valueAtomPairchain: SASA values of paired chain at atom resolution
@@ -54,25 +57,25 @@ sasa <- setClass(
 ## POPScomp function implemented in R
 ##+++++
 ## It might be better to split popscomp.R into a shell-oritend part and two
-##   other functions that return the sasa values and differences
+##   other functions that return the SASA values and differences
 ##+++++
-popscompR = function(inputPDB, outdir) {
+popscompR = function(inputPDB, outDir) {
 	## number of cores
 	nCore = detectCores() - 1;
 
 	#________________________________________________________________________________
 	## split input PDB into chains
-	chain.files = pdbsplit(paste(outdir, inputPDB, sep = "/"),  path = outdir, multi = FALSE);
+	chain.files = pdbsplit(paste(outDir, inputPDB, sep = "/"),  path = outDir, multi = FALSE);
 	## short names
 	chain.files.short = sub('\\.pdb$', '', basename(chain.files));
 
 	#________________________________________________________________________________
 	## run POPS over all single chains via system (= shell) call
 	sapply(1:length(chain.files), function(x) {
-	  command = paste0("pops --outDirName ", outdir,
+	  command = paste0("pops --outDirName ", outDir,
 	                   " --rout --atomOut --residueOut --chainOut ",
-	                   "--pdb ", chain.files[x], " 1> ", outdir, "/POPScomp_chain", x, ".o",
-	                   " 2> ", outdir, "/POPScomp_chain", x, ".e");
+	                   "--pdb ", chain.files[x], " 1> ", outDir, "/POPScomp_chain", x, ".o",
+	                   " 2> ", outDir, "/POPScomp_chain", x, ".e");
 	  system_status = system(command);
 	  paste("Exit code:", system_status);
 	});
@@ -82,7 +85,7 @@ popscompR = function(inputPDB, outdir) {
 	pair.cmbn = combn(length(chain.files), 2);
 	chainpair.files = list();
 	chainpair.files = sapply(1:dim(pair.cmbn)[2], function(x) {
-	  chainpair.files[[x]] = paste0(outdir, "/",
+	  chainpair.files[[x]] = paste0(outDir, "/",
 	                          chain.files.short[pair.cmbn[1, x]], "-",
 	                          chain.files.short[pair.cmbn[2, x]], ".pdb");
 	  command = paste("cat", chain.files[pair.cmbn[1, x]],
@@ -96,10 +99,10 @@ popscompR = function(inputPDB, outdir) {
 	#________________________________________________________________________________
 	## run POPS over all pairwise chain combinations via system (= shell) call
 	sapply(1:length(chainpair.files), function(x) {
-	  command = paste0("pops --outDirName ", outdir,
+	  command = paste0("pops --outDirName ", outDir,
 	                  " --rout --atomOut --residueOut --chainOut ",
-	                  "--pdb ", chainpair.files[x], " 1> ", outdir, "/POPScomp_chainpair", x, ".o",
-                                                  " 2> ", outdir, "/POPScomp_chainpair", x, ".e");
+	                  "--pdb ", chainpair.files[x], " 1> ", outDir, "/POPScomp_chainpair", x, ".o",
+                                                  " 2> ", outDir, "/POPScomp_chainpair", x, ".e");
 	  system_status = system(command);
 	  paste("Exit code:", system_status);
 	});
@@ -114,9 +117,9 @@ popscompR = function(inputPDB, outdir) {
 	  sasapair.files = lapply(1:dim(pair.cmbn)[2], function(x) {
       sasa.files = list();
       sasa.files[[1]] = read.table(paste0(chainpair.files[x], rpopsLevel[y]), header = TRUE);
-      sasa.files[[2]] = read.table(paste0(outdir, "/", chain.files.short[pair.cmbn[1, x]],
+      sasa.files[[2]] = read.table(paste0(outDir, "/", chain.files.short[pair.cmbn[1, x]],
                                           ".pdb", rpopsLevel[y]), header = TRUE);
-      sasa.files[[3]] = read.table(paste0(outdir, "/", chain.files.short[pair.cmbn[2, x]],
+      sasa.files[[3]] = read.table(paste0(outDir, "/", chain.files.short[pair.cmbn[2, x]],
                                           ".pdb", rpopsLevel[y]), header = TRUE);
       names(sasa.files) = c(paste0(sasa.files[[2]][1, "Chain"], sasa.files[[3]][1, "Chain"]),
                             as.character(sasa.files[[2]][1, "Chain"]),

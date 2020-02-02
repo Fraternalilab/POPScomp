@@ -66,6 +66,7 @@ typedef struct
 	int noHeaderOut;
 	int padding;
 	int rout;
+	char *routPrefix;
 	int jsonOut;
 	FILE *jsonOutFile;
 	char *jsonOutFileName;
