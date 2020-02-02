@@ -171,7 +171,7 @@ ui <- fluidPage(
         tabPanel("About",
 			    h3("Servers"),
 			    h4("Software"),
-          p("This is version 3.0.5 of the", a("POPScomp server", href="http://popscom.org:3838"), "."),
+          p("This is version 3.0.6 of the", a("POPScomp server", href="http://popscom.org:3838"), "."),
 			    p("Source code and detailed information will be released in 2020
 			        on Fraternali Lab's GitHub page as ",
 			      a("POPScomp repository", href="https://github.com/Fraternalilab/POPScomp"), "."
@@ -360,10 +360,10 @@ server <- function(input, output) {
     AtomGp = integer(),
     Surf = double()
   )
-  write.table(atom_sasa_null.df, file = "pops.out.rpopsAtom")
+  write.table(atom_sasa_null.df, file = "id.rpopsAtom")
   ## reactive data: update output when file content changes
   atomSASAOutput = reactiveValues(highlight = NULL, data = NULL)
-  atomSASAOutputData = reactiveFileReader(2000, NULL, "pops.out.rpopsAtom",
+  atomSASAOutputData = reactiveFileReader(2000, NULL, "id.rpopsAtom",
                                       read.table, header = TRUE)
   ## render output data as table
   output$popsSASAAtom = DT::renderDataTable({
@@ -385,9 +385,9 @@ server <- function(input, output) {
     AtomGp = integer(),
     Surf = double()
   )
-  write.table(atom_deltasasa_null.df, file = "pops.out.rpopsAtom")
+  write.table(atom_deltasasa_null.df, file = "dSASA.rpopsAtom")
   atomDeltaSASAOutput = reactiveValues(highlight = NULL, data = NULL)
-  atomDeltaSASAOutputData = reactiveFileReader(2000, NULL, "pops.out.rpopsAtom",
+  atomDeltaSASAOutputData = reactiveFileReader(2000, NULL, "dSASA.rpopsAtom",
                                       read.table, header = TRUE)
   output$popsDeltaSASAAtom = DT::renderDataTable({
     atomDeltaSASAOutput$data = atomDeltaSASAOutputData()
@@ -408,9 +408,9 @@ server <- function(input, output) {
                       AtomGp = integer(),
                       Surf = double()
   )
-  write.table(atom_isosasa_null.df, file = "pops.out.rpopsAtom")
+  write.table(atom_isosasa_null.df, file = "isoSASA.rpopsAtom")
   atomIsoSASAOutput = reactiveValues(highlight = NULL, data = NULL)
-  atomIsoSASAOutputData = reactiveFileReader(2000, NULL, "pops.out.rpopsAtom",
+  atomIsoSASAOutputData = reactiveFileReader(2000, NULL, "isoSASA.rpopsAtom",
                                          read.table, header = TRUE)
   output$popsIsoSASAAtom = DT::renderDataTable({
     atomIsoSASAOutput$data = atomIsoSASAOutputData()
@@ -429,9 +429,9 @@ server <- function(input, output) {
     N = integer(),
     Surf = double()
   )
-  write.table(residue_sasa_null.df, file = "pops.out.rpopsResidue")
+  write.table(residue_sasa_null.df, file = "id.rpopsResidue")
   residueSASAOutput = reactiveValues(highlight = NULL, data = NULL)
-  residueSASAOutputData = reactiveFileReader(2000, NULL, "pops.out.rpopsResidue",
+  residueSASAOutputData = reactiveFileReader(2000, NULL, "id.rpopsResidue",
                                          read.table, header = TRUE)
   output$popsSASAResidue = DT::renderDataTable({
     residueSASAOutput$data = residueSASAOutputData()
@@ -450,9 +450,9 @@ server <- function(input, output) {
     N = integer(),
     Surf = double()
   )
-  write.table(residue_deltasasa_null.df, file = "pops.out.rpopsResidue")
+  write.table(residue_deltasasa_null.df, file = "dSASA.rpopsResidue")
   residueDeltaSASAOutput = reactiveValues(highlight = NULL, data = NULL)
-  residueDeltaSASAOutputData = reactiveFileReader(2000, NULL, "pops.out.rpopsResidue",
+  residueDeltaSASAOutputData = reactiveFileReader(2000, NULL, "dSASA.rpopsResidue",
                                          read.table, header = TRUE)
   output$popsDeltaSASAResidue = DT::renderDataTable({
     residueDeltaSASAOutput$data = residueDeltaSASAOutputData()
@@ -471,9 +471,9 @@ server <- function(input, output) {
                       N = integer(),
                       Surf = double()
   )
-  write.table(residue_isosasa_null.df, file = "pops.out.rpopsResidue")
+  write.table(residue_isosasa_null.df, file = "isoSASA.rpopsResidue")
   residueIsoSASAOutput = reactiveValues(highlight = NULL, data = NULL)
-  residueIsoSASAOutputData = reactiveFileReader(2000, NULL, "pops.out.rpopsResidue",
+  residueIsoSASAOutputData = reactiveFileReader(2000, NULL, "isoSASA.rpopsResidue",
                                       read.table, header = TRUE)
   output$popsIsoSASAResidue = DT::renderDataTable({
     residueIsoSASAOutput$data = residueIsoSASAOutputData()
@@ -484,9 +484,9 @@ server <- function(input, output) {
     ChainNr = integer(),
     ChainNe = character()
   )
-  write.table(chain_sasa_null.df, file = "pops.out.rpopsChain")
+  write.table(chain_sasa_null.df, file = "id.rpopsChain")
   chainSASAOutput = reactiveValues(highlight = NULL, data = NULL)
-  chainSASAOutputData = reactiveFileReader(2000, NULL, "pops.out.rpopsChain",
+  chainSASAOutputData = reactiveFileReader(2000, NULL, "id.rpopsChain",
                                        read.table, header = TRUE)
   output$popsSASAChain = DT::renderDataTable({
     chainSASAOutput$data = chainSASAOutputData()
@@ -497,9 +497,9 @@ server <- function(input, output) {
     ChainNr = integer(),
     ChainNe = character()
   )
-  write.table(chain_deltasasa_null.df, file = "pops.out.rpopsChain")
+  write.table(chain_deltasasa_null.df, file = "dSASA.rpopsChain")
   chainDeltaSASAOutput = reactiveValues(highlight = NULL, data = NULL)
-  chainDeltaSASAOutputData = reactiveFileReader(2000, NULL, "pops.out.rpopsChain",
+  chainDeltaSASAOutputData = reactiveFileReader(2000, NULL, "dSASA.rpopsChain",
                                        read.table, header = TRUE)
   output$popsDeltaSASAChain = DT::renderDataTable({
     chainDeltaSASAOutput$data = chainDeltaSASAOutputData()
@@ -510,9 +510,9 @@ server <- function(input, output) {
                     ChainNr = integer(),
                     ChainNe = character()
   )
-  write.table(chain_isosasa_null.df, file = "pops.out.rpopsChain")
+  write.table(chain_isosasa_null.df, file = "isoSASA.rpopsChain")
   chainIsoSASAOutput = reactiveValues(highlight = NULL, data = NULL)
-  chainIsoSASAOutputData = reactiveFileReader(2000, NULL, "pops.out.rpopsChain",
+  chainIsoSASAOutputData = reactiveFileReader(2000, NULL, "isoSASA.rpopsChain",
                                       read.table, header = TRUE)
   output$popsIsoSASAChain = DT::renderDataTable({
     chainIsoSASAOutput$data = chainIsoSASAOutputData()
@@ -524,9 +524,9 @@ server <- function(input, output) {
                       Phil = double(),
                       Total = double()
   )
-  write.table(molecule_sasa_null.df, file = "pops.out.rpopsMolecule")
+  write.table(molecule_sasa_null.df, file = "id.rpopsMolecule")
   moleculeSAASOutput = reactiveValues(highlight = NULL, data = NULL)
-  moleculeSASAOutputData = reactiveFileReader(2000, NULL, "pops.out.rpopsMolecule",
+  moleculeSASAOutputData = reactiveFileReader(2000, NULL, "id.rpopsMolecule",
                                       read.table, header = TRUE)
   output$popsSASAMolecule = DT::renderDataTable({
     moleculeSASAOutput$data = moleculeSASAOutputData()
