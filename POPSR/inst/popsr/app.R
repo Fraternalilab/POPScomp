@@ -126,13 +126,14 @@ ui <- fluidPage(
         tabPanel("Usage",
 		      h3("Method"),
           p("The POPScomp server invokes the POPS program to compute the
-		      Solvent Accessible Surface Area (SASA) of a given PDB structure.
-			    This is the POPS functionality, which has been currently implemented.
-			    Soon to come: The POPSCOMP functionality for protein or RNA/DNA complexes,
-			    where the POPScomp server creates internally
-			    all pair combinations of chains to compute the buried SASA upon complexation.
-			    Details of those functionalities are explained in the published papers
-			    on POPS and POPSCOMP, see 'About' tab for the list of publications."),
+		        Solvent Accessible Surface Area (SASA) of a given PDB structure.
+			      This is the POPS functionality, which has been currently implemented.
+			      Soon to come: The POPSCOMP functionality for protein or RNA/DNA complexes,
+			      where the POPScomp server creates internally
+			      all pair combinations of chains to compute the buried SASA upon complexation.
+			      Details of those functionalities are explained in the published papers
+			      on POPS and POPSCOMP, see 'About' tab for the list of publications."
+          ),
 		      h3("Run"),
           p("SASA tables are initialised without any values; therefore, before 'run POPScomp' execution,
             the user sees only the table header and below the notice 'Showing 0 to 0 of 0 entries'.
@@ -141,7 +142,8 @@ ui <- fluidPage(
             which are automatically loaded into the respective tabs.
             Because that computation is a shell command, the success of the computation is
             returned as exit code and shown below the 'run POPScomp' button.
-            It should normally read 'Exit code: 0', otherwise consult the 'Exit Codes' tab."),
+            It should normally read 'Exit code: 0', otherwise consult the 'Exit Codes' tab."
+          ),
 		      h3("Results"),
 		      p("The SASA result tabs are 'Atom', 'Residue', 'Chain' and 'Molecule'.
             Except for 'Molecule', they all contain a second layer of tabs to accommodate
@@ -150,10 +152,12 @@ ui <- fluidPage(
             'DeltaSASA': The SASA difference between isolated chains and chain pair complexes.
             'Isolated Chains': SASA values of isolated chains.
             Only structures containing multiple chains will yield values for
-            'DeltaSASA' and 'Isolated Chains' tabs."),
+            'DeltaSASA' and 'Isolated Chains' tabs."
+		      ),
 		      p("Results will be kept for one day on the server. Please use the 'Download ...' buttons
 		        under the tables to save their content in 'csv' format. The 'Download All Results'
-		        button on the side panel returns the zipped content of the output directory."),
+		        button on the side panel returns the zipped content of the output directory."
+		      ),
 		      h3("Help"),
           p("In case the server does not work as expected or server-related issues
 		        need clarification, please email the maintainers:
@@ -161,7 +165,8 @@ ui <- fluidPage(
             Franca Fraternali (franca.fraternali@kcl.ac.uk).
             For software and output errors, feature suggestions and similar topics,
             please add an entry to the ",
-            a("Issues tab on the POPScomp GitHub page", href="https://github.com/Fraternalilab/POPScomp/issues"), ".")
+            a("Issues tab on the POPScomp GitHub page", href="https://github.com/Fraternalilab/POPScomp/issues"), "."
+          )
         ),
         tabPanel("About",
 			    h3("Servers"),
@@ -169,18 +174,22 @@ ui <- fluidPage(
           p("This is version 3.0.5 of the", a("POPScomp server", href="http://popscom.org:3838"), "."),
 			    p("Source code and detailed information will be released in 2020
 			        on Fraternali Lab's GitHub page as ",
-			      a("POPScomp repository", href="https://github.com/Fraternalilab/POPScomp"), "."),
+			      a("POPScomp repository", href="https://github.com/Fraternalilab/POPScomp"), "."
+			    ),
 			    p("The POPScomp server is based on two software packages:"),
           p("1. POPSC: A GNU Autotools package of the POPS C program."),
           p("2. POPSR: An R package containing this Shiny server
-             to interface the POPS program and to provide the POPSCOMP functionality."),
+             to interface the POPS program and to provide the POPSCOMP functionality."
+          ),
           p("Since April 2019, POPSC and POPSR are being co-developed."),
 			    p("The legacy codes of POPS and POPSCOMP are available as repositories
 			      'POPSlegacy' and 'POPSCOMPlegacy' on ",
-			        a("Fraternali Lab's GitHub page", href="https://github.com/Fraternalilab"), "."),
+			        a("Fraternali Lab's GitHub page", href="https://github.com/Fraternalilab"), "."
+			    ),
 			    h4("EBI PDBe-KB"),
           p("POPScomp is part of the ",
-              a("FunPDBe resources", href="https://www.ebi.ac.uk/pdbe/funpdbe/deposition"), "."),
+              a("FunPDBe resources", href="https://www.ebi.ac.uk/pdbe/funpdbe/deposition"), "."
+          ),
 			    h3("References"),
 			    p("Users publishing results obtained with the program and
 			        its applications should acknowledge its use by citation."),
@@ -188,24 +197,37 @@ ui <- fluidPage(
 			    p("Fraternali, F. and van Gunsteren, W.F.
 			        An efficient mean solvation force model for use in
 			        molecular dynamics simulations of proteins in aqueous solution.
-			        Journal of Molecular Biology 256 (1996) 939-948."),
+			        Journal of Molecular Biology 256 (1996) 939-948.",
+			      a("DOI", href="https://dx.doi.org/10.1016%2Fj.sbi.2014.04.003"),
+			      a("Pubmed", href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4045398/")
+			    ),
 			    h4("POPS method"),
 			    p("Fraternali, F. and Cavallo, L.
 			        Parameter optimized surfaces (POPS): analysis of key interactions
 			        and conformational changes in the ribosome.
-			        Nucleic Acids Research 30 (2002) 2950-2960."),
+			        Nucleic Acids Research 30 (2002) 2950-2960.",
+			      a("DOI", href="https://dx.doi.org/10.1093%2Fnar%2Fgkf373"),
+			      a("Pubmed", href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC117037/")
+			    ),
 			    h4("POPS server"),
 			    p("Cavallo, L., Kleinjung, J. and Fraternali, F.
 			        POPS: A fast algorithm for solvent accessible surface areas
 			        at atomic and residue level.
-			        Nucleic Acids Research 31 (2003) 3364-3366."),
+			        Nucleic Acids Research 31 (2003) 3364-3366.",
+			      a("DOI", href="https://dx.doi.org/10.1093%2Fnar%2Fgkg601"),
+			      a("Pubmed", href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC169007/")
+			    ),
 			    h4("POPSCOMP server"),
 			    p("Kleinjung, J. and Fraternali, F.
 			        POPSCOMP: an automated interaction analysis of biomolecular complexes.
-			        Nucleic Acids Research 33 (2005) W342-W346."),
+			        Nucleic Acids Research 33 (2005) W342-W346.",
+			      a("DOI", href="https://dx.doi.org/10.1093%2Fnar%2Fgki369"),
+			      a("Pubmed", href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1160130/")
+			    ),
 			    h3("License"),
 			    p("Usage of the software and server is free under the
-			        GNU General Public License v3.0."),
+			        GNU General Public License v3.0."
+			    ),
 			    h4("Copyright Holders, Authors and Maintainers"),
 			    p("2002-2020 Franca Fraternali (author, maintainer)"),
 			    p("2008-2020 Jens Kleinjung (author, maintainer)"),
@@ -216,9 +238,11 @@ ui <- fluidPage(
         tabPanel("Exit Codes",
           h3("Shiny exit codes"),
           p("* No PDB source input! - Enter PDB identifier or upload PDB file from local file system
-            at the top of the side panel."),
+            at the top of the side panel."
+          ),
           p("* Two PDB sources input! - Only one PDB source is accepted per computation. Refresh the
-            browser page and either speficy a PDB identifier or upload a PDB file, not both."),
+            browser page and either speficy a PDB identifier or upload a PDB file, not both."
+          ),
           h3("Shell command exit codes"),
           p("* 0 - Success"),
           p("* 1 - Catchall for general errors"),
@@ -232,7 +256,8 @@ ui <- fluidPage(
           h3("Troubleshooting Errors"),
           h4("Exit code: 1 AND Error: Cannot open the connection"),
           p("The PDB file could not be read, most possibly because something went wrong during up/down-loading.
-            If you used the 'Enter PDB entry' field, check your internet connection.")
+            If you used the 'Enter PDB entry' field, check your internet connection."
+          )
         )
       )
     )
