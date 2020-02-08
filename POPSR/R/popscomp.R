@@ -14,46 +14,12 @@ library("bio3d");
 ## for atom selection mechanisms see:
 ## http://thegrantlab.org/bio3d/tutorials/structure-analysis
 
-library("parallel");
+#library("parallel");
 
 get.pdb("1f3r", path = "/tmp");
 pdb = read.pdb("/tmp/1f3r.pdb");
 setwd("/home/jkleinj/2COPIES/develop/POPSsuite/POPScomp/POPSR/inst/popsr");
 outDir = ".";
-
-#_______________________________________________________________________________
-#' sasa : An S4 class for SASA data
-#' @slot valueAtomPairchain: SASA values of paired chain at atom resolution
-#' @slot valueAtomChain1: same for the first isolated chain
-#' @slot valueAtomChain2: same for the second isolated chain
-#' ... equally for the other resolutions 'Residue', 'Chain' and 'Molecule'
-#' @slot diffAtomChain1: SASA differences of chain 1 at atom resolution
-#' @slot diffAtomChain2: SASA differences of chain 2 at atom resolution
-#' ... equally for the other resolutions 'Residue' and 'Chain'
-sasa <- setClass(
-  "sasa",
-
-  slots = c(
-    valueAtomPairchain = "data.frame",
-    valueAtomChain1 = "data.frame",
-    valueAtomChain2 = "data.frame",
-    valueResiduePairchain = "data.frame",
-    valueResidueChain1 = "data.frame",
-    valueResidueChain2 = "data.frame",
-    valueChainPairchain = "data.frame",
-    valueChainChain1 = "data.frame",
-    valueChainChain2 = "data.frame",
-    valueMoleculePairchain = "data.frame",
-    valueMoleculeChain1 = "data.frame",
-    valueMoleculeChain2 = "data.frame",
-    diffAtomChain1 = "data.frame",
-    diffAtomChain2 = "data.frame",
-    diffResidueChain1 = "data.frame",
-    diffResidueChain2 = "data.frame",
-    diffChainChain1 = "data.frame",
-    diffChainChain2 = "data.frame"
-  )
-)
 
 #_______________________________________________________________________________
 ## POPScomp function implemented in R
@@ -172,25 +138,55 @@ popscompR = function(inputPDB, outDir) {
 	## 'pair.cmbn' contains the order of PAIR files as column order and
   ##   the index of ISO files as column elements. That way the match between
   ##   PAIR and ISO files is reconstructed here.
-  ## initialise list of lists with predefined number of output files
+  ## initialise list of lists with predefined number of SASA difference tables
   diff.sasa.level = vector(mode = "list", length = length(rpopsLevel));
   diff.veclist = function(x) { vector(mode = "list", length = length(dim(pair.cmbn)[2])) };
   diff.sasa.level = lapply(diff.sasa.level, diff.veclist);
-  sasadiff.level.tables = lapply(1:(length(rpopsLevel) - 1), function(y) {
   ## compute SASA differences
   for (j in 1:length(rpopsLevel)) {
     for (i in 1:length(dim(pair.cmbn)[2])) {
-	    ## rbind ISO chain SASAs
-      iso.tmp = rbind(iso.sasa.level.files[[j]][[pair.cmbn[1, i]]],
-                      iso.sasa.level.files[[j]][[pair.cmbn[2, i]]]);
-      ## assert consistency between 'rbind' ISO files and PAIR file
-      stopifnot(dim(iso.tmp) == dim(pair.sasa.level.files[[j]][[i]]));
-      ## DIFF values
-      diff.tmp = iso.tmp[ , "SASA.A.2"] - pair.sasa.level.files[[j]][[i]][ , "SASA.A.2"];
-	  });
-	});
+      if (i in 1:3) {
+        ## rbind ISO chain SASAs
+        iso.rbind.tmp = rbind(iso.sasa.level.files[[j]][[pair.cmbn[1, i]]],
+                              iso.sasa.level.files[[j]][[pair.cmbn[2, i]]]);
+        ## assert consistency between 'rbind' ISO files and PAIR file
+        stopifnot(dim(iso.rbind.tmp) == dim(pair.sasa.level.files[[j]][[i]]));
+        ## SASA DIFF values; column headers differ between levels
+        D_SASA.A.2 = iso.rbind.tmp[ , "SASA.A.2"] - pair.sasa.level.files[[j]][[i]][ , "SASA.A.2"];
+        if (j == 1) {
+          diff.tmp.df = cbind(iso.rbind.tmp, D_SASA.A.2);
+          diff.sasa.level[[j]][[i]] = diff.tmp.df[diff.tmp.df[ , "D_SASA.A.2"] > 0,
+            c("ResidNe", "Chain", "ResidNr", "iCode", "D_SASA.A.2")];
+        } else if (j == 2) {
+          D_Phob.A.2 = iso.rbind.tmp[ , "Phob.A.2"] - pair.sasa.level.files[[j]][[i]][ , "Phob.A.2"];
+          D_Phil.A.2 = iso.rbind.tmp[ , "Phil.A.2"] - pair.sasa.level.files[[j]][[i]][ , "Phil.A.2"];
+          diff.tmp.df = cbind(iso.rbind.tmp, D_Phob.A.2, D_Phil.A.2, D_SASA.A.2);
+          diff.sasa.level[[j]][[i]] = diff.tmp.df[diff.tmp.df[ , "D_SASA.A.2"] > 0,
+            c("ResidNe", "Chain", "ResidNr", "iCode", "D_Phob.A.2", "D_Phil.A.2", "D_SASA.A.2")];
+        } else if (j == 3) {
+          D_Phob.A.2 = iso.rbind.tmp[ , "Phob.A.2"] - pair.sasa.level.files[[j]][[i]][ , "Phob.A.2"];
+          D_Phil.A.2 = iso.rbind.tmp[ , "Phil.A.2"] - pair.sasa.level.files[[j]][[i]][ , "Phil.A.2"];
+          diff.tmp.df = cbind(iso.rbind.tmp, D_Phob.A.2, D_Phil.A.2, D_SASA.A.2);
+          diff.sasa.level[[j]][[i]] = diff.tmp.df[diff.tmp.df[ , "D_SASA.A.2"] > 0,
+            c("Chain", "Id", "AtomRange", "ResidRange", "D_Phob.A.2", "D_Phil.A.2", "D_SASA.A.2")];
+        }
+      if (j == 4) {
+        diff.tmp.df = iso.sasa.level.files[[j]][[pair.cmbn[1, i]]] +
+                      iso.sasa.level.files[[j]][[pair.cmbn[2, i]]] -
+                      pair.sasa.level.files[[j]][[i]];
+        colnames(diff.tmp.df) = c("D_Phob.A.2", "D_Phil.A.2", "D_SASA.A.2");
+        diff.sasa.level[[j]][[i]] = diff.tmp.df;
+      }
+    };
+    names(diff.sasa.level[[j]]) = chainpair.files.short;
+  };
+  names(diff.sasa.level) = rpopsLevel;
 
-	return(list(sasapair.level.files, sasadiff.level.tables));
+  #________________________________________________________________________________
+  ## write result files
+  for (j in 1:length(rpopsLevel)) {
+    write.table(do.call(rbind, diff.sasa.level[[j]]), paste0(outDir, "/", "diffSASA.", rpopsLevel[j]));
+  }
 }
 
 #===============================================================================
