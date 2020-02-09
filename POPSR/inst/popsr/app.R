@@ -1,4 +1,3 @@
-#! /usr/bin/R
 #===============================================================================
 # Shiny application as interface of POPS & POPSCOMP
 # (C) 2019 -2020 Jens Kleinjung and Franca Fraternali
@@ -8,6 +7,7 @@ library(shiny)
 library(bio3d)
 library(DT)
 library(digest)
+library(RPOPS)
 
 #_______________________________________________________________________________
 # POPS UI
@@ -349,6 +349,8 @@ server <- function(input, output) {
                       "--rProbe", input$rprobe, "--pdb", inputPDB, "1> POPScomp.o 2> POPScomp.e");
     }
     system_status = system(command)
+    ## run POPScomp
+    popscompR(inputPDB, outDir)
     ## zip output directory for potential All-Result download
     zip(paste0(mainDir, "/", subDir, ".zip"), outDir)
     ## return exit code of POPS command
@@ -365,12 +367,12 @@ server <- function(input, output) {
                         Chain = character(),
                         ResidNr = integer(),
                         iCode = integer(),
-                        SASA = double(),
-                        Q = double(),
-                        N = integer(),
+                        SASA.A.2 = double(),
+                        Q.SASA. = double(),
+                        N.overl. = integer(),
                         AtomTp = integer(),
                         AtomGp = integer(),
-                        Surf = double()
+                        Surf.A.2 = double()
   )
   write.table(atom_sasa_null.df, file = "id.rpopsAtom")
   ## reactive data: update output when file content changes
@@ -411,8 +413,11 @@ server <- function(input, output) {
                           ResidNr = integer(),
                           iCode = integer(),
                           SASA.A.2 = double(),
+                          Q.SASA. = double(),
+                          N.overl. = integer(),
                           AtomTp = integer(),
-                          AtomGp = integer()
+                          AtomGp = integer(),
+                          Surf.A.2 = double()
   )
   write.table(atom_isosasa_null.df, file = "isoSASA.rpopsAtom")
   atomIsoSASAOutput = reactiveValues(highlight = NULL, data = NULL)
@@ -428,12 +433,12 @@ server <- function(input, output) {
                           Chain = character(),
                           ResidNr = integer(),
                           iCode = integer(),
-                          Phob = double(),
-                          Phil = double(),
-                          Total = double(),
-                          Q = double(),
-                          N = integer(),
-                          Surf = double()
+                          Phob.A.2 = double(),
+                          Phil.A.2 = double(),
+                          SASA.A.2 = double(),
+                          Q.SASA. = double(),
+                          N.overl. = integer(),
+                          Surf.A.2 = double()
   )
   write.table(residue_sasa_null.df, file = "id.rpopsResidue")
   residueSASAOutput = reactiveValues(highlight = NULL, data = NULL)
