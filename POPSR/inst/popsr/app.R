@@ -119,9 +119,18 @@ ui <- fluidPage(
           )
         ),
         tabPanel("Molecule",
-          DT::dataTableOutput("popsMolecule"),
-          tags$hr(),
-          downloadButton('downloadMoleculeSASA', 'Download Molecule SASA')
+          tabsetPanel(
+            tabPanel("Input Structure",
+              DT::dataTableOutput("popsSASAMolecule"),
+              tags$hr(),
+              downloadButton('downloadMoleculeSASA', 'Download Molecule SASA')
+            ),
+            tabPanel("DeltaSASA",
+              DT::dataTableOutput("popsDeltaSASAMolecule"),
+              tags$hr(),
+              downloadButton('downloadMoleculeDeltaSASA', 'Download Molecule DeltaSASA')
+            )
+          )
         ),
         tabPanel("Usage",
 		      h3("Method"),
@@ -169,11 +178,14 @@ ui <- fluidPage(
           )
         ),
         tabPanel("About",
-			    h3("Servers"),
-			    h4("Software"),
-          p("This is version 3.0.6 of the", a("POPScomp server", href="http://popscom.org:3838"), "."),
-			    p("Source code and detailed information will be released in 2020
-			        on Fraternali Lab's GitHub page as ",
+			    h3("Shiny App"),
+			    p("This is version 3.1 of the POPScomp Shiny App. There are several options to run this code:"),
+			    p("1. Use our server at http://popscomp.org:3838 ->", a("POPScomp", href="http://popscom.org:3838"), "."),
+			    p("2. Download the POPScomp Docker image and use the App on your local computer without any further installation."),
+			    p("3. Clone the ",  a("POPScomp repository", href="https://github.com/Fraternalilab/POPScomp"),
+			        "and compile POPSC and run the App on your local computer."),
+			    h3("Software"),
+			    p("Source code and detailed information can Fraternali Lab's GitHub page as ",
 			      a("POPScomp repository", href="https://github.com/Fraternalilab/POPScomp"), "."
 			    ),
 			    p("The POPScomp server is based on two software packages:"),
@@ -186,7 +198,7 @@ ui <- fluidPage(
 			      'POPSlegacy' and 'POPSCOMPlegacy' on ",
 			        a("Fraternali Lab's GitHub page", href="https://github.com/Fraternalilab"), "."
 			    ),
-			    h4("EBI PDBe-KB"),
+			    h3("EBI PDBe-KB"),
           p("POPScomp is part of the ",
               a("FunPDBe resources", href="https://www.ebi.ac.uk/pdbe/funpdbe/deposition"), "."
           ),
@@ -347,18 +359,18 @@ server <- function(input, output) {
   ## empty dataframe with column names
   ## that will show up as empty table before POPS has finished
   atom_sasa_null.df = data.frame(
-    AtomNr = integer(),
-    AtomNe = character(),
-    Residue = character(),
-    Chain = character(),
-    ResidNr = integer(),
-    iCode = integer(),
-    SASA = double(),
-    Q = double(),
-    N = integer(),
-    AtomTp = integer(),
-    AtomGp = integer(),
-    Surf = double()
+                        AtomNr = integer(),
+                        AtomNe = character(),
+                        Residue = character(),
+                        Chain = character(),
+                        ResidNr = integer(),
+                        iCode = integer(),
+                        SASA = double(),
+                        Q = double(),
+                        N = integer(),
+                        AtomTp = integer(),
+                        AtomGp = integer(),
+                        Surf = double()
   )
   write.table(atom_sasa_null.df, file = "id.rpopsAtom")
   ## reactive data: update output when file content changes
@@ -372,22 +384,19 @@ server <- function(input, output) {
 
   ## o5.1.2 atom DeltaSASA
   atom_deltasasa_null.df = data.frame(
-    AtomNr = integer(),
-    AtomNe = character(),
-    Residue = character(),
-    Chain = character(),
-    ResidNr = integer(),
-    iCode = integer(),
-    SASA = double(),
-    Q = double(),
-    N = integer(),
-    AtomTp = integer(),
-    AtomGp = integer(),
-    Surf = double()
+                            AtomNr = integer(),
+                            AtomNe = character(),
+                            Residue = character(),
+                            Chain = character(),
+                            ResidNr = integer(),
+                            iCode = integer(),
+                            SASA.A.2 = double(),
+                            AtomTp = integer(),
+                            AtomGp = integer()
   )
-  write.table(atom_deltasasa_null.df, file = "dSASA.rpopsAtom")
+  write.table(atom_deltasasa_null.df, file = "deltaSASA.rpopsAtom")
   atomDeltaSASAOutput = reactiveValues(highlight = NULL, data = NULL)
-  atomDeltaSASAOutputData = reactiveFileReader(2000, NULL, "dSASA.rpopsAtom",
+  atomDeltaSASAOutputData = reactiveFileReader(2000, NULL, "deltaSASA.rpopsAtom",
                                       read.table, header = TRUE)
   output$popsDeltaSASAAtom = DT::renderDataTable({
     atomDeltaSASAOutput$data = atomDeltaSASAOutputData()
@@ -395,18 +404,15 @@ server <- function(input, output) {
 
   ## o5.1.3 atom isolated-chain SASA
   atom_isosasa_null.df = data.frame(
-                      AtomNr = integer(),
-                      AtomNe = character(),
-                      Residue = character(),
-                      Chain = character(),
-                      ResidNr = integer(),
-                      iCode = integer(),
-                      SASA = double(),
-                      Q = double(),
-                      N = integer(),
-                      AtomTp = integer(),
-                      AtomGp = integer(),
-                      Surf = double()
+                          AtomNr = integer(),
+                          AtomNe = character(),
+                          Residue = character(),
+                          Chain = character(),
+                          ResidNr = integer(),
+                          iCode = integer(),
+                          SASA.A.2 = double(),
+                          AtomTp = integer(),
+                          AtomGp = integer()
   )
   write.table(atom_isosasa_null.df, file = "isoSASA.rpopsAtom")
   atomIsoSASAOutput = reactiveValues(highlight = NULL, data = NULL)
@@ -418,16 +424,16 @@ server <- function(input, output) {
 
   ## o5.2.1 residue SASA
   residue_sasa_null.df = data.frame(
-    ResidNe = character(),
-    Chain = character(),
-    ResidNr = integer(),
-    iCode = integer(),
-    Phob = double(),
-    Phil = double(),
-    Total = double(),
-    Q = double(),
-    N = integer(),
-    Surf = double()
+                          ResidNe = character(),
+                          Chain = character(),
+                          ResidNr = integer(),
+                          iCode = integer(),
+                          Phob = double(),
+                          Phil = double(),
+                          Total = double(),
+                          Q = double(),
+                          N = integer(),
+                          Surf = double()
   )
   write.table(residue_sasa_null.df, file = "id.rpopsResidue")
   residueSASAOutput = reactiveValues(highlight = NULL, data = NULL)
@@ -439,20 +445,17 @@ server <- function(input, output) {
 
   ## o5.2.2 residue DeltaSASA
   residue_deltasasa_null.df = data.frame(
-    ResidNe = character(),
-    Chain = character(),
-    ResidNr = integer(),
-    iCode = integer(),
-    Phob = double(),
-    Phil = double(),
-    Total = double(),
-    Q = double(),
-    N = integer(),
-    Surf = double()
+                                ResidNe = character(),
+                                Chain = character(),
+                                ResidNr = integer(),
+                                iCode = integer(),
+                                D_Phob.A.2 = double(),
+                                D_Phil.A.2 = double(),
+                                D_SASA.A.2 = double()
   )
-  write.table(residue_deltasasa_null.df, file = "dSASA.rpopsResidue")
+  write.table(residue_deltasasa_null.df, file = "deltaSASA.rpopsResidue")
   residueDeltaSASAOutput = reactiveValues(highlight = NULL, data = NULL)
-  residueDeltaSASAOutputData = reactiveFileReader(2000, NULL, "dSASA.rpopsResidue",
+  residueDeltaSASAOutputData = reactiveFileReader(2000, NULL, "deltaSASA.rpopsResidue",
                                          read.table, header = TRUE)
   output$popsDeltaSASAResidue = DT::renderDataTable({
     residueDeltaSASAOutput$data = residueDeltaSASAOutputData()
@@ -460,16 +463,16 @@ server <- function(input, output) {
 
   ## o5.2.3 residue isolated-chain SASA
   residue_isosasa_null.df = data.frame(
-                      ResidNe = character(),
-                      Chain = character(),
-                      ResidNr = integer(),
-                      iCode = integer(),
-                      Phob = double(),
-                      Phil = double(),
-                      Total = double(),
-                      Q = double(),
-                      N = integer(),
-                      Surf = double()
+                              ResidNe = character(),
+                              Chain = character(),
+                              ResidNr = integer(),
+                              iCode = integer(),
+                              Phob.A.2 = double(),
+                              Phil.A.2 = double(),
+                              SASA.A.2 = double(),
+                              Q.SASA. = double(),
+                              N.overl. = integer(),
+                              Surf.A.2 = double()
   )
   write.table(residue_isosasa_null.df, file = "isoSASA.rpopsResidue")
   residueIsoSASAOutput = reactiveValues(highlight = NULL, data = NULL)
@@ -481,8 +484,13 @@ server <- function(input, output) {
 
   ## o5.3.1 chain SASA
   chain_sasa_null.df = data.frame(
-    ChainNr = integer(),
-    ChainNe = character()
+                          Chain = integer(),
+                          Id = character(),
+                          AtomRange = character(),
+                          ResidRange = character(),
+                          Phob.A.2 = double(),
+                          Phil.A.2 = double(),
+                          SASA.A.2 = double()
   )
   write.table(chain_sasa_null.df, file = "id.rpopsChain")
   chainSASAOutput = reactiveValues(highlight = NULL, data = NULL)
@@ -494,12 +502,17 @@ server <- function(input, output) {
 
   ## o5.3.2 chain DeltaSASA
   chain_deltasasa_null.df = data.frame(
-    ChainNr = integer(),
-    ChainNe = character()
+                              Chain = integer(),
+                              Id = character(),
+                              AtomRange = character(),
+                              ResidRange = character(),
+                              D_Phob.A.2 = double(),
+                              D_Phil.A.2 = double(),
+                              D_SASA.A.2 = double()
   )
-  write.table(chain_deltasasa_null.df, file = "dSASA.rpopsChain")
+  write.table(chain_deltasasa_null.df, file = "deltaSASA.rpopsChain")
   chainDeltaSASAOutput = reactiveValues(highlight = NULL, data = NULL)
-  chainDeltaSASAOutputData = reactiveFileReader(2000, NULL, "dSASA.rpopsChain",
+  chainDeltaSASAOutputData = reactiveFileReader(2000, NULL, "deltaSASA.rpopsChain",
                                        read.table, header = TRUE)
   output$popsDeltaSASAChain = DT::renderDataTable({
     chainDeltaSASAOutput$data = chainDeltaSASAOutputData()
@@ -507,8 +520,13 @@ server <- function(input, output) {
 
   ## o5.3.3 chain isolated-chain SASA
   chain_isosasa_null.df = data.frame(
-                    ChainNr = integer(),
-                    ChainNe = character()
+                            Chain = integer(),
+                            Id = character(),
+                            AtomRange = character(),
+                            ResidRange = character(),
+                            Phob.A.2 = double(),
+                            Phil.A.2 = double(),
+                            SASA.A.2 = double()
   )
   write.table(chain_isosasa_null.df, file = "isoSASA.rpopsChain")
   chainIsoSASAOutput = reactiveValues(highlight = NULL, data = NULL)
@@ -518,18 +536,32 @@ server <- function(input, output) {
     chainIsoSASAOutput$data = chainIsoSASAOutputData()
   })
 
-  ## o5.4 molecule
+  ## o5.4.1 molecule SASA
   molecule_sasa_null.df = data.frame(
-                      Phob = double(),
-                      Phil = double(),
-                      Total = double()
+                            Phob.A.2 = double(),
+                            Phil.A.2 = double(),
+                            SASA.A.2 = double()
   )
   write.table(molecule_sasa_null.df, file = "id.rpopsMolecule")
-  moleculeSAASOutput = reactiveValues(highlight = NULL, data = NULL)
+  moleculeSASAOutput = reactiveValues(highlight = NULL, data = NULL)
   moleculeSASAOutputData = reactiveFileReader(2000, NULL, "id.rpopsMolecule",
                                       read.table, header = TRUE)
   output$popsSASAMolecule = DT::renderDataTable({
     moleculeSASAOutput$data = moleculeSASAOutputData()
+  })
+
+  ## o5.4.2 molecule DeltaSASA
+  molecule_deltasasa_null.df = data.frame(
+                                D_Phob.A.2 = double(),
+                                D_Phil.A.2 = double(),
+                                D_SASA.A.2 = double()
+  )
+  write.table(chain_deltasasa_null.df, file = "deltaSASA.rpopsMolecule")
+  moleculeDeltaSASAOutput = reactiveValues(highlight = NULL, data = NULL)
+  moleculeDeltaSASAOutputData = reactiveFileReader(2000, NULL, "deltaSASA.rpopsMolecule",
+                                                read.table, header = TRUE)
+  output$popsDeltaSASAMolecule = DT::renderDataTable({
+    moleculeDeltaSASAOutput$data = moleculeDeltaSASAOutputData()
   })
 
   ## d1 function removed

@@ -1,13 +1,18 @@
 
-# POPS: Parameter OPtimised Surface of proteins and nucleic acids 
-Calculation of solvent accessible surface areas (SASAs) of biopolymers,
-currently proteins and nucleic acids.
+# POPScomp: Surface Areas of Biopolymers and their Complexes 
+Calculation of solvent accessible surface areas (SASAs) of biopolymers
+(proteins and nucleic acids). The software package is based the
+POPS* (Parameter OPtimised Surface) program.
+
 
 ## POPScomp server
 * [POPScomp](http://popscomp.org:3838)
 
+
 ## Source code
-* [POPScomp GitHub](https://github.com/Fraternalilab/POPScomp)
+* [POPScomp code](https://github.com/Fraternalilab/POPScomp)
+* [Latest Release](https://github.com/Fraternalilab/POPS/releases/latest)
+
 
 ## References
 Users publishing results obtained with the program and its applications
@@ -66,48 +71,52 @@ The latex documentation is completed by executing 'make pdf' in the
 - 1f3r (test2 series): An antibody-peptide complex with one HETATM residue.
 - 1aki (test3 series): The GROMOS trajectory of a small molecule.  
 
+
 ## Usage
 ### Command Line Parameters
 ```
 pops [--pdb ... | --pdbml ...] [OPTIONS ...]
 	 INPUT OPTIONS
-       Input is either a *.pdb[.gz] file (--pdb) or a *.xml[.gz] file (--pdbml).
-	   --pdb <PDB input>		(mode: optional, type: char  , default: void)
-	   --pdbml <PDBML input>	(mode: optional, type: char  , default: void)
-	   --traj <trajectory input>	(mode: optional , type: char  , default: void)
-	   --zipped                 (mode: opional , type: bool  , default: false)
+	   Input syntax is either '--pdb <name>.pdb[.gz]' or '--pdbml <name>.xml[.gz]'.
+	   --pdb <PDB input>		(type: char  , default: void)
+	   --pdbml <PDBML input>	(type: char  , default: void)
+	   --traj <trajectory input>	(type: char  , default: void)
+	   --zipped			(type: no_arg, default: off)
 	 MODE OPTIONS
-	   --coarse			(mode: optional , type: no_arg, default: off)
-	   --hydrogens			(mode: optional , type: no_arg, default: off)
-	   --multiModel			(mode: optional , type: no_arg, default: off)
-	   --partOcc			(mode: optional , type: no_arg, default: off)
-	   --rProbe <probe radius [A]>	(mode: optional , type: float , default: 1.4)
-	   --silent			(mode: optional , type: no_arg, default: off)
+	   --coarse			(type: no_arg, default: off)
+	   --hydrogens			(type: no_arg, default: off)
+	   --multiModel			(type: no_arg, default: off)
+	   --partOcc			(type: no_arg, default: off)
+	   --rProbe <probe radius [A]>	(type: float , default: 1.4)
+	   --silent			(type: no_arg, default: off)
 	 OUTPUT OPTIONS
-	   --popsOut <POPS output>	(mode: optional , type: char  , default: pops.out)
-	   --popstrajOut <POPS output>	(mode: optional , type: char  , default: popstraj.out)
-	   --popsbOut <POPSb output>	(mode: optional , type: char  , default: popsb.out)
-	   --popsbtrajOut <POPSb output>(mode: optional , type: char  , default: popsbtraj.out)
-	   --sigmaOut <SFE output>	(mode: optional , type: char  , default: sigma.out)
-	   --sigmatrajOut <SFE output>	(mode: optional , type: char  , default: sigmatraj.out)
-	   --interfaceOut		(mode: optional , type: no_arg, default: off)
-	   --compositionOut		(mode: optional , type: no_arg, default: off)
-	   --typeOut			(mode: optional , type: no_arg, default: off)
-	   --topologyOut		(mode: optional , type: no_arg, default: off)
-	   --atomOut			(mode: optional , type: no_arg, default: off)
-	   --residueOut			(mode: optional , type: no_arg, default: off)
-	   --chainOut			(mode: optional , type: no_arg, default: off)
-	   --neighbourOut		(mode: optional , type: no_arg, default: off)
-	   --parameterOut		(mode: optional , type: no_arg, default: off)
-	   --noTotalOut			(mode: optional , type: no_arg, default: off)
-	   --noHeaderOut		(mode: optional , type: no_arg, default: off)
-	   --padding			(mode: optional , type: no_arg, default: off)
-	   --rout			(mode: optional , type: no_arg, default: off)
-	   --jsonOut			(mode: optional , type: no_arg, default: off)
+	   --outDirName <output dir>	(type: char  , default: NULL)
+	   --popsOut <POPS output>	(type: char  , default: pops.out)
+	   --popstrajOut <POPS output>	(type: char  , default: popstraj.out)
+	   --popsbOut <POPSb output>	(type: char  , default: popsb.out)
+	   --popsbtrajOut <POPSb output>(type: char  , default: popsbtraj.out)
+	   --sigmaOut <SFE output>	(type: char  , default: sigma.out)
+	   --sigmatrajOut <SFE output>	(type: char  , default: sigmatraj.out)
+	   --interfaceOut		(type: no_arg, default: off)
+	   --compositionOut		(type: no_arg, default: off)
+	   --typeOut			(type: no_arg, default: off)
+	   --topologyOut		(type: no_arg, default: off)
+	   --atomOut			(type: no_arg, default: off)
+	   --residueOut			(type: no_arg, default: off)
+	   --chainOut			(type: no_arg, default: off)
+	   --neighbourOut		(type: no_arg, default: off)
+	   --parameterOut		(type: no_arg, default: off)
+	   --noTotalOut			(type: no_arg, default: off)
+	   --noHeaderOut		(type: no_arg, default: off)
+	   --padding			(type: no_arg, default: off)
+	   --rout			(type: no_arg, default: off)
+	   --routPrefix <prefix>	(type: char   , default: NULL)
+	   --jsonOut			(type: no_arg, default: off)
 	 INFO OPTIONS
-	   --cite			(mode: optional , type: no_arg, default: off)
-	   --version			(mode: optional , type: no_arg, default: off)
+	   --cite			(type: no_arg, default: off)
+	   --version			(type: no_arg, default: off)
 	   --help
+
 ```
 
 ### Short Description of Command Line Parameters
@@ -142,6 +151,8 @@ pops [--pdb ... | --pdbml ...] [OPTIONS ...]
 * noHeaderOut : suppress output headers (for benchmarking)
 * padding : add lines to pad the missing hydrogen atom lines (for benchmarking)
 * rout : output of R-compatible output 
+* routPrefix : prefix for rOut files
+* jsonOut : output in JSON format as specified by FunPDBe REST API
 
 
 ## Input file formats
@@ -164,7 +175,6 @@ whose presence is checked at the configuration stage.
 * Output (print output)
 * From version 3.0 the POPSCOMP method has been built into the POPS program
     so that complex interfaces are computed automatically.
-
 
 ### Determine the atom and residue types according to 'sasa_data.h' ('type'),
 Possible complications in the handling of PDB files and the way it
@@ -314,7 +324,7 @@ The atom specific parameters (radii, SASAs) are listed on the web server's
 and the solvent radius for water.
 
 
-### Return values
+## Return values
 * 0 : Clean termination.
 * 1 : Error:
   - Input error (wrong file name).
@@ -330,38 +340,23 @@ and the solvent radius for water.
 * Default result output: By default the program prints results to 'pops.out'.
 
 
-## Code
-* [POPS code](https://github.com/Fraternalilab/POPS)
-* [Latest Release](https://github.com/Fraternalilab/POPS/releases/latest)
-
-### Github branches
-* master : the distributed version of POPS
-* PDBML : parses XML format instead of PDB format
-* json : prints POPS output in JSON format
-* popscomp : computes results of POPSCOMP protocol
-* Rout : prints POPS output in R compatible table format
-
-
 ## Contact
 * franca.fraternali@kcl.ac.uk
 * jens@jkleinj.eu
 
 
-## Copyright
-* 2002-2020 Franca Fraternali (program author)
-* 2008-2020 Jens Kleinjung (modular C code)
-* 2002 Kuang Lin and Valerie Hindie (translation to C)
-* 2002 Luigi Cavallo (parametrisation)
+## (C) Copyright
+### Copyright Holders, Authors and Maintainers
+	2002-2020 Franca Fraternali (author, maintainer)
+	2008-2020 Jens Kleinjung (author, maintainer)
 
-
-## Availability
-The program is made available under the GNU Public License for academic
-scientific purposes, under the condition that proper acknowledgement
-is made to the authors of the program in publications resulting from the use
-of the program.
+### Contributors
+	2002 Kuang Lin and Valerie Hindie (translation to C)
+	2002 Luigi Cavallo (parametrisation)
 
 
 ## License
+GNU General Public License v3.0.
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
