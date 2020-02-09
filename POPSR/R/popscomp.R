@@ -140,12 +140,12 @@ popscompR = function(inputPDB, outDir) {
   ## compute SASA differences
   for (j in 1:length(rpopsLevel)) {
     for (i in 1:length(dim(pair.cmbn)[2])) {
-      if (i in 1:3) {
+      if (i %in% 1:3) {
         ## rbind ISO chain SASAs
         iso.rbind.tmp = rbind(iso.sasa.level.files[[j]][[pair.cmbn[1, i]]],
                               iso.sasa.level.files[[j]][[pair.cmbn[2, i]]]);
         ## assert consistency between 'rbind' ISO files and PAIR file
-        stopifnot(dim(iso.rbind.tmp) == dim(pair.sasa.level.files[[j]][[i]]));
+        #stopifnot(dim(iso.rbind.tmp) == dim(pair.sasa.level.files[[j]][[i]]));
         ## SASA DIFF values; column headers differ between levels
         D_SASA.A.2 = iso.rbind.tmp[ , "SASA.A.2"] - pair.sasa.level.files[[j]][[i]][ , "SASA.A.2"];
         if (j == 1) {
@@ -165,6 +165,7 @@ popscompR = function(inputPDB, outDir) {
           diff.sasa.level[[j]][[i]] = diff.tmp.df[diff.tmp.df[ , "D_SASA.A.2"] > 0,
             c("Chain", "Id", "AtomRange", "ResidRange", "D_Phob.A.2", "D_Phil.A.2", "D_SASA.A.2")];
         }
+      }
       if (j == 4) {
         diff.tmp.df = iso.sasa.level.files[[j]][[pair.cmbn[1, i]]] +
                       iso.sasa.level.files[[j]][[pair.cmbn[2, i]]] -
