@@ -16,11 +16,6 @@ library("bio3d");
 
 #library("parallel");
 
-get.pdb("1f3r", path = "/tmp");
-pdb = read.pdb("/tmp/1f3r.pdb");
-setwd("/home/jkleinj/2COPIES/develop/POPSsuite/POPScomp/POPSR/inst/popsr");
-outDir = ".";
-
 #_______________________________________________________________________________
 ## POPScomp function implemented in R
 ## Prefixes:
@@ -31,7 +26,7 @@ outDir = ".";
 ## DIFF: difference between sum of isolated chain SASA and paired chain SASA
 popscompR = function(inputPDB, outDir) {
 	## number of cores
-	nCore = detectCores() - 1;
+	#nCore = detectCores() - 1;
 
 	#________________________________________________________________________________
 	## ISO: split input PDB into chains
@@ -183,9 +178,12 @@ popscompR = function(inputPDB, outDir) {
   names(diff.sasa.level) = rpopsLevel;
 
   #________________________________________________________________________________
-  ## write result files
+  ## write DIFF SASA result files
+  ## ID SASA files have been created in the App
+  ## PAIR SASA files have been created here earlier
+  ## that completes the set of three types of output files
   for (j in 1:length(rpopsLevel)) {
-    write.table(do.call(rbind, diff.sasa.level[[j]]), paste0(outDir, "/", "diffSASA.", rpopsLevel[j]));
+    write.table(do.call(rbind, diff.sasa.level[[j]]), paste0(outDir, "/", "deltaSASA.", rpopsLevel[j]));
   }
 }
 
