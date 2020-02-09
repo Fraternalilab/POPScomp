@@ -32,9 +32,11 @@ static void print_header()
 static void print_license()
 {
     fprintf(stdout, "\nhttp://popscomp.org\n"
-			"\nCopyright (C) and Contributions\n"
+			"\n(C) Copyright\n"
+			"Copyright Holders, Authors and Maintainers\n"
 			"\t2002-2020 Franca Fraternali (author, maintainer)\n"
 			"\t2008-2020 Jens Kleinjung (author, maintainer)\n"
+			"Contributors\n"
 			"\t2002 Kuang Lin and Valerie Hindie (translation to C)\n"
 			"\t2002 Luigi Cavallo (parametrisation)\n"
 			"POPS* is free software and comes with ABSOLUTELY NO WARRANTY.\n"
