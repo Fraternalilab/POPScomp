@@ -32,6 +32,7 @@ Since POPScomp 3.0 (04.2019), the subdirectories *POPSC*, *POPSR*, *FunPDBe* and
 co-developed to ensure full compatibility of inter-dependencies.
 1. *POPSC*: A GNU Autotools package of the POPS C program that computes SASA
   for a given structure.
+  ![C/C++ CI](https://github.com/Fraternalilab/POPScomp/workflows/C/C++%20CI/badge.svg)
 2. *POPSR*: An R package containing an R program that
     - splits complexes into single and pair components to compute buried SASA
 	  using POPSC and 
