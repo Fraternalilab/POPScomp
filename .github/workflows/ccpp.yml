@@ -6,9 +6,11 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    working-directory: POPSC
+
     steps:
     - uses: actions/checkout@v2
+    - name: subdir
+      run: cd POPSC
     - name: bootstrap
       run: ./bootstrap
     - name: configure
