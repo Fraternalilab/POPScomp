@@ -1,11 +1,11 @@
 ## Overview
 This is version 3.1 of the POPScomp program. There are several options to run this code:
-1. Use our server at (http://popscomp.org:3838) -> POPScomp .
+1. Use our POPScomp server at http://popscomp.org:3838 .
 2. Download the POPScomp Docker image and use the App on your local computer without any further installation.
-3. Clone the POPScomp repository and compile POPSC and run the App on your local computer.
+3. Clone the POPScomp GitHub repository, compile POPSC and run the App on your local computer.
 
 The POPScomp program computes the Solvent Accessible Surface Area (SASA)
-of a given PDB structure. If the structure is composed of more than one chain
+of a given PDB structure. If the structure is a complex, *i.e.* composed of more than one chain
 containing protein or RNA/DNA, POPScomp creates internally all pair combinations
 of chains to compute the buried SASA upon complexation. Details of those routines
 are explained in the published papers on POPS and POPSCOMP.
@@ -18,23 +18,11 @@ the Shiny sever runs the POPS program on components of the PDB file
 and the tables automatically refresh to show the resulting SASA values.
 
 ## Software
-Source code and detailed information can Fraternali Lab's GitHub page as POPScomp repository.
-The POPScomp server is bFraternali lab's
-[POPScomp GitHub page](https://github.com/Fraternalilab/POPScomp).
-Please use that site for bug reports and add a Star to the repository
-to support the software maintainers.
-ased on two software packages:
-1. POPSC: A GNU Autotools package of the POPS C program.
-2. POPSR: An R package containing this Shiny server to interface the POPS program and to provide the POPSCOMP functionality.
-Since April 2019, POPSC and POPSR are being co-developed.
-Fraternali lab's
-[POPScomp GitHub page](https://github.com/Fraternalilab/POPScomp).
+Source code and detailed information can be found on
+Fraternali lab's [POPScomp GitHub page](https://github.com/Fraternalilab/POPScomp).
 Please use that site for bug reports and add a Star to the repository
 to support the software maintainers.
 
-The legacy codes of POPS and POPSCOMP are available as repositories 'POPSlegacy' and 'POPSCOMPlegacy' on Fraternali Lab's GitHub page .
-
-### Packages
 1. *POPSC*: A GNU Autotools package of the POPS C program that computes SASA
   for a given structure.
   ![C/C++ CI](https://github.com/Fraternalilab/POPScomp/workflows/C/C++%20CI/badge.svg)
@@ -44,20 +32,9 @@ The legacy codes of POPS and POPSCOMP are available as repositories 'POPSlegacy'
     - provides a Shiny server as interface to the POPScomp (POPSC and POPSR) programs.
 3. *FunPDBe*: Scripts to run POPScomp over the PDB database and feed the output into
   the FunPDBe project.
-4. *DockerImage*: A *Docker* image of POPScomp can be pulled from the Google Cloud.
+4. *Docker Image*: A *Docker* image of POPScomp can be pulled from the Google Cloud.
 ```
 docker pull eu.gcr.io/high-hue-217311/popscomp:3.1
-```
-
-Fraternali lab's
-[POPScomp GitHub page](https://github.com/Fraternalilab/POPScomp).
-Please use that site for bug reports and add a Star to the repository
-to support the software maintainers.
-
-### Docker image
-A *Docker* image of POPScomp can be pulled from the Google Cloud.
-```
-docker pull eu.gcr.io/high-hue-217311/popscomp:0.1
 ```
 
 ## Servers
