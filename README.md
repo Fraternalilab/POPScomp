@@ -1,8 +1,8 @@
 ## Overview
 This is version 3.1 of the POPScomp program. There are several options to run this code:
 1. Use our POPScomp server at http://popscomp.org:3838 .
-2. Download the POPScomp Docker image and use the App on your local computer without any further installation.
-3. Clone the POPScomp GitHub repository, compile POPSC and run the App on your local computer.
+2. Download the POPScomp Docker image and use the Shiny App on your local computer without any further installation.
+3. Clone the POPScomp GitHub repository, compile POPSC and run the Shiny App on your local computer.
 
 The POPScomp program computes the Solvent Accessible Surface Area (SASA)
 of a given PDB structure. If the structure is a complex, *i.e.* composed of more than one chain
