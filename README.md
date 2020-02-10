@@ -29,7 +29,7 @@ to support the software maintainers.
 2. *POPSR*: An R package containing an R program that
     - splits complexes into single and pair components to compute buried SASA
 	  using POPSC and 
-    - provides a Shiny server as interface to the POPScomp (POPSC and POPSR) programs.
+    - provides a Shiny App as interface to the POPScomp (POPSC and POPSR) programs.
 3. *FunPDBe*: Scripts to run POPScomp over the PDB database and feed the output into
   the FunPDBe project.
 4. *Docker Image*: A *Docker* image of POPScomp can be pulled from the Google Cloud.
