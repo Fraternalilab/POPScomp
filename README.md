@@ -1,8 +1,8 @@
 ## Overview
 This is version 3.1 of the POPScomp program. There are several options to run this code:
 1. Use our POPScomp server at http://popscomp.org:3838 .
-2. Download the POPScomp Docker image and use the Shiny App on your local computer without any further installation.
-3. Clone the POPScomp GitHub repository, compile POPSC and run the Shiny App on your local computer.
+2. Download the POPScomp Docker image and use the *Shiny* App on your local computer without any further installation.
+3. Clone the POPScomp GitHub repository, compile POPSC and run the *Shiny* App on your local computer.
 
 The POPScomp program computes the Solvent Accessible Surface Area (SASA)
 of a given PDB structure. If the structure is a complex, *i.e.* composed of more than one chain
@@ -26,10 +26,9 @@ to support the software maintainers.
 1. *POPSC*: A GNU Autotools package of the POPS C program that computes SASA
   for a given structure.
   ![C/C++ CI](https://github.com/Fraternalilab/POPScomp/workflows/C/C++%20CI/badge.svg)
-2. *POPSR*: An R package containing an R program that
-    - splits complexes into single and pair components to compute buried SASA
-	  using POPSC and 
-    - provides a Shiny App as interface to the POPScomp (POPSC and POPSR) programs.
+2. *POPSR*: An R package containing R programs that
+    - split complexes into single and pair components to compute buried SASA using POPSC and 
+    - provide a Shiny App as interface to the POPSC program.
 3. *FunPDBe*: Scripts to run POPScomp over the PDB database and feed the output into
   the FunPDBe project.
 4. *Docker Image*: A *Docker* image of POPScomp can be pulled from the Google Cloud.
