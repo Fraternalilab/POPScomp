@@ -8,7 +8,7 @@ unfies the two methods.
 
 There are several options to run POPScomp, refer to the [Wiki](https://github.com/Fraternalilab/POPScomp/wiki) for more details:
 1. Use our POPScomp *Shiny* server at http://popscomp.org:3838 .
-2. Download the POPScomp Docker image and use the *Shiny* App on your local computer without any further installation.
+2. Download the POPScomp Docker image (see below) and use the *Shiny* App on your local computer without any further installation.
 3. Clone the [POPScomp GitHub repository](https://github.com/Fraternalilab/POPScomp), compile POPSC and run the *Shiny* App on your local computer.
 
 The POPScomp *Shiny* App allows for easy processing of PDB structures.
@@ -22,7 +22,7 @@ and the tables automatically refresh to show the resulting SASA values.
 ## Software
 Please use the [Issues](https://github.com/Fraternalilab/POPScomp/issues) page for bug reports and add a Star to the repository to support the software maintainers.
 
-The [GitHub repository](https://github.com/Fraternalilab/POPScomp) contains the following components:
+The [POPScomp GitHub repository](https://github.com/Fraternalilab/POPScomp) contains the following components:
 1. *POPSC*: A GNU Autotools package of the POPS C program that computes SASA
   for a given structure.
   ![C/C++ CI](https://github.com/Fraternalilab/POPScomp/workflows/C/C++%20CI/badge.svg)
