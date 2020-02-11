@@ -1,20 +1,22 @@
 ## Overview
-This is version 3.1 of the POPScomp program. There are several options to run this code:
-1. Use our POPScomp server at http://popscomp.org:3838 .
-2. Download the POPScomp Docker image and use the *Shiny* App on your local computer without any further installation.
-3. Clone the POPScomp GitHub repository, compile POPSC and run the *Shiny* App on your local computer.
-
 The POPScomp program computes the Solvent Accessible Surface Area (SASA)
 of a given PDB structure. If the structure is a complex, *i.e.* composed of more than one chain
 containing protein or RNA/DNA, POPScomp creates internally all pair combinations
 of chains to compute the buried SASA upon complexation. Details of those routines
-are explained in the published papers on POPS and POPSCOMP.
+are explained in the published papers on POPS and POPSCOMP. The POPScomp program
+unfies the two methods.
 
-The POPScomp *Shiny* App shows tabs for atom, residue, chain and molecule SASAs.
-The tables are initialised without any values and therefore the user sees
-the table header and below the notice 'No data available in table'.
-After selecting a PDB identifier or file and pressing 'run POPScomp',
-the Shiny sever runs the POPS program on components of the PDB file
+There are several options to run POPScomp:
+1. Use our POPScomp *Shiny* server at http://popscomp.org:3838 .
+2. Download the POPScomp Docker image and use the *Shiny* App on your local computer without any further installation.
+3. Clone the POPScomp GitHub repository, compile POPSC and run the *Shiny* App on your local computer.
+
+The POPScomp *Shiny* App allows for easy processing of PDB structures.
+The interface provides upload fields for PDB structures and shows result tabs for atom, residue, chain and molecule SASAs.
+The SASA tables are initialised without any values and therefore the user sees the table header and
+below the notice 'No data available in table'.
+After selecting a PDB identifier or uploading an input file and pressing 'run POPScomp',
+the Shiny server runs the POPS program on the PDB file and, if applicable, on its complex components
 and the tables automatically refresh to show the resulting SASA values.
 
 ## Software
@@ -23,6 +25,7 @@ Fraternali lab's [POPScomp GitHub page](https://github.com/Fraternalilab/POPScom
 Please use that site for bug reports and add a Star to the repository
 to support the software maintainers.
 
+The GitHub repository contains the following components:
 1. *POPSC*: A GNU Autotools package of the POPS C program that computes SASA
   for a given structure.
   ![C/C++ CI](https://github.com/Fraternalilab/POPScomp/workflows/C/C++%20CI/badge.svg)
