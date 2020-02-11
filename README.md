@@ -6,7 +6,7 @@ of chains to compute the buried SASA upon complexation. Details of those routine
 are explained in the published papers on POPS and POPSCOMP. The POPScomp program
 unfies the two methods.
 
-There are several options to run POPScomp:
+There are several options to run POPScomp, refer to the Wiki for more details:
 1. Use our POPScomp *Shiny* server at http://popscomp.org:3838 .
 2. Download the POPScomp Docker image and use the *Shiny* App on your local computer without any further installation.
 3. Clone the POPScomp GitHub repository, compile POPSC and run the *Shiny* App on your local computer.
@@ -20,24 +20,21 @@ the Shiny server runs the POPS program on the PDB file and, if applicable, on it
 and the tables automatically refresh to show the resulting SASA values.
 
 ## Software
-Source code and detailed information can be found on
-Fraternali lab's [POPScomp GitHub page](https://github.com/Fraternalilab/POPScomp).
-Please use that site for bug reports and add a Star to the repository
-to support the software maintainers.
+Please use the Issue tab for bug reports and add a Star to the repository to support the software maintainers.
 
-The GitHub repository contains the following components:
+This GitHub repository contains the following components:
 1. *POPSC*: A GNU Autotools package of the POPS C program that computes SASA
   for a given structure.
   ![C/C++ CI](https://github.com/Fraternalilab/POPScomp/workflows/C/C++%20CI/badge.svg)
 2. *POPSR*: An R package containing R programs that
     - split complexes into single and pair components to compute buried SASA using POPSC and 
     - provide a Shiny App as interface to the POPSC program.
-3. *FunPDBe*: Scripts to run POPScomp over the PDB database and feed the output into
-  the FunPDBe project.
-4. *Docker Image*: A *Docker* image of POPScomp can be pulled from the Google Cloud.
+3. *Docker Image*: A *Docker* image of POPScomp can be pulled from the Google Cloud.
 ```
 docker pull eu.gcr.io/high-hue-217311/popscomp:3.1
 ```
+4. *FunPDBe*: Scripts to run POPScomp over the PDB database and feed the output into
+  the FunPDBe project.
 
 ## Servers
 
