@@ -49,7 +49,7 @@ POPScomp is part of the [FunPDBe resources](https://www.ebi.ac.uk/pdbe/funpdbe/d
 
 ### Note on legacy sites
 * mathbio.nimr.mrc.ac.uk/POPSCOMP : This was the original address of the POPS and POPSCOMP servers in the Division of Mathematical Biology at the NIMR institute, which has been closed in 2015 and became a part of the Francis Crick Institute.
-* mathbio.crick.mrc.ac.uk/POPSCOMP : For a short while, the POPS and POPSCOMP servers were running in the Francis Crick Institute, but unfortunately the institute's administration decided to stop support.
+* mathbio.crick.mrc.ac.uk/POPSCOMP : For a short while, the POPS and POPSCOMP servers were running in the Francis Crick Institute, but the institute's administration decided to stop support.
 
 
 ## References
