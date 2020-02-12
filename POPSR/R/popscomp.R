@@ -50,16 +50,23 @@ popscompR = function(inputPDB, outDir) {
 	## We do that here because there is only one tab on the interface for each resolution level
 	##   and the number of chains to be processed/shown will vary. Otherwise we would need
 	##   a dynamic tab structure on the interface that creates a tab for each chain.
+	## Atom
 	## first just the header line
-	command0 = paste0("head -n 1 ", outDir, "/id.rpopsAtom > ", outDir, "/isoSASA.rpopsAtom");
-	system_status0 = system(command0);
-	## then concatenate all putput files, without file name header (-q) and table header (-n+2)
-	command1 = paste0("tail -q -n+2 ", outDir, "/*.iso.rpopsAtom >> ", outDir, "/isoSASA.rpopsAtom");
-	system_status1 = system(command1);
-	command2 = paste0("tail -q -n+2 ", outDir, "/*.iso.rpopsResidue >> ", outDir, "/isoSASA.rpopsResidue");
-	system_status2 = system(command2);
-	command3 = paste0("tail -q -n+2 ", outDir, "/*.iso.rpopsChain >> ", outDir, "/isoSASA.rpopsChain");
-	system_status3 = system(command3);
+	command1.1 = paste0("head -n 1 ", outDir, "/id.rpopsAtom > ", outDir, "/isoSASA.rpopsAtom");
+	system_status1.1 = system(command1.1);
+	## then concatenate output file, without file name header (-q) and table header (-n+2)
+	command1.2 = paste0("tail -q -n+2 ", outDir, "/*.iso.rpopsAtom >> ", outDir, "/isoSASA.rpopsAtom");
+	system_status1.2 = system(command1.2);
+	## Residue
+	command2.1 = paste0("head -n 1 ", outDir, "/id.rpopsResidue > ", outDir, "/isoSASA.rpopsResidue");
+	system_status2.1 = system(command2.1);
+	command2.2 = paste0("tail -q -n+2 ", outDir, "/*.iso.rpopsResidue >> ", outDir, "/isoSASA.rpopsResidue");
+	system_status2.2 = system(command2.2);
+	## Chain
+	command3.1 = paste0("head -n 1 ", outDir, "/id.rpopsChain > ", outDir, "/isoSASA.rpopsChain");
+	system_status3.1 = system(command3.1);
+	command3.2 = paste0("tail -q -n+2 ", outDir, "/*.iso.rpopsChain >> ", outDir, "/isoSASA.rpopsChain");
+	system_status3.2 = system(command3.2);
 
 	#________________________________________________________________________________
 	## PAIR: create PDB files for all pairwise chain combinations
@@ -140,36 +147,39 @@ popscompR = function(inputPDB, outDir) {
   ## compute SASA differences
   for (j in 1:length(rpopsLevel)) {
     for (i in 1:length(dim(pair.cmbn)[2])) {
-      if (i %in% 1:3) {
+      if (j %in% 1:3) {
         ## rbind ISO chain SASAs
         iso.rbind.tmp = rbind(iso.sasa.level.files[[j]][[pair.cmbn[1, i]]],
                               iso.sasa.level.files[[j]][[pair.cmbn[2, i]]]);
         ## assert consistency between 'rbind' ISO files and PAIR file
         #stopifnot(dim(iso.rbind.tmp) == dim(pair.sasa.level.files[[j]][[i]]));
-        ## SASA DIFF values; column headers differ between levels
-        D_SASA.A.2 = iso.rbind.tmp[ , "SASA.A.2"] - pair.sasa.level.files[[j]][[i]][ , "SASA.A.2"];
+        print(paste(j, i, dim(iso.rbind.tmp), dim(pair.sasa.level.files[[j]][[i]])));
+        ## SASA DIFF values, applies to all levels
+        D_SASA.A.2 = round(iso.rbind.tmp[ , "SASA.A.2"] - pair.sasa.level.files[[j]][[i]][ , "SASA.A.2"], 2);
+        ## more level-specific delta values
         if (j == 1) {
           diff.tmp.df = cbind(iso.rbind.tmp, D_SASA.A.2);
           diff.sasa.level[[j]][[i]] = diff.tmp.df[diff.tmp.df[ , "D_SASA.A.2"] > 0,
             c("ResidNe", "Chain", "ResidNr", "iCode", "D_SASA.A.2")];
         } else if (j == 2) {
-          D_Phob.A.2 = iso.rbind.tmp[ , "Phob.A.2"] - pair.sasa.level.files[[j]][[i]][ , "Phob.A.2"];
-          D_Phil.A.2 = iso.rbind.tmp[ , "Phil.A.2"] - pair.sasa.level.files[[j]][[i]][ , "Phil.A.2"];
+          D_Phob.A.2 = round(iso.rbind.tmp[ , "Phob.A.2"] - pair.sasa.level.files[[j]][[i]][ , "Phob.A.2"], digits = 2);
+          D_Phil.A.2 = round(iso.rbind.tmp[ , "Phil.A.2"] - pair.sasa.level.files[[j]][[i]][ , "Phil.A.2"], digits = 2);
           diff.tmp.df = cbind(iso.rbind.tmp, D_Phob.A.2, D_Phil.A.2, D_SASA.A.2);
           diff.sasa.level[[j]][[i]] = diff.tmp.df[diff.tmp.df[ , "D_SASA.A.2"] > 0,
             c("ResidNe", "Chain", "ResidNr", "iCode", "D_Phob.A.2", "D_Phil.A.2", "D_SASA.A.2")];
         } else if (j == 3) {
-          D_Phob.A.2 = iso.rbind.tmp[ , "Phob.A.2"] - pair.sasa.level.files[[j]][[i]][ , "Phob.A.2"];
-          D_Phil.A.2 = iso.rbind.tmp[ , "Phil.A.2"] - pair.sasa.level.files[[j]][[i]][ , "Phil.A.2"];
+          D_Phob.A.2 = round(iso.rbind.tmp[ , "Phob.A.2"] - pair.sasa.level.files[[j]][[i]][ , "Phob.A.2"], digits = 2);
+          D_Phil.A.2 = round(iso.rbind.tmp[ , "Phil.A.2"] - pair.sasa.level.files[[j]][[i]][ , "Phil.A.2"], digits = 2);
           diff.tmp.df = cbind(iso.rbind.tmp, D_Phob.A.2, D_Phil.A.2, D_SASA.A.2);
           diff.sasa.level[[j]][[i]] = diff.tmp.df[diff.tmp.df[ , "D_SASA.A.2"] > 0,
             c("Chain", "Id", "AtomRange", "ResidRange", "D_Phob.A.2", "D_Phil.A.2", "D_SASA.A.2")];
         }
       }
       if (j == 4) {
-        diff.tmp.df = iso.sasa.level.files[[j]][[pair.cmbn[1, i]]] +
-                      iso.sasa.level.files[[j]][[pair.cmbn[2, i]]] -
-                      pair.sasa.level.files[[j]][[i]];
+        diff.tmp.df = round(iso.sasa.level.files[[j]][[pair.cmbn[1, i]]] +
+                            iso.sasa.level.files[[j]][[pair.cmbn[2, i]]] -
+                            pair.sasa.level.files[[j]][[i]],
+                            digits = 2);
         colnames(diff.tmp.df) = c("D_Phob.A.2", "D_Phil.A.2", "D_SASA.A.2");
         diff.sasa.level[[j]][[i]] = diff.tmp.df;
       }

@@ -9,6 +9,8 @@ library(DT)
 library(digest)
 library(RPOPS)
 
+options("digits" = 4)
+
 #_______________________________________________________________________________
 # POPS UI
 ui <- fluidPage(
@@ -136,12 +138,10 @@ ui <- fluidPage(
 		      h3("Method"),
           p("The POPScomp server invokes the POPS program to compute the
 		        Solvent Accessible Surface Area (SASA) of a given PDB structure.
-			      This is the POPS functionality, which has been currently implemented.
-			      Soon to come: The POPSCOMP functionality for protein or RNA/DNA complexes,
-			      where the POPScomp server creates internally
+			      For protein or RNA/DNA complexes, the POPScomp server creates internally
 			      all pair combinations of chains to compute the buried SASA upon complexation.
 			      Details of those functionalities are explained in the published papers
-			      on POPS and POPSCOMP, see 'About' tab for the list of publications."
+			      on implicit solvent, POPS and POPSCOMP; see 'About' tab for the list of publications."
           ),
 		      h3("Run"),
           p("SASA tables are initialised without any values; therefore, before 'run POPScomp' execution,
@@ -182,22 +182,15 @@ ui <- fluidPage(
 			    p("This is version 3.1 of the POPScomp Shiny App. There are several options to run this code:"),
 			    p("1. Use our server at http://popscomp.org:3838 ->", a("POPScomp", href="http://popscom.org:3838"), "."),
 			    p("2. Download the POPScomp Docker image and use the App on your local computer without any further installation."),
-			    p("3. Clone the ",  a("POPScomp repository", href="https://github.com/Fraternalilab/POPScomp"),
+			    p("3. Clone the ",  a("POPScomp GitHub repository", href="https://github.com/Fraternalilab/POPScomp"),
 			        "and compile POPSC and run the App on your local computer."),
 			    h3("Software"),
-			    p("Source code and detailed information can Fraternali Lab's GitHub page as ",
-			      a("POPScomp repository", href="https://github.com/Fraternalilab/POPScomp"), "."
+			    p("For source code and Wiki visit Fraternali Lab's ",
+			      a("POPScomp GitHub repository", href="https://github.com/Fraternalilab/POPScomp"), "."
 			    ),
 			    p("The POPScomp server is based on two software packages:"),
           p("1. POPSC: A GNU Autotools package of the POPS C program."),
-          p("2. POPSR: An R package containing this Shiny server
-             to interface the POPS program and to provide the POPSCOMP functionality."
-          ),
-          p("Since April 2019, POPSC and POPSR are being co-developed."),
-			    p("The legacy codes of POPS and POPSCOMP are available as repositories
-			      'POPSlegacy' and 'POPSCOMPlegacy' on ",
-			        a("Fraternali Lab's GitHub page", href="https://github.com/Fraternalilab"), "."
-			    ),
+          p("2. POPSR: An R package containing this Shiny App."),
 			    h3("EBI PDBe-KB"),
           p("POPScomp is part of the ",
               a("FunPDBe resources", href="https://www.ebi.ac.uk/pdbe/funpdbe/deposition"), "."
@@ -236,11 +229,7 @@ ui <- fluidPage(
 			      a("DOI", href="https://dx.doi.org/10.1093%2Fnar%2Fgki369"),
 			      a("Pubmed", href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1160130/")
 			    ),
-<<<<<<< HEAD
 			    h3("License and Copyright"),
-=======
-			    h3("License"),
->>>>>>> fb4b00af35a89148ba973164120cd6ec4376a8e3
 			    p("Usage of the software and server is free under the
 			        GNU General Public License v3.0."
 			    ),
@@ -283,6 +272,8 @@ ui <- fluidPage(
 #_______________________________________________________________________________
 # server routines
 server <- function(input, output) {
+
+  options("digits" = 4)
 
   ## random output paths
   rndString = as.character(digest(format(Sys.time(), "%H:%M:%OS3")))
@@ -396,7 +387,7 @@ server <- function(input, output) {
                             Chain = character(),
                             ResidNr = integer(),
                             iCode = integer(),
-                            SASA.A.2 = double(),
+                            D_SASA.A.2 = double(),
                             AtomTp = integer(),
                             AtomGp = integer()
   )
@@ -565,7 +556,7 @@ server <- function(input, output) {
                                 D_Phil.A.2 = double(),
                                 D_SASA.A.2 = double()
   )
-  write.table(chain_deltasasa_null.df, file = "deltaSASA.rpopsMolecule")
+  write.table(molecule_deltasasa_null.df, file = "deltaSASA.rpopsMolecule")
   moleculeDeltaSASAOutput = reactiveValues(highlight = NULL, data = NULL)
   moleculeDeltaSASAOutputData = reactiveFileReader(2000, NULL, "deltaSASA.rpopsMolecule",
                                                 read.table, header = TRUE)
