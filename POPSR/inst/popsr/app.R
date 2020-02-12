@@ -9,8 +9,6 @@ library(DT)
 library(digest)
 library(RPOPS)
 
-options("digits" = 4)
-
 #_______________________________________________________________________________
 # POPS UI
 ui <- fluidPage(
@@ -155,8 +153,7 @@ ui <- fluidPage(
           ),
 		      h3("Results"),
 		      p("The SASA result tabs are 'Atom', 'Residue', 'Chain' and 'Molecule'.
-            Except for 'Molecule', they all contain a second layer of tabs to accommodate
-            the POPSCOMP functionality, as follows.
+            Those tabs contain a second layer of tabs to accommodate the POPSCOMP functionality, as follows.
             'Input Structure': SASA values of the PDB structure as input.
             'DeltaSASA': The SASA difference between isolated chains and chain pair complexes.
             'Isolated Chains': SASA values of isolated chains.
@@ -166,6 +163,11 @@ ui <- fluidPage(
 		      p("Results will be kept for one day on the server. Please use the 'Download ...' buttons
 		        under the tables to save their content in 'csv' format. The 'Download All Results'
 		        button on the side panel returns the zipped content of the output directory."
+		      ),
+		      h3("Multiple Runs"),
+		      p("Refresh the browser between runs, otherwise the same (random) output directory will be used,
+		        which may be confusing if results for single-chain structures and complexes are being mixed.
+		        This behaviour will be improved upon in future releases."
 		      ),
 		      h3("Help"),
           p("In case the server does not work as expected or server-related issues
@@ -273,13 +275,14 @@ ui <- fluidPage(
 # server routines
 server <- function(input, output) {
 
-  options("digits" = 4)
-
-  ## random output paths
-  rndString = as.character(digest(format(Sys.time(), "%H:%M:%OS3")))
+  ## main output directory
   mainDir = "/tmp"
+  ## random output path
+  rndString = as.character(digest(format(Sys.time(), "%H:%M:%OS3")))
   subDir = paste0("POPScomp_", rndString)
   outDir = paste(mainDir, subDir, sep = "/")
+  dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
+  setwd(file.path(mainDir, subDir))
 
   ## o1.1 display input PDB entry
   output$pdbentry <- renderText({
@@ -307,19 +310,13 @@ server <- function(input, output) {
   ##     path to the temporary file.
   ## - POPS will be run on the PDB file and the output will be zipped.
   output$nil <- eventReactive(input$popscomp, {
+
     ## to proceed, we require one PDB identifier or uploaded PDB file
     validate(need(((input$pdbentry != "") || (! is.null(input$PDBfile))),
           message = "No PDB source input!"))
     ## to proceed, we need one unspecified PDB identifier
     validate(need(((input$pdbentry == "") || (is.null(input$PDBfile))),
           message = "Two PDB sources input!"))
-
-    #mainDir = "/tmp"
-    #rndString = as.character(digest(format(Sys.time(), "%H:%M:%OS3")))
-    #subDir = paste0("POPScomp_", rndString)
-    #outDir = paste(mainDir, subDir, sep = "/")
-    dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
-    setwd(file.path(mainDir, subDir))
 
     ## download (PDB database) or upload (local file system) the PDB structure
     if (input$pdbentry != "") {
@@ -369,7 +366,7 @@ server <- function(input, output) {
                         AtomGp = integer(),
                         Surf.A.2 = double()
   )
-  write.table(atom_sasa_null.df, file = "id.rpopsAtom")
+  write.table(atom_sasa_null.df, file = paste(outDir, "id.rpopsAtom", sep = '/'))
   ## reactive data: update output when file content changes
   atomSASAOutput = reactiveValues(highlight = NULL, data = NULL)
   atomSASAOutputData = reactiveFileReader(2000, NULL, "id.rpopsAtom",
@@ -391,7 +388,7 @@ server <- function(input, output) {
                             AtomTp = integer(),
                             AtomGp = integer()
   )
-  write.table(atom_deltasasa_null.df, file = "deltaSASA.rpopsAtom")
+  write.table(atom_deltasasa_null.df, file = paste(outDir, "deltaSASA.rpopsAtom", sep = '/'))
   atomDeltaSASAOutput = reactiveValues(highlight = NULL, data = NULL)
   atomDeltaSASAOutputData = reactiveFileReader(2000, NULL, "deltaSASA.rpopsAtom",
                                       read.table, header = TRUE)
@@ -414,7 +411,7 @@ server <- function(input, output) {
                           AtomGp = integer(),
                           Surf.A.2 = double()
   )
-  write.table(atom_isosasa_null.df, file = "isoSASA.rpopsAtom")
+  write.table(atom_isosasa_null.df, file = paste(outDir, "isoSASA.rpopsAtom", sep = '/'))
   atomIsoSASAOutput = reactiveValues(highlight = NULL, data = NULL)
   atomIsoSASAOutputData = reactiveFileReader(2000, NULL, "isoSASA.rpopsAtom",
                                          read.table, header = TRUE)
@@ -435,7 +432,7 @@ server <- function(input, output) {
                           N.overl. = integer(),
                           Surf.A.2 = double()
   )
-  write.table(residue_sasa_null.df, file = "id.rpopsResidue")
+  write.table(residue_sasa_null.df, file = paste(outDir, "id.rpopsResidue", sep = '/'))
   residueSASAOutput = reactiveValues(highlight = NULL, data = NULL)
   residueSASAOutputData = reactiveFileReader(2000, NULL, "id.rpopsResidue",
                                          read.table, header = TRUE)
@@ -453,7 +450,7 @@ server <- function(input, output) {
                                 D_Phil.A.2 = double(),
                                 D_SASA.A.2 = double()
   )
-  write.table(residue_deltasasa_null.df, file = "deltaSASA.rpopsResidue")
+  write.table(residue_deltasasa_null.df, file = paste(outDir, "deltaSASA.rpopsResidue", sep = '/'))
   residueDeltaSASAOutput = reactiveValues(highlight = NULL, data = NULL)
   residueDeltaSASAOutputData = reactiveFileReader(2000, NULL, "deltaSASA.rpopsResidue",
                                          read.table, header = TRUE)
@@ -474,7 +471,7 @@ server <- function(input, output) {
                               N.overl. = integer(),
                               Surf.A.2 = double()
   )
-  write.table(residue_isosasa_null.df, file = "isoSASA.rpopsResidue")
+  write.table(residue_isosasa_null.df, file = paste(outDir, "isoSASA.rpopsResidue", sep = '/'))
   residueIsoSASAOutput = reactiveValues(highlight = NULL, data = NULL)
   residueIsoSASAOutputData = reactiveFileReader(2000, NULL, "isoSASA.rpopsResidue",
                                       read.table, header = TRUE)
@@ -492,7 +489,7 @@ server <- function(input, output) {
                           Phil.A.2 = double(),
                           SASA.A.2 = double()
   )
-  write.table(chain_sasa_null.df, file = "id.rpopsChain")
+  write.table(chain_sasa_null.df, file = paste(outDir, "id.rpopsChain", sep = '/'))
   chainSASAOutput = reactiveValues(highlight = NULL, data = NULL)
   chainSASAOutputData = reactiveFileReader(2000, NULL, "id.rpopsChain",
                                        read.table, header = TRUE)
@@ -510,7 +507,7 @@ server <- function(input, output) {
                               D_Phil.A.2 = double(),
                               D_SASA.A.2 = double()
   )
-  write.table(chain_deltasasa_null.df, file = "deltaSASA.rpopsChain")
+  write.table(chain_deltasasa_null.df, file = paste(outDir, "deltaSASA.rpopsChain", sep = '/'))
   chainDeltaSASAOutput = reactiveValues(highlight = NULL, data = NULL)
   chainDeltaSASAOutputData = reactiveFileReader(2000, NULL, "deltaSASA.rpopsChain",
                                        read.table, header = TRUE)
@@ -528,7 +525,7 @@ server <- function(input, output) {
                             Phil.A.2 = double(),
                             SASA.A.2 = double()
   )
-  write.table(chain_isosasa_null.df, file = "isoSASA.rpopsChain")
+  write.table(chain_isosasa_null.df, file = paste(outDir, "isoSASA.rpopsChain", sep = '/'))
   chainIsoSASAOutput = reactiveValues(highlight = NULL, data = NULL)
   chainIsoSASAOutputData = reactiveFileReader(2000, NULL, "isoSASA.rpopsChain",
                                       read.table, header = TRUE)
@@ -542,7 +539,7 @@ server <- function(input, output) {
                             Phil.A.2 = double(),
                             SASA.A.2 = double()
   )
-  write.table(molecule_sasa_null.df, file = "id.rpopsMolecule")
+  write.table(molecule_sasa_null.df, file = paste(outDir, "id.rpopsMolecule", sep = '/'))
   moleculeSASAOutput = reactiveValues(highlight = NULL, data = NULL)
   moleculeSASAOutputData = reactiveFileReader(2000, NULL, "id.rpopsMolecule",
                                       read.table, header = TRUE)
@@ -556,7 +553,7 @@ server <- function(input, output) {
                                 D_Phil.A.2 = double(),
                                 D_SASA.A.2 = double()
   )
-  write.table(molecule_deltasasa_null.df, file = "deltaSASA.rpopsMolecule")
+  write.table(molecule_deltasasa_null.df, file = paste(outDir, "deltaSASA.rpopsMolecule", sep = '/'))
   moleculeDeltaSASAOutput = reactiveValues(highlight = NULL, data = NULL)
   moleculeDeltaSASAOutputData = reactiveFileReader(2000, NULL, "deltaSASA.rpopsMolecule",
                                                 read.table, header = TRUE)

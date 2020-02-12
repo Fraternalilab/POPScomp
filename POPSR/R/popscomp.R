@@ -31,6 +31,11 @@ popscompR = function(inputPDB, outDir) {
 	#________________________________________________________________________________
 	## ISO: split input PDB into chains
 	chain.files = pdbsplit(paste(outDir, inputPDB, sep = "/"),  path = outDir, multi = FALSE);
+	## don not continue if input PDB is not a complex
+	if (length(chain.files) < 2) {
+	  return(0);
+	}
+
 	## short names
 	chain.files.short = sub('\\.pdb$', '', basename(chain.files));
 
