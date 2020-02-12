@@ -236,7 +236,11 @@ ui <- fluidPage(
 			      a("DOI", href="https://dx.doi.org/10.1093%2Fnar%2Fgki369"),
 			      a("Pubmed", href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1160130/")
 			    ),
+<<<<<<< HEAD
 			    h3("License and Copyright"),
+=======
+			    h3("License"),
+>>>>>>> fb4b00af35a89148ba973164120cd6ec4376a8e3
 			    p("Usage of the software and server is free under the
 			        GNU General Public License v3.0."
 			    ),
