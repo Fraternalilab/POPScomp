@@ -8,7 +8,7 @@ on implicit solvent, POPS and POPSCOMP. The POPScomp program unfies the latter t
 
 There are several options to run POPScomp, refer to the [Wiki](https://github.com/Fraternalilab/POPScomp/wiki) for more details:
 1. Use our POPScomp *Shiny* server at http://popscomp.org:3838 .
-2. Download the POPScomp [Docker image](https://github.com/Fraternalilab/POPScomp/#Docker_Image) and use the *Shiny* App on your local computer without any further installation.
+2. Download the POPScomp [Docker Image](https://github.com/Fraternalilab/POPScomp/#DockerImage) and use the *Shiny* App on your local computer without any further installation.
 3. Clone the [POPScomp GitHub repository](https://github.com/Fraternalilab/POPScomp), compile POPSC and run the *Shiny* App on your local computer.
 
 The POPScomp *Shiny* App allows for easy processing of PDB structures.
@@ -30,7 +30,7 @@ A GNU Autotools package of the POPS C program that computes SASA for a given str
 An R package containing R programs that
 - split complexes into single and pair components to compute buried SASA using POPSC and 
 - provide a Shiny App as interface to the POPSC program.
-### Docker Image
+### DockerImage
 A *Docker* image of POPScomp can be pulled from the Google Cloud.
 ```
 docker pull eu.gcr.io/high-hue-217311/popscomp:3.1
