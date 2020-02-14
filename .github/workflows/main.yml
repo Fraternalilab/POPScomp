@@ -1,0 +1,16 @@
+name: R CI
+
+on: [push]
+
+jobs:
+  R-CMD-CHECK:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: r-lib/actions/setup-r@master
+        with:
+            r-version: '3.6.1'
+      - name: compile POPSR
+        run: R CMD build POPSR
