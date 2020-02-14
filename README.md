@@ -23,18 +23,20 @@ and the tables automatically refresh to show the resulting SASA values.
 Please use the [Issues](https://github.com/Fraternalilab/POPScomp/issues) page for bug reports and add a Star to the repository to support the software maintainers.
 
 The [POPScomp GitHub repository](https://github.com/Fraternalilab/POPScomp) contains the following components:
-### POPSC
+### POPSC  ![C/C++ CI](https://github.com/Fraternalilab/POPScomp/workflows/C/C++%20CI/badge.svg)
 A GNU Autotools package of the POPS C program that computes SASA for a given structure.
-  ![C/C++ CI](https://github.com/Fraternalilab/POPScomp/workflows/C/C++%20CI/badge.svg)
-### POPSR
+  
+### POPSR  ![R CI](https://github.com/Fraternalilab/POPScomp/workflows/R%20CI/badge.svg)
 An R package containing R programs that
 - split complexes into single and pair components to compute buried SASA using POPSC and 
 - provide a Shiny App as interface to the POPSC program.
+
 ### DockerImage
 A *Docker* image of POPScomp can be pulled from the Google Cloud.
 ```
 docker pull eu.gcr.io/high-hue-217311/popscomp:3.1
 ```
+
 ### FunPDBe
 Scripts to run POPScomp over the PDB database and feed the output into the FunPDBe project.
 
