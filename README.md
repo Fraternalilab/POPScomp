@@ -23,7 +23,7 @@ and the tables automatically refresh to show the resulting SASA values.
 Please use the [Issues](https://github.com/Fraternalilab/POPScomp/issues) page for bug reports and add a Star to the repository to support the software maintainers.
 
 The [POPScomp GitHub repository](https://github.com/Fraternalilab/POPScomp) contains the following components:
-### POPSC  ![C/C++ CI](https://github.com/Fraternalilab/POPScomp/workflows/C/C++%20CI/badge.svg)
+### POPSC  ![C CI](https://github.com/Fraternalilab/POPScomp/workflows/C%20CI/badge.svg) 
 A GNU Autotools package of the POPS C program that computes SASA for a given structure.
   
 ### POPSR  ![R CI](https://github.com/Fraternalilab/POPScomp/workflows/R%20CI/badge.svg)
