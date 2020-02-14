@@ -13,6 +13,6 @@ jobs:
         with:
             r-version: '3.6.1'
       - name: Install dependencies
-        run: Rscript -e 'install.packages(c("remotes", "knitr", "roxygen2"))' -e 'remotes::install_deps(dependencies = TRUE)'
+        run: Rscript -e 'install.packages(c("knitr"), dependencies = TRUE)'
       - name: compile POPSR
         run: R CMD build POPSR
