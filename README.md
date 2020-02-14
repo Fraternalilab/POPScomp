@@ -27,9 +27,9 @@ The [POPScomp GitHub repository](https://github.com/Fraternalilab/POPScomp) cont
 A GNU Autotools package of the POPS C program that computes SASA for a given structure.
   
 ### POPSR  ![R CI](https://github.com/Fraternalilab/POPScomp/workflows/R%20CI/badge.svg)
-An R package containing R programs that
+An R package to
 - split complexes into single and pair components to compute buried SASA using POPSC and 
-- provide a Shiny App as interface to the POPSC program.
+- provide a *Shiny* App as interface to the POPSC program.
 
 ### DockerImage
 A *Docker* image of POPScomp can be pulled from the Google Cloud.
