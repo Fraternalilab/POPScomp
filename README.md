@@ -8,16 +8,11 @@ on implicit solvent, POPS and POPSCOMP. The POPScomp program unfies the latter t
 
 There are several options to run POPScomp, refer to the [Wiki](https://github.com/Fraternalilab/POPScomp/wiki) for more details:
 1. Use our POPScomp *Shiny* server at http://popscomp.org:3838 .
+The POPScomp *Shiny* App allows for easy processing of PDB structures.
+The interface provides upload fields for PDB structures and shows result tabs for atom, residue, chain and molecule SASAs.
 2. Download the POPScomp [Docker Image](https://github.com/Fraternalilab/POPScomp/#DockerImage) and use the *Shiny* App on your local computer without any further installation.
 3. Clone the [POPScomp GitHub repository](https://github.com/Fraternalilab/POPScomp), compile POPSC and run the *Shiny* App on your local computer.
 
-The POPScomp *Shiny* App allows for easy processing of PDB structures.
-The interface provides upload fields for PDB structures and shows result tabs for atom, residue, chain and molecule SASAs.
-The SASA tables are initialised without any values and therefore the user sees the table header and
-below the notice 'No data available in table'.
-After selecting a PDB identifier or uploading an input file and pressing 'run POPScomp',
-the Shiny server runs the POPS program on the PDB file and, if applicable, on its complex components
-and the tables automatically refresh to show the resulting SASA values.
 
 ## Software
 Please use the [Issues](https://github.com/Fraternalilab/POPScomp/issues) page for bug reports and add a Star to the repository to support the software maintainers.
