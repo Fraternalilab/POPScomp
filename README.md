@@ -26,10 +26,9 @@ An R package to
 - provide a *Shiny* App as interface to the POPSC program.
 
 ### DockerImage
-A *Docker* image of POPScomp can be pulled from the Google Cloud.
-```
-docker pull eu.gcr.io/high-hue-217311/popscomp:3.1
-```
+A *Docker* image of POPScomp has been developed and is currently (mid Jan 2020) being tested.
+Watch this space for further updates.
+
 
 ### FunPDBe
 Scripts to run POPScomp over the PDB database and feed the output into the FunPDBe project.
