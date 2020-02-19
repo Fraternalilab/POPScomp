@@ -26,12 +26,14 @@ An R package to
 - provide a *Shiny* App as interface to the POPSC program.
 
 ### DockerImage
-A *Docker* image of POPScomp has been developed and is currently (mid Jan 2020) being tested.
-Watch this space for further updates.
-
+A *Docker* image of POPScomp is available that provides the program suite in fully functional form,
+*i.e.* pre-compiled POPSC, RStudio with POPSR and all dependencies installed.
+Please refer to the Wiki for detailed guidelines on downloading and usage of the Docker image.
 
 ### FunPDBe
-Scripts to run POPScomp over the PDB database and feed the output into the FunPDBe project.
+Scripts to run POPScomp over the PDB database and feed the output into the Elixir FunPDBe project.
+This directory has been included purely as a reference for the FunPDBe project. and should be ignored
+by POPScomp users.
 
 
 ## Servers
