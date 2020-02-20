@@ -32,8 +32,8 @@ Please refer to the Wiki for detailed guidelines on downloading and usage of the
 
 ### FunPDBe
 Scripts to run POPScomp over the PDB database and feed the output into the Elixir FunPDBe project.
-This directory has been included purely as a reference for the FunPDBe project. and should be ignored
-by POPScomp users.
+This directory has been included purely as a reference for the FunPDBe project and is not intended to
+be used for POPScomp applications.
 
 
 ## Servers
