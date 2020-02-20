@@ -10,7 +10,7 @@ There are several options to run POPScomp, refer to the [Wiki](https://github.co
 1. Use our POPScomp *Shiny* server at [popscomp.org](http://popscomp.org:3838).
 The interface allows for easy processing of PDB structures and shows result tabs for atom, residue, chain and molecule SASAs.
 2. Download the POPScomp [Docker Image](https://github.com/Fraternalilab/POPScomp/#DockerImage) and use the *Shiny* App on your local computer without any further installation.
-3. Clone the [POPScomp GitHub repository](https://github.com/Fraternalilab/POPScomp), compile POPSC and run the *Shiny* App on your local computer.
+3. To install from source code, either download the [latest release](https://github.com/Fraternalilab/POPScomp/releases/latest) or use the development version by cloning the [POPScomp repository](https://github.com/Fraternalilab/POPScomp). Compile/install the program suite and run the *Shiny* App on your local computer.
 
 
 ## Software
