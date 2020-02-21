@@ -57,6 +57,12 @@ Users publishing results obtained with the program and its applications
 should acknowledge its use by citation.
 
 ### Implicit solvent
+Kleinjung, J. and Fraternali, F.<br>
+*Design and Application of Implicit Solvent Models in Biomolecular Simulations.*<br>
+**Current Opinion in Structural Biology** 25 (2014) 126-134.<br> 
+[![doi](https://img.shields.io/badge/doi-10.1016/j.sbi.2014.04.003-blue.svg?style=flat)](https://dx.doi.org/10.1016/j.sbi.2014.04.003)
+[![pubmed](https://img.shields.io/badge/pubmed-4045398-blue.svg?style=flat))](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4045398/)
+
 Fraternali, F. and van Gunsteren, W.F.<br>
 *An efficient mean solvation force model for use in molecular dynamics simulations of proteins in aqueous solution.*<br>
 **Journal of Molecular Biology** 256 (1996) 939-948.<br>
