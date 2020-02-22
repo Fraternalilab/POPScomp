@@ -182,10 +182,10 @@ ui <- fluidPage(
         tabPanel("About",
 			    h3("Shiny App"),
 			    p("This is version 3.1 of the POPScomp Shiny App. There are several options to run this code:"),
-			    p("1. Use our server at http://popscomp.org:3838 ->", a("POPScomp", href="http://popscom.org:3838"), "."),
+			    p("1. Use our server at ", a("popscomp.org", href="http://popscom.org:3838"), "."),
 			    p("2. Download the POPScomp Docker image and use the App on your local computer without any further installation."),
-			    p("3. Clone the ",  a("POPScomp GitHub repository", href="https://github.com/Fraternalilab/POPScomp"),
-			        "and compile POPSC and run the App on your local computer."),
+			    p("3. Get the source code from the ",  a("POPScomp GitHub repository", href="https://github.com/Fraternalilab/POPScomp"),
+			        "compile and run the App on your local computer."),
 			    h3("Software"),
 			    p("For source code and Wiki visit Fraternali Lab's ",
 			      a("POPScomp GitHub repository", href="https://github.com/Fraternalilab/POPScomp"), "."

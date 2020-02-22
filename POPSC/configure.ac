@@ -58,10 +58,12 @@ if test "$ac_use_profiling" = "yes"; then
 fi
 
 # check for libxml2
-PKG_CHECK_MODULES(XML, libxml-2.0 >= 2.4)
+#PKG_CHECK_MODULES(XML, libxml-2.0 >= 2.4)
+AC_SEARCH_LIBS([xmlCleanupParser],[xml xml2])
 
 # check for zlib 
-PKG_CHECK_MODULES([ZLIB], zlib >= 1.0)
+#PKG_CHECK_MODULES([ZLIB], zlib >= 1.0)
+AC_SEARCH_LIBS([deflate],[z])
 
 # output files
 AC_CONFIG_FILES([Makefile src/Makefile tests/Makefile])
