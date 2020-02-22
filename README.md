@@ -16,7 +16,9 @@ The interface allows for easy processing of PDB structures and shows result tabs
 ## Software
 Please use the [Issues](https://github.com/Fraternalilab/POPScomp/issues) page for bug reports and add a Star to the repository to support the software maintainers.
 
-The [POPScomp repository](https://github.com/Fraternalilab/POPScomp) contains the following components:
+The [POPScomp repository](https://github.com/Fraternalilab/POPScomp) 
+[![DOI](https://zenodo.org/badge/182454886.svg)](https://zenodo.org/badge/latestdoi/182454886)
+contains the following components:
 ### POPSC  ![C CI](https://github.com/Fraternalilab/POPScomp/workflows/C%20CI/badge.svg) 
 A GNU Autotools package of the POPS C program that computes SASA for a given structure.
   
@@ -55,6 +57,9 @@ POPScomp is part of the [FunPDBe resources](https://www.ebi.ac.uk/pdbe/funpdbe/d
 ## References
 Users publishing results obtained with the program and its applications
 should acknowledge its use by citation.
+
+### POPScomp software
+[![DOI](https://zenodo.org/badge/182454886.svg)](https://zenodo.org/badge/latestdoi/182454886)
 
 ### Implicit solvent
 Kleinjung, J. and Fraternali, F.<br>
