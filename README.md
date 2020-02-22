@@ -7,36 +7,33 @@ are explained in the [published papers](https://github.com/Fraternalilab/POPScom
 on implicit solvent, POPS and POPSCOMP. The POPScomp program unfies the latter two methods.
 
 There are several options to run POPScomp, refer to the [Wiki](https://github.com/Fraternalilab/POPScomp/wiki) for more details:
-1. Use our POPScomp *Shiny* server at http://popscomp.org:3838 .
+1. Use our POPScomp *Shiny* server at [popscomp.org](http://popscomp.org:3838).
+The interface allows for easy processing of PDB structures and shows result tabs for atom, residue, chain and molecule SASAs.
 2. Download the POPScomp [Docker Image](https://github.com/Fraternalilab/POPScomp/#DockerImage) and use the *Shiny* App on your local computer without any further installation.
-3. Clone the [POPScomp GitHub repository](https://github.com/Fraternalilab/POPScomp), compile POPSC and run the *Shiny* App on your local computer.
+3. To install from source code, either download the [latest release](https://github.com/Fraternalilab/POPScomp/releases/latest) or use the development version by cloning the [POPScomp repository](https://github.com/Fraternalilab/POPScomp). Compile/install the program suite and run the *Shiny* App on your local computer.
 
-The POPScomp *Shiny* App allows for easy processing of PDB structures.
-The interface provides upload fields for PDB structures and shows result tabs for atom, residue, chain and molecule SASAs.
-The SASA tables are initialised without any values and therefore the user sees the table header and
-below the notice 'No data available in table'.
-After selecting a PDB identifier or uploading an input file and pressing 'run POPScomp',
-the Shiny server runs the POPS program on the PDB file and, if applicable, on its complex components
-and the tables automatically refresh to show the resulting SASA values.
 
 ## Software
 Please use the [Issues](https://github.com/Fraternalilab/POPScomp/issues) page for bug reports and add a Star to the repository to support the software maintainers.
 
-The [POPScomp GitHub repository](https://github.com/Fraternalilab/POPScomp) contains the following components:
-### POPSC
+The [POPScomp repository](https://github.com/Fraternalilab/POPScomp) contains the following components:
+### POPSC  ![C CI](https://github.com/Fraternalilab/POPScomp/workflows/C%20CI/badge.svg) 
 A GNU Autotools package of the POPS C program that computes SASA for a given structure.
-  ![C/C++ CI](https://github.com/Fraternalilab/POPScomp/workflows/C/C++%20CI/badge.svg)
-### POPSR
-An R package containing R programs that
+  
+### POPSR  ![R CI](https://github.com/Fraternalilab/POPScomp/workflows/R%20CI/badge.svg)
+An R package to
 - split complexes into single and pair components to compute buried SASA using POPSC and 
-- provide a Shiny App as interface to the POPSC program.
+- provide a *Shiny* App as interface to the POPSC program.
+
 ### DockerImage
-A *Docker* image of POPScomp can be pulled from the Google Cloud.
-```
-docker pull eu.gcr.io/high-hue-217311/popscomp:3.1
-```
+A *Docker* image of POPScomp is available that provides the program suite in fully functional form,
+*i.e.* pre-compiled POPSC, RStudio with POPSR and all dependencies installed.
+Please refer to the Wiki for detailed guidelines on downloading and usage of the Docker image.
+
 ### FunPDBe
-Scripts to run POPScomp over the PDB database and feed the output into the FunPDBe project.
+Scripts to run POPScomp over the PDB database and feed the output into the Elixir FunPDBe project.
+This directory has been included purely as a reference for the FunPDBe project and is not intended to
+be used for POPScomp applications.
 
 
 ## Servers
@@ -60,6 +57,12 @@ Users publishing results obtained with the program and its applications
 should acknowledge its use by citation.
 
 ### Implicit solvent
+Kleinjung, J. and Fraternali, F.<br>
+*Design and Application of Implicit Solvent Models in Biomolecular Simulations.*<br>
+**Current Opinion in Structural Biology** 25 (2014) 126-134.<br> 
+[![doi](https://img.shields.io/badge/doi-10.1016/j.sbi.2014.04.003-blue.svg?style=flat)](https://dx.doi.org/10.1016/j.sbi.2014.04.003)
+[![pubmed](https://img.shields.io/badge/pubmed-4045398-blue.svg?style=flat)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4045398/)
+
 Fraternali, F. and van Gunsteren, W.F.<br>
 *An efficient mean solvation force model for use in molecular dynamics simulations of proteins in aqueous solution.*<br>
 **Journal of Molecular Biology** 256 (1996) 939-948.<br>
