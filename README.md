@@ -6,16 +6,28 @@
 
 The POPScomp program computes the Solvent Accessible Surface Area (SASA)
 of a given PDB structure. If the structure is a complex, *i.e.* composed of more than one chain
-containing protein or RNA/DNA, POPScomp creates internally all pair combinations
-of chains to compute the buried SASA upon complexation. Details of those routines
-are explained in the [published papers](https://github.com/Fraternalilab/POPScomp/#References)
-on implicit solvent, POPS and POPSCOMP. The POPScomp program unfies the latter two methods.
+containing protein or RNA/DNA, POPScomp computes additionally the SASA buried between chains.
+Details of those routines are explained in the
+[published papers](https://github.com/Fraternalilab/POPScomp/#References).
+(Note: POPScomp embodies both methods, POPS and POPSCOMP).
 
-There are several options to run POPScomp, refer to the [Wiki](https://github.com/Fraternalilab/POPScomp/wiki) for more details:
-1. Use our POPScomp *Shiny* server at [popscomp.org](http://popscomp.org:3838).
-The interface allows for easy processing of PDB structures and shows result tabs for atom, residue, chain and molecule SASAs.
-2. Download the POPScomp [Docker Image](https://github.com/Fraternalilab/POPScomp/#DockerImage) and use the *Shiny* App on your local computer without any further installation.
+## Installation
+1. Use the POPScomp *Shiny* server at [popscomp.org](http://popscomp.org:3838) without installation.
+2. Download the POPScomp [Docker Image](https://github.com/Fraternalilab/POPScomp/#DockerImage) and use the *Shiny* App on your local computer.
 3. To install from source code, either download the [latest release](https://github.com/Fraternalilab/POPScomp/releases/latest) or use the development version by cloning the [POPScomp repository](https://github.com/Fraternalilab/POPScomp). Compile/install the program suite and run the *Shiny* App on your local computer.
+
+
+## Usage
+Enter a PDB identifier or upload a custom PDB file and press 'run POPScomp'.
+Results will be shown as tables for different resolutions: Atom, Residue, Chain and Molecule.
+Download individual results *via* the buttons underneath the tables or bundled *via* the
+'Download All Results' button.
+
+![POPScomp Shiny Interface](https://github.com/Fraternalilab/POPScomp/blob/master/POPSR/inst/popsr/png/POPScomp_Shiny.png)
+
+
+## Documentation
+Please refer to the [Wiki](https://github.com/Fraternalilab/POPScomp/wiki) for documentation.
 
 
 ## Software
