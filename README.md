@@ -19,8 +19,6 @@ The interface allows for easy processing of PDB structures and shows result tabs
 
 
 ## Software
-Please use the [Issues](https://github.com/Fraternalilab/POPScomp/issues) page for bug reports and add a Star to the repository to support the software maintainers.
-
 The [POPScomp repository](https://github.com/Fraternalilab/POPScomp)
 contains the following components:
 ### POPSC
@@ -98,6 +96,10 @@ Kleinjung, J. and Fraternali, F.<br>
 **Nucleic Acids Research** 33 (2005) W342-W346.<br>
 [![doi](https://img.shields.io/badge/doi-10.1016%2Fj.jmb.2014.03.010-blue.svg?style=flat)](https://dx.doi.org/10.1093%2Fnar%2Fgki369)
 [![pubmed](https://img.shields.io/badge/pubmed-24681267-blue.svg?style=flat)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1160130/)
+
+
+## Contributing
+Please add a Star to the repository to support the software maintainers and use the [Issues](https://github.com/Fraternalilab/POPScomp/issues) page for bug reports.
 
 
 ## License and Copyright
