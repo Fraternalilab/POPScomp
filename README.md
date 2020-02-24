@@ -1,4 +1,9 @@
-## Overview
+## POPScomp: Solvent Accessible Surface Areas of Biomolecules and their Complexes
+[![License](https://img.shields.io/badge/license-GPL-blue.svg)](http://www.gnu.org/licenses/gpl-3.0.en.html)
+![C CI](https://github.com/Fraternalilab/POPScomp/workflows/C%20CI/badge.svg) 
+![R CI](https://github.com/Fraternalilab/POPScomp/workflows/R%20CI/badge.svg)
+[![DOI](https://zenodo.org/badge/182454886.svg)](https://zenodo.org/badge/latestdoi/182454886)
+
 The POPScomp program computes the Solvent Accessible Surface Area (SASA)
 of a given PDB structure. If the structure is a complex, *i.e.* composed of more than one chain
 containing protein or RNA/DNA, POPScomp creates internally all pair combinations
@@ -16,13 +21,12 @@ The interface allows for easy processing of PDB structures and shows result tabs
 ## Software
 Please use the [Issues](https://github.com/Fraternalilab/POPScomp/issues) page for bug reports and add a Star to the repository to support the software maintainers.
 
-The [POPScomp repository](https://github.com/Fraternalilab/POPScomp) 
-[![DOI](https://zenodo.org/badge/182454886.svg)](https://zenodo.org/badge/latestdoi/182454886)
+The [POPScomp repository](https://github.com/Fraternalilab/POPScomp)
 contains the following components:
-### POPSC  ![C CI](https://github.com/Fraternalilab/POPScomp/workflows/C%20CI/badge.svg) 
+### POPSC
 A GNU Autotools package of the POPS C program that computes SASA for a given structure.
   
-### POPSR  ![R CI](https://github.com/Fraternalilab/POPScomp/workflows/R%20CI/badge.svg)
+### POPSR
 An R package to
 - split complexes into single and pair components to compute buried SASA using POPSC and 
 - provide a *Shiny* App as interface to the POPSC program.
