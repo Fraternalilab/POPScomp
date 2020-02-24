@@ -1,4 +1,9 @@
-## Overview
+## POPScomp: Solvent Accessible Surface Areas of Biomolecules and their Complexes
+[![License](https://img.shields.io/badge/license-GPL-blue.svg)](http://www.gnu.org/licenses/gpl-3.0.en.html)
+![C CI](https://github.com/Fraternalilab/POPScomp/workflows/C%20CI/badge.svg) 
+![R CI](https://github.com/Fraternalilab/POPScomp/workflows/R%20CI/badge.svg)
+[![DOI](https://zenodo.org/badge/182454886.svg)](https://zenodo.org/badge/latestdoi/182454886)
+
 The POPScomp program computes the Solvent Accessible Surface Area (SASA)
 of a given PDB structure. If the structure is a complex, *i.e.* composed of more than one chain
 containing protein or RNA/DNA, POPScomp creates internally all pair combinations
@@ -14,13 +19,12 @@ The interface allows for easy processing of PDB structures and shows result tabs
 
 
 ## Software
-Please use the [Issues](https://github.com/Fraternalilab/POPScomp/issues) page for bug reports and add a Star to the repository to support the software maintainers.
-
-The [POPScomp repository](https://github.com/Fraternalilab/POPScomp) contains the following components:
-### POPSC  ![C CI](https://github.com/Fraternalilab/POPScomp/workflows/C%20CI/badge.svg) 
+The [POPScomp repository](https://github.com/Fraternalilab/POPScomp)
+contains the following components:
+### POPSC
 A GNU Autotools package of the POPS C program that computes SASA for a given structure.
   
-### POPSR  ![R CI](https://github.com/Fraternalilab/POPScomp/workflows/R%20CI/badge.svg)
+### POPSR
 An R package to
 - split complexes into single and pair components to compute buried SASA using POPSC and 
 - provide a *Shiny* App as interface to the POPSC program.
@@ -28,7 +32,8 @@ An R package to
 ### DockerImage
 A *Docker* image of POPScomp is available that provides the program suite in fully functional form,
 *i.e.* pre-compiled POPSC, RStudio with POPSR and all dependencies installed.
-Please refer to the Wiki for detailed guidelines on downloading and usage of the Docker image.
+Please refer to the [Wiki](https://github.com/Fraternalilab/POPScomp/wiki/POPScomp-Docker-Image)
+for detailed guidelines on downloading and usage of the Docker image.
 
 ### FunPDBe
 Scripts to run POPScomp over the PDB database and feed the output into the Elixir FunPDBe project.
@@ -38,9 +43,8 @@ be used for POPScomp applications.
 
 ## Servers
 
-### POPScomp server
-* [POPScomp](http://popscomp.org:3838)
-
+### POPScomp *Shiny* server at [popscomp.org](http://popscomp.org:3838)
+Publically available server with an intuitive user interface.
 Results will be stored on the server for maximally one day.
 For permanent storage, please download your results via the 'Download' buttons.
 
@@ -55,6 +59,9 @@ POPScomp is part of the [FunPDBe resources](https://www.ebi.ac.uk/pdbe/funpdbe/d
 ## References
 Users publishing results obtained with the program and its applications
 should acknowledge its use by citation.
+
+### POPScomp software
+[![DOI](https://zenodo.org/badge/182454886.svg)](https://zenodo.org/badge/latestdoi/182454886)
 
 ### Implicit solvent
 Kleinjung, J. and Fraternali, F.<br>
@@ -89,6 +96,10 @@ Kleinjung, J. and Fraternali, F.<br>
 **Nucleic Acids Research** 33 (2005) W342-W346.<br>
 [![doi](https://img.shields.io/badge/doi-10.1016%2Fj.jmb.2014.03.010-blue.svg?style=flat)](https://dx.doi.org/10.1093%2Fnar%2Fgki369)
 [![pubmed](https://img.shields.io/badge/pubmed-24681267-blue.svg?style=flat)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1160130/)
+
+
+## Contributing
+Please add a Star to the repository to support the software maintainers and use the [Issues](https://github.com/Fraternalilab/POPScomp/issues) page for bug reports.
 
 
 ## License and Copyright
