@@ -34,7 +34,8 @@ An R package to
 ### DockerImage
 A *Docker* image of POPScomp is available that provides the program suite in fully functional form,
 *i.e.* pre-compiled POPSC, RStudio with POPSR and all dependencies installed.
-Please refer to the Wiki for detailed guidelines on downloading and usage of the Docker image.
+Please refer to the [Wiki](https://github.com/Fraternalilab/POPScomp/wiki/POPScomp-Docker-Image)
+for detailed guidelines on downloading and usage of the Docker image.
 
 ### FunPDBe
 Scripts to run POPScomp over the PDB database and feed the output into the Elixir FunPDBe project.
@@ -44,9 +45,8 @@ be used for POPScomp applications.
 
 ## Servers
 
-### POPScomp server
-* [POPScomp](http://popscomp.org:3838)
-
+### POPScomp *Shiny* server at [popscomp.org](http://popscomp.org:3838)
+Publically available server with an intuitive user interface.
 Results will be stored on the server for maximally one day.
 For permanent storage, please download your results via the 'Download' buttons.
 
