@@ -102,7 +102,7 @@ Cavallo, L., Kleinjung, J. and Fraternali, F.<br>
 [![doi](https://img.shields.io/badge/doi-10.1016%2Fj.jmb.2014.03.010-blue.svg?style=flat)](https://dx.doi.org/10.1093%2Fnar%2Fgkg601)
 [![pubmed](https://img.shields.io/badge/pubmed-24681267-blue.svg?style=flat)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC169007/)
 
-### POPSCOMP server
+### POPSCOMP method and server
 Kleinjung, J. and Fraternali, F.<br>
 *POPSCOMP: an automated interaction analysis of biomolecular complexes.*<br>
 **Nucleic Acids Research** 33 (2005) W342-W346.<br>
