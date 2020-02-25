@@ -12,6 +12,7 @@ Details of those routines are explained in the
 (Note: POPScomp embodies both methods, POPS and POPSCOMP).
 
 ## Installation
+There are 3 ways to install/use POPScomp:
 1. Use the POPScomp *Shiny* server at [popscomp.org](http://popscomp.org:3838) without installation.
 2. Download the POPScomp [Docker Image](https://github.com/Fraternalilab/POPScomp/#DockerImage) and use the *Shiny* App on your local computer.
 3. To install from source code, either download the [latest release](https://github.com/Fraternalilab/POPScomp/releases/latest) or use the development version by cloning the [POPScomp repository](https://github.com/Fraternalilab/POPScomp). Compile/install the program suite and run the *Shiny* App on your local computer.
