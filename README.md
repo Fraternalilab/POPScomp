@@ -119,8 +119,8 @@ Please add a Star to the repository to support the software maintainers and use 
 Usage of the software and server is free under the GNU General Public License v3.0.
 
 ### Copyright Holders, Authors and Maintainers 
-- 2002-2019 Franca Fraternali (author, maintainer) franca.fraternali@kcl.ac.uk
-- 2008-2019 Jens Kleinjung (author, maintainer) jens@jkleinj.eu
+- 2002-2020 Franca Fraternali (author, maintainer) franca.fraternali@kcl.ac.uk
+- 2008-2020 Jens Kleinjung (author, maintainer) jens@jkleinj.eu
 
 ### Contributors
 - 2002 Kuang Lin and Valerie Hindie (translation to C)
