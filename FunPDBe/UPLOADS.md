@@ -5,10 +5,14 @@ therefore the POPS update can be run on Wednesday morning,
 for example at 3:00.
 
 ## 
-Increment
+Incremental update
+
+##  
+Upload of the remaining JSON output for PDBML >=4MB.
 
 ## Wed 15 Jan 23:07:43 GMT 2020
-Complete upload of JSON output for PDBML (<4MB).
+Complete upload of JSON output for PDBML <4MB.
+Directory is JSONVAL.20200115.upload1.0
 
 ```
 jkleinj@ac:~/database$ lftp -e "mirror -R /home/jkleinj/database/JSONVAL/ /upload/" -u pops,2n8BDJiY ftp-private.ebi.ac.uk
