@@ -39,4 +39,10 @@ Make is run in parallel by using the '-j' flag:
 ```
 make -j 8 mkpops 2>&1 | tee mkpops.`date +%Y%m%d.%H%M`.log
 ```
+For split runs:
+```
+make -j 4 mkpops1 2>&1 | tee mkpops1.`date +%Y%m%d.%H%M`.log &
+make -j 4 mkpops2 2>&1 | tee mkpops2.`date +%Y%m%d.%H%M`.log &
+make -j 4 mkpops3 2>&1 | tee mkpops3.`date +%Y%m%d.%H%M`.log &
+```
 

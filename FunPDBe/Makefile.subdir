@@ -19,12 +19,15 @@
 ## creates .json dependencies from list of *.xml.gz using upper file size limit
 ## the printf command is needed to remove the path of the target file name,
 ##   because file size comes from 'XML/', but output goes to 'JSON/'
-##  -500k :  5-20 s
-## -1000k : 0.5-2 min
-## -2000k : 2-8 min
-## -4000k : 8-30 min
-
-JSONFILES := $(patsubst %.xml.gz,%.json,$(shell find ${PDBDIR}/$X -name '*.xml.gz' -size '-4000k' -printf "%f\n"))
+##   -500k :  5-20 s
+##  -1000k : 0.5-2 min
+##  -2000k : 2-8 min
+##  -4000k : 8-30 min
+##  -8000k : hours
+## -16000k : many hours
+#JSONFILES := $(patsubst %.xml.gz,%.json,$(shell find ${PDBDIR}/$X -name '*.xml.gz' -size '-16000k' -printf "%f\n"))
+## only the fat ones
+JSONFILES := $(patsubst %.xml.gz,%.json,$(shell find ${PDBDIR}/$X -name '*.xml.gz' -size '+16000k' -printf "%f\n"))
 
 #_______________________________________________________________________________
 ## suffix rules
