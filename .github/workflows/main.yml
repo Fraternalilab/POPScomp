@@ -1,0 +1,18 @@
+name: R CI
+
+on: [push]
+
+jobs:
+  R-CMD-CHECK:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: r-lib/actions/setup-r@master
+        with:
+            r-version: '3.6.1'
+      - name: Install dependencies
+        run: Rscript -e 'install.packages(c("knitr"), dependencies = TRUE)'
+      - name: compile POPSR
+        run: R CMD build POPSR

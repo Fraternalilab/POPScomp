@@ -17,7 +17,7 @@ static void print_version()
 					"|__) /  \\ |__) /__` \n"
 					"|    \\__/ |    .__/\n"); 
 
-	fprintf(stdout, "\n%s %s\n", PACKAGE, VERSION);
+	fprintf(stdout, "\nversion %s\n", VERSION);
 }
 
 /*____________________________________________________________________________*/
@@ -31,9 +31,12 @@ static void print_header()
 /** print license */
 static void print_license()
 {
-    fprintf(stdout, "\nCopyright (C) and Contributions\n"
+    fprintf(stdout, "\nhttp://popscomp.org\n"
+			"\n(C) Copyright\n"
+			"Copyright Holders, Authors and Maintainers\n"
 			"\t2002-2020 Franca Fraternali (author, maintainer)\n"
 			"\t2008-2020 Jens Kleinjung (author, maintainer)\n"
+			"Contributors\n"
 			"\t2002 Kuang Lin and Valerie Hindie (translation to C)\n"
 			"\t2002 Luigi Cavallo (parametrisation)\n"
 			"POPS* is free software and comes with ABSOLUTELY NO WARRANTY.\n"
@@ -104,7 +107,8 @@ static void set_defaults(Arg *arg, Argpdb *argpdb)
 	arg->noHeaderOut = 0; /* suppress output headers (for benchmarking) */
 	arg->padding = 0; /* add lines to pad the missing hydrogen atom lines 
 						(for benchmarking) */
-	arg->rout = 0; /* output for R-version of POPSCOMP */ 
+	arg->rout = 0; /* output for R-version (POPScomp) */ 
+	arg->routPrefix = "id"; /* prefix for R-version (POPScomp) output */ 
 	arg->jsonOut = 0; /* JSON output */
 	arg->jsonOutFileName = "pops";
 	arg->jsonbOutFileName = "popsb";
@@ -146,6 +150,7 @@ static void check_input(Arg *arg, Argpdb *argpdb)
 	assert(arg->noHeaderOut == 0 || arg->noHeaderOut == 1);
 	assert(arg->padding == 0 || arg->padding == 1);
 	assert(arg->rout == 0 || arg->rout == 1);
+	assert(strlen(arg->routPrefix) > 0);
 	assert(arg->jsonOut == 0 || arg->jsonOut == 1);
 }
 
@@ -212,6 +217,7 @@ int parse_args(int argc, char **argv, Arg *arg, Argpdb *argpdb)
 	   --noHeaderOut\t\t(type: no_arg, default: off)\n\
 	   --padding\t\t\t(type: no_arg, default: off)\n\
 	   --rout\t\t\t(type: no_arg, default: off)\n\
+	   --routPrefix <prefix>\t(type: char   , default: NULL)\n\
 	   --jsonOut\t\t\t(type: no_arg, default: off)\n\
 	 INFO OPTIONS\n\
 	   --cite\t\t\t(type: no_arg, default: off)\n\
@@ -254,12 +260,13 @@ int parse_args(int argc, char **argv, Arg *arg, Argpdb *argpdb)
         {"noHeaderOut", no_argument, 0, 23},
         {"padding", no_argument, 0, 24},
         {"rout", no_argument, 0, 25},
-        {"jsonOut", no_argument, 0, 26},
-        {"hydrogens", no_argument, 0, 27},
-        {"partOcc", no_argument, 0, 28},
-        {"pdbml", required_argument, 0, 29},
-        {"zipped", no_argument, 0, 30},
-        {"outDirName", required_argument, 0, 31},
+        {"routPrefix", required_argument, 0, 26},
+        {"jsonOut", no_argument, 0, 27},
+        {"hydrogens", no_argument, 0, 28},
+        {"partOcc", no_argument, 0, 29},
+        {"pdbml", required_argument, 0, 30},
+        {"zipped", no_argument, 0, 31},
+        {"outDirName", required_argument, 0, 32},
         {"cite", no_argument, 0, 40},
         {"version", no_argument, 0, 41},
         {"help", no_argument, 0, 42},
@@ -267,7 +274,7 @@ int parse_args(int argc, char **argv, Arg *arg, Argpdb *argpdb)
     };
 
     /** assign parameters to long options */
-    while ((c = getopt_long(argc, argv, "1:2:3 4 5:6:7:8:9:10:11:12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29:30 31:40 41", long_options, NULL)) != -1) {
+    while ((c = getopt_long(argc, argv, "1:2:3 4 5:6:7:8:9:10:11:12 13 14 15 16 17 18 19 20 21 22 23 24 25 26:27 28 29 30:31 32:40 41", long_options, NULL)) != -1) {
         switch(c) {
             case 1:
                 arg->pdbInFileName = optarg;
@@ -345,23 +352,26 @@ int parse_args(int argc, char **argv, Arg *arg, Argpdb *argpdb)
                 arg->rout = 1;
                 break;
             case 26:
-                arg->jsonOut = 1;
+                arg->routPrefix = optarg;
                 break;
             case 27:
-                argpdb->hydrogens = 1;
+                arg->jsonOut = 1;
                 break;
             case 28:
-                argpdb->partOcc = 1;
+                argpdb->hydrogens = 1;
                 break;
             case 29:
+                argpdb->partOcc = 1;
+                break;
+            case 30:
                 arg->pdbmlInFileName = optarg;
 				arg->pdbIn = basename(optarg);
 				arg->pdbml = 1;
 				break;
-            case 30:
+            case 31:
 				arg->zipped = 1;
 				break;
-            case 31:
+            case 32:
 				arg->outDirName = optarg;
 				break;
             case 40:
