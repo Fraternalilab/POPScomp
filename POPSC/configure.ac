@@ -1,6 +1,6 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
-AC_INIT(pops, 3.0.3, jens@jkleinj.eu)
+AC_INIT(pops, 3.1.2, jens@jkleinj.eu)
 
 AC_PREREQ([2.63])
 AC_CONFIG_SRCDIR([src/arg.c])
@@ -59,9 +59,13 @@ fi
 
 # check for libxml2
 PKG_CHECK_MODULES(XML, libxml-2.0 >= 2.4)
+## on Google Cloud engine
+#AC_SEARCH_LIBS([xmlCleanupParser],[xml xml2])
 
 # check for zlib 
 PKG_CHECK_MODULES([ZLIB], zlib >= 1.0)
+## on Google Cloud engine
+#AC_SEARCH_LIBS([deflate],[z])
 
 # output files
 AC_CONFIG_FILES([Makefile src/Makefile tests/Makefile])

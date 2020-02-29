@@ -358,7 +358,7 @@ void print_sasa(Arg *arg, Argpdb *argpdb, Str *pdb, Type *type, Topol *topol, \
 	if (arg->atomOut && ! argpdb->coarse) {
 		if (arg->rout) {
 			sprintf(rpopsOutFileName, "%s/%s.%s",
-				arg->outDirName, arg->pdbIn, "rpopsAtom");
+				arg->outDirName, arg->routPrefix, "rpopsAtom");
 			rpopsOutFile = safe_open(rpopsOutFileName, "w");
 			print_atom_sasa(rpopsOutFile, arg, pdb, molSasa);
 			fclose(rpopsOutFile);
@@ -366,12 +366,22 @@ void print_sasa(Arg *arg, Argpdb *argpdb, Str *pdb, Type *type, Topol *topol, \
 			print_atom_sasa(arg->sasaOutFile, arg, pdb, molSasa);
 		}
 	}
+	
+	/* print '0' to pops.out.rpopsAtom for Shiny reactive file reader
+	     when no atom SASAs are being computed under '--coarse' */
+	if (argpdb->coarse && arg->rout) {
+		sprintf(rpopsOutFileName, "%s/%s.%s",
+			arg->outDirName, arg->routPrefix, "rpopsAtom");
+		rpopsOutFile = safe_open(rpopsOutFileName, "w");
+		fprintf(rpopsOutFile, "%d\n", 0);
+		fclose(rpopsOutFile);
+	}
 
 	/* residue SASA */
 	if (arg->residueOut) {
 		if (arg->rout) {
 			sprintf(rpopsOutFileName, "%s/%s.%s",
-				arg->outDirName, arg->pdbIn, "rpopsResidue");
+				arg->outDirName, arg->routPrefix, "rpopsResidue");
 			rpopsOutFile = safe_open(rpopsOutFileName, "w");
 			print_residue_sasa(rpopsOutFile, arg, pdb, molSasa);
 			fclose(rpopsOutFile);
@@ -384,7 +394,7 @@ void print_sasa(Arg *arg, Argpdb *argpdb, Str *pdb, Type *type, Topol *topol, \
 	if (arg->chainOut) {
 		if (arg->rout) {
 			sprintf(rpopsOutFileName, "%s/%s.%s",
-				arg->outDirName, arg->pdbIn, "rpopsChain");
+				arg->outDirName, arg->routPrefix, "rpopsChain");
 			rpopsOutFile = safe_open(rpopsOutFileName, "w");
 			print_chain_sasa(rpopsOutFile, arg, pdb, molSasa);
 			fclose(rpopsOutFile);
@@ -397,7 +407,7 @@ void print_sasa(Arg *arg, Argpdb *argpdb, Str *pdb, Type *type, Topol *topol, \
 	if (! arg->noTotalOut) {
 		if (arg->rout) {
 			sprintf(rpopsOutFileName, "%s/%s.%s",
-				arg->outDirName, arg->pdbIn, "rpopsMolecule");
+				arg->outDirName, arg->routPrefix, "rpopsMolecule");
 			rpopsOutFile = safe_open(rpopsOutFileName, "w");
 			print_mol_sasa(rpopsOutFile, arg, molSasa);
 			fclose(rpopsOutFile);

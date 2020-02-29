@@ -17,7 +17,7 @@ JSONVALDIR = /home/jkleinj/database/JSONVAL/
 .PHONY : upload
 
 upload :
-	lftp -e "mirror -R $(JSONVALDIR)/ /upload/" -u pops,2n8BDJiY ftp-private.ebi.ac.uk
+	lftp -e "mirror -R $(JSONVALDIR)/ /upload/" -u pops,<password> ftp-private.ebi.ac.uk
 
 
 #===============================================================================

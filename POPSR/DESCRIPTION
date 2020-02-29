@@ -1,7 +1,7 @@
 Package: RPOPS
 Type: Package
 Title: R Interface of POPS
-Version: 3.0.3 
+Version: 3.1.1
 Authors@R: c(person("Jens", "Kleinjung", role  = c("aut", "cre", "cph"),
                      email = "jens@jkleinj.eu"),
              person("Franca", "Fraternali", role  = c("aut", "cph"),
@@ -19,7 +19,7 @@ Depends: R (>= 3.4),
 Imports: 
 Suggests: knitr,
           rmarkdown
-Collate: popscomp.R plotSASA.R runApp.R 
+Collate: popscomp.R plotSASA.R runApp.R
 License: GPL-3
 URL: https://github.com/Fraternalilab/POPS
 BugReports: https://github.com/Fraternalilab/POPS/Issues
