@@ -47,7 +47,7 @@ An R package to
 #### DockerImage
 A *Docker* image of POPScomp is available that provides the program suite in fully functional form,
 *i.e.* pre-compiled POPSC, RStudio with POPSR and all dependencies installed.
-Please refer to the [Wiki](https://github.com/Fraternalilab/POPScomp/wiki/POPScomp-Docker-Image)
+Please refer to the [Wiki](https://github.com/Fraternalilab/POPScomp/wiki/Docker-Image)
 for detailed guidelines on downloading and usage of the Docker image.
 
 #### FunPDBe
