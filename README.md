@@ -8,7 +8,7 @@ The POPScomp program computes the Solvent Accessible Surface Area (SASA)
 of a given PDB structure. If the structure is a complex, *i.e.* composed of more than one chain
 containing protein or RNA/DNA, POPScomp computes additionally the SASA buried between chains.
 The name 'POPS' is derived from **P**arameter **OP**timised **S**urfaces, because its parametrisation
-was performed by regression against a large set of protein structures.
+was performed by regression against a large set of protein and RNA/DNA structures.
 Details of those routines are explained in the
 [published papers](https://github.com/Fraternalilab/POPScomp/#References).
 (Note: POPScomp embodies both methods, POPS and POPSCOMP).
