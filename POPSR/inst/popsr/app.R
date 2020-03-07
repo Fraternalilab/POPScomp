@@ -160,7 +160,7 @@ ui <- fluidPage(
             Only structures containing multiple chains will yield values for
             'DeltaSASA' and 'Isolated Chains' tabs."
 		      ),
-		      p("Results will be kept for one day on the server. Please use the 'Download ...' buttons
+		      p("Results will be kept on the server until midnight (UTC). Please use the 'Download ...' buttons
 		        under the tables to save their content in 'csv' format. The 'Download All Results'
 		        button on the side panel returns the zipped content of the output directory."
 		      ),
