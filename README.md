@@ -1,8 +1,10 @@
 ## POPScomp: Solvent Accessible Surface Areas of Biomolecules and their Complexes
+[![release](https://img.shields.io/badge/release-v3.1.2-green?logo=github)](https://github.com/Fraternalilab/POPScomp/releases)
+[![wiki](https://img.shields.io/badge/wiki-orange)](https://github.com/Fraternalilab/POPScomp/wiki)
 [![License](https://img.shields.io/badge/license-GPL-blue.svg)](http://www.gnu.org/licenses/gpl-3.0.en.html)
+[![DOI](https://zenodo.org/badge/182454886.svg)](https://zenodo.org/badge/latestdoi/182454886)
 ![C CI](https://github.com/Fraternalilab/POPScomp/workflows/C%20CI/badge.svg) 
 ![R CI](https://github.com/Fraternalilab/POPScomp/workflows/R%20CI/badge.svg)
-[![DOI](https://zenodo.org/badge/182454886.svg)](https://zenodo.org/badge/latestdoi/182454886)
 
 The POPScomp program computes the Solvent Accessible Surface Area (SASA)
 of a given PDB structure. If the structure is a complex, *i.e.* composed of more than one chain
