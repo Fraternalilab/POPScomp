@@ -118,7 +118,7 @@ Kleinjung, J. and Fraternali, F.<br>
 
 ## Contributing
 Please feel free to open an issue on the [Issues](https://github.com/Fraternalilab/POPScomp/issues) page if you have any difficulty with POPScomp.
-We have no formal procedure to process contributed code, but we will revise code submitted *via* a pull request and acknowledge authors accordingly.
+We have no formal procedure to process contributed code, but we will revise code submitted *via* pull requests and will acknowledge authors accordingly.
 
 
 ## License and Copyright
