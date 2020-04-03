@@ -117,7 +117,9 @@ Kleinjung, J. and Fraternali, F.<br>
 
 
 ## Contributing
-Please add a Star to the repository to support the software maintainers and use the [Issues](https://github.com/Fraternalilab/POPScomp/issues) page for bug reports.
+Please add a Star to the repository to support the software maintainers.
+Feel free to open an issue on the [Issues](https://github.com/Fraternalilab/POPScomp/issues) page if you have any difficulty with POPScomp.
+We have no formal procedure to process contributed code, but we will revise code submitted *via* a pull request and acknowledge authors accordingly.
 
 
 ## License and Copyright
