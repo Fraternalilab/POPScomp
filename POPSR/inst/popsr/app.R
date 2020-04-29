@@ -7,7 +7,7 @@ library(shiny)
 library(bio3d)
 library(DT)
 library(digest)
-library(RPOPS)
+library(POPSR)
 
 #_______________________________________________________________________________
 # POPS UI
@@ -160,14 +160,10 @@ ui <- fluidPage(
             Only structures containing multiple chains will yield values for
             'DeltaSASA' and 'Isolated Chains' tabs."
 		      ),
-		      p("Results will be kept on the server until midnight (UTC). Please use the 'Download ...' buttons
-		        under the tables to save their content in 'csv' format. The 'Download All Results'
-		        button on the side panel returns the zipped content of the output directory."
-		      ),
-		      h3("Multiple Runs"),
-		      p("Refresh the browser between runs, otherwise the same (random) output directory will be used,
-		        which may be confusing if results for single-chain structures and complexes are being mixed.
-		        This behaviour will be improved upon in future releases."
+		      p("Results will be stored on the server until midnight GMT time and then automatically removed.
+		        Please use the 'Download ...' buttons under the tables to save your results in 'csv' format.
+		        The 'Download All Results' button on the side panel returns the zipped content of the entire output directory,
+		        i.e. all results produced for a given POPScomp job."
 		      ),
 		      h3("Help"),
           p("In case the server does not work as expected or server-related issues
@@ -181,22 +177,11 @@ ui <- fluidPage(
         ),
         tabPanel("About",
 			    h3("Shiny App"),
-			    p("This is version 3.1 of the POPScomp Shiny App. There are several options to run this code:"),
-			    p("1. Use our server at ", a("popscomp.org", href="http://popscom.org:3838"), "."),
-			    p("2. Download the POPScomp Docker image and use the App on your local computer without any further installation."),
-			    p("3. Get the source code from the ",  a("POPScomp GitHub repository", href="https://github.com/Fraternalilab/POPScomp"),
-			        "compile and run the App on your local computer."),
-			    h3("Software"),
-			    p("For source code and Wiki visit Fraternali Lab's ",
-			      a("POPScomp GitHub repository", href="https://github.com/Fraternalilab/POPScomp"), "."
+			    p("This is version 3.1 of the POPScomp Shiny App."),
+			    p("For detailed information about the software visit Fraternali Lab's ",
+			      a("POPScomp GitHub repository", href="https://github.com/Fraternalilab/POPScomp"),
+			      "; the Wiki pages contain detailed installation and usage instructions."
 			    ),
-			    p("The POPScomp server is based on two software packages:"),
-          p("1. POPSC: A GNU Autotools package of the POPS C program."),
-          p("2. POPSR: An R package containing this Shiny App."),
-			    h3("EBI PDBe-KB"),
-          p("POPScomp is part of the ",
-              a("FunPDBe resources", href="https://www.ebi.ac.uk/pdbe/funpdbe/deposition"), "."
-          ),
 			    h3("References"),
 			    p("Users publishing results obtained with the program and
 			        its applications should acknowledge its use by citation."),
@@ -277,13 +262,11 @@ server <- function(input, output) {
 
   ## main output directory
   mainDir = "/tmp"
-  ## random output path
-  rndString = as.character(digest(format(Sys.time(), "%H:%M:%OS3")))
-  subDir = paste0("POPScomp_", rndString)
+  subDir = "POPScomp_init"
   outDir = paste(mainDir, subDir, sep = "/")
   dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
   setwd(file.path(mainDir, subDir))
-
+  
   ## o1.1 display input PDB entry
   output$pdbentry <- renderText({
     input$pdbentry
@@ -311,6 +294,12 @@ server <- function(input, output) {
   ## - POPS will be run on the PDB file and the output will be zipped.
   output$nil <- eventReactive(input$popscomp, {
 
+    rndString = as.character(digest(format(Sys.time(), "%H:%M:%OS3")))
+    subDir = paste0("POPScomp_", rndString)
+    outDir = paste(mainDir, subDir, sep = "/")
+    dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
+    setwd(file.path(mainDir, subDir))
+    
     ## to proceed, we require one PDB identifier or uploaded PDB file
     validate(need(((input$pdbentry != "") || (! is.null(input$PDBfile))),
           message = "No PDB source input!"))
