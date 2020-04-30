@@ -147,9 +147,9 @@ ui <- fluidPage(
             After selecting a PDB file and pressing 'run POPScomp', the server runs
             the POPS program on the selected PDB file. The output is SASA tables,
             which are automatically loaded into the respective tabs.
-            Because that computation is a shell command, the success of the computation is
-            returned as exit code and shown below the 'run POPScomp' button.
-            It should normally read 'Exit code: 0', otherwise consult the 'Exit Codes' tab."
+            The success of the computation is returned as exit code and shown below
+	    the 'run POPScomp' button: 'Exit code: 0' means success and that is what you
+	    should expect to see, otherwise consult the 'Exit Codes' tab."
           ),
 		      h3("Results"),
 		      p("The SASA result tabs are 'Atom', 'Residue', 'Chain' and 'Molecule'.
@@ -177,7 +177,7 @@ ui <- fluidPage(
         ),
         tabPanel("About",
 			    h3("Shiny App"),
-			    p("This is version 3.1 of the POPScomp Shiny App."),
+			    p("This is version 3.1.4 of the POPScomp Shiny App."),
 			    p("For detailed information about the software visit Fraternali Lab's ",
 			      a("POPScomp GitHub repository", href="https://github.com/Fraternalilab/POPScomp"),
 			      "; the Wiki pages contain detailed installation and usage instructions."
@@ -191,6 +191,13 @@ ui <- fluidPage(
 			        molecular dynamics simulations of proteins in aqueous solution.
 			        Journal of Molecular Biology 256 (1996) 939-948.",
 			      a("DOI", href="https://dx.doi.org/10.1016%2Fj.sbi.2014.04.003"),
+			      a("Pubmed", href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4045398/")
+			    ),
+			    p("Kleinjung, J. and Fraternali, F.
+				Design and Application of Implicit Solvent Models
+				in Biomolecular Simulations.
+                                Current Opinion in Structural Biology 25 (2014) 126-134.",
+			      a("DOI", href="http://dx.doi.org/10.1016/j.sbi.2014.04.003"),
 			      a("Pubmed", href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4045398/")
 			    ),
 			    h4("POPS method"),
@@ -228,13 +235,12 @@ ui <- fluidPage(
 			    p("2002 Luigi Cavallo (parametrisation)")
         ),
         tabPanel("Exit Codes",
-          h3("Shiny exit codes"),
-          p("* No PDB source input! - Enter PDB identifier or upload PDB file from local file system
-            at the top of the side panel."
-          ),
-          p("* Two PDB sources input! - Only one PDB source is accepted per computation. Refresh the
-            browser page and either speficy a PDB identifier or upload a PDB file, not both."
-          ),
+	  h3("Overview"),
+	  p("POPScomp uses a combination of *Shell* (system) calls and R *Shiny* routines.
+	    Therefore, the return value shown as exit code may come from *Shell* or *Shiny*.
+	    A successful run will return 'Exit code: 0'. Any error will return an exit code
+	    different from '0'. A commented list of exit codes is given below together with
+	    troubleshooting tips. In case you get stuck, please contact the maintainers."),
           h3("Shell command exit codes"),
           p("* 0 - Success"),
           p("* 1 - Catchall for general errors"),
@@ -245,6 +251,13 @@ ui <- fluidPage(
           p("* 128+n - Fatal error signal 'n'"),
           p("* 130 - Script terminated by Control-C"),
           p("* 255* - Exit status out of range"),
+          h3("Shiny exit codes"),
+          p("* No PDB source input! - Enter PDB identifier or upload PDB file from local file system
+            at the top of the side panel."
+          ),
+          p("* Two PDB sources input! - Only one PDB source is accepted per computation. Refresh the
+            browser page and either speficy a PDB identifier or upload a PDB file, not both."
+          ),
           h3("Troubleshooting Errors"),
           h4("Exit code: 1 AND Error: Cannot open the connection"),
           p("The PDB file could not be read, most possibly because something went wrong during up/down-loading.
@@ -260,7 +273,11 @@ ui <- fluidPage(
 # server routines
 server <- function(input, output) {
 
-  ## main output directory
+  ## initialisation output directory
+  ## Shiny needs empty output files to be present here,
+  ##   otherwise it shows error messages on the start page before the POPScomp run.
+  ## This will be overwritten/replaced by the input$popscomp function,
+  ##   which will copy over the empty initialisation files and overwrite them where applicable.
   mainDir = "/tmp"
   subDir = "POPScomp_init"
   outDir = paste(mainDir, subDir, sep = "/")
@@ -293,12 +310,19 @@ server <- function(input, output) {
   ##     path to the temporary file.
   ## - POPS will be run on the PDB file and the output will be zipped.
   output$nil <- eventReactive(input$popscomp, {
-
+    ## create a new output directory for each POPScomp run
     rndString = as.character(digest(format(Sys.time(), "%H:%M:%OS3")))
     subDir = paste0("POPScomp_", rndString)
     outDir = paste(mainDir, subDir, sep = "/")
     dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
     setwd(file.path(mainDir, subDir))
+    
+    ## Copy initialisation files to the new output directory,
+    ##   otherwise error messages will appear in non-complex structure results
+    ##   for isolated chains and difference SASAs.
+    initDir = "POPScomp_init"
+    cpInit = paste0("cp ", mainDir, "/", initDir, "/* .")
+    system(cpInit)
     
     ## to proceed, we require one PDB identifier or uploaded PDB file
     validate(need(((input$pdbentry != "") || (! is.null(input$PDBfile))),
