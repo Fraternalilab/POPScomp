@@ -63,7 +63,7 @@ be used for POPScomp applications.
 
 #### POPScomp *Shiny* server at [popscomp.org](http://popscomp.org:3838)
 Publically available server with an intuitive user interface.
-Results will be stored on the server until midnight (UTC).
+Results will be stored on the server until midnight (GMT).
 For permanent storage, please download your results via the 'Download' buttons.
 
 #### FunPDBe
