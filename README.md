@@ -38,8 +38,8 @@ Please refer to the [Wiki](https://github.com/Fraternalilab/POPScomp/wiki) for d
 
 
 ## Software Design
-This [POPScomp repository](https://github.com/Fraternalilab/POPScomp)
-contains the following components:
+This POPScomp repository contains the following components:
+
 #### POPSC
 A GNU Autotools package of the POPS C program that computes SASA for a given structure.
   
