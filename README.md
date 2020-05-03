@@ -48,8 +48,9 @@ An R package to
 - split complexes into single and pair components to compute buried SASA using POPSC and 
 - provide a *Shiny* App as interface to the POPSC program.
 
-#### DockerImage
-A *Docker* image of POPScomp is available that provides the program suite in fully functional form,
+#### *Docker* Image
+A [POPScomp *Docker* image](https://hub.docker.com/u/popscomp) is available that provides 
+the program suite in fully functional form,
 *i.e.* pre-compiled POPSC, RStudio with POPSR and all dependencies installed.
 Please refer to the [Wiki](https://github.com/Fraternalilab/POPScomp/wiki/Docker-Image)
 for detailed guidelines on downloading and usage of the Docker image.
