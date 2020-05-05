@@ -177,7 +177,7 @@ ui <- fluidPage(
         ),
         tabPanel("About",
 			    h3("Shiny App"),
-			    p("This is version 3.1.4 of the POPScomp Shiny App."),
+			    p("This is version 3.1.5 of the POPScomp Shiny App."),
 			    p("For detailed information about the software visit Fraternali Lab's ",
 			      a("POPScomp GitHub repository", href="https://github.com/Fraternalilab/POPScomp"),
 			      "; the Wiki pages contain detailed installation and usage instructions."
