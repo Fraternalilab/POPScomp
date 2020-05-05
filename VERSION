@@ -1,6 +1,0 @@
-3.1.4
-version number is used in:
-- POPSC/configure.ac
-- POPSR/DESCRIPTION
-- POPSR/inst/popsr/app.R
-- tag of Docker image
