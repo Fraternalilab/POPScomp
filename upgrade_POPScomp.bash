@@ -7,7 +7,7 @@ rm POPSC/src/pops
 git pull https://github.com/Fraternalilab/POPScomp
 
 ## compile POPSC
-cd POPSC ; ./configure ; make ; cd ..
+cd POPSC ; ./bootstrap ; ./configure ; make ; cd ..
 
 ## compile POPSR
 R CMD build POPSR
