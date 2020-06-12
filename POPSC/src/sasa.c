@@ -176,30 +176,30 @@ __inline__ static int mod_atom_sasa(Str *pdb, Topol *topol, Type *type, \
 	cj1 = compute_c1(atomRadius_j, rSolvent);
 
 	/* compute cc2 */
-    cc2 = cutoffRadius - atomDistance;
+    	cc2 = cutoffRadius - atomDistance;
 
 	/* compute c[ij]3 */
-    ci3 = compute_c3(atomRadius_j, atomRadius_i, atomDistance);
-    cj3 = compute_c3(atomRadius_i, atomRadius_j, atomDistance);
+    	ci3 = compute_c3(atomRadius_j, atomRadius_i, atomDistance);
+    	cj3 = compute_c3(atomRadius_i, atomRadius_j, atomDistance);
     
 	/* compute b[ij,ji] */
-    bij =  ci1 * cc2 * ci3;
-    bji =  cj1 * cc2 * cj3;
+    	bij =  ci1 * cc2 * ci3;
+    	bji =  cj1 * cc2 * cj3;
 
 	/* compute c[ij]; jk: moved to atom_sasa formula */
-    /*ci  = pCon * bij;
-    cj  = pCon * bji;*/
+    	/*ci  = pCon * bij;
+    	cj  = pCon * bji;*/
 
 	/* count overlaps */
-    ++ molSasa->atomSasa[i].nOverlap;
+    	++ molSasa->atomSasa[i].nOverlap;
 
 	/* count overlaps */
-    ++ molSasa->atomSasa[i].nOverlap;
-    ++ molSasa->atomSasa[j].nOverlap;
+    	++ molSasa->atomSasa[i].nOverlap;
+    	++ molSasa->atomSasa[j].nOverlap;
 
 	/* compute atom SASA for atoms i and j */
-    molSasa->atomSasa[i].sasa = atom_sasa(molSasa, i, connectivityParameter, bij, atomParameter_i);
-    molSasa->atomSasa[j].sasa = atom_sasa(molSasa, j, connectivityParameter, bji, atomParameter_j);
+    	molSasa->atomSasa[i].sasa = atom_sasa(molSasa, i, connectivityParameter, bij, atomParameter_i);
+    	molSasa->atomSasa[j].sasa = atom_sasa(molSasa, j, connectivityParameter, bji, atomParameter_j);
 
 	/* compute atom bSASA for atoms i and j */
 	/* select side-chain (including CA) atoms and
@@ -326,7 +326,6 @@ static int compute_res_chain_mol_sasa(Str *pdb, Type *type, MolSasa *molSasa, \
 		}
 		/*___________________________________________________________________________*/
 		/* increment residue index */
-		//if (i > 0 && (pdb->atom[i].residueNumber != pdb->atom[i - 1].residueNumber)) { 
 		if (i > 0 && (pdb->atom[i].residueNumber != pdb->atom[i - 1].residueNumber ||
 				      strcmp(pdb->atom[i].icode, pdb->atom[i - 1].icode) != 0)) {
 			++ j;
@@ -336,7 +335,7 @@ static int compute_res_chain_mol_sasa(Str *pdb, Type *type, MolSasa *molSasa, \
 		}
 		/*___________________________________________________________________________*/
 		/* increment chain index */
-        if (i > 0 && pdb->atom[i].chainIdentifier[0] != pdb->atom[i - 1].chainIdentifier[0]) {
+        	if (i > 0 && pdb->atom[i].chainIdentifier[0] != pdb->atom[i - 1].chainIdentifier[0]) {
 			++ k;
 			molSasa->chainSasa[k-1].last = i-1;
 			molSasa->chainSasa[k].first = i;

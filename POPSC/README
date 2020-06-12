@@ -243,6 +243,17 @@ Starting from the SASA of the isolated atom, overlap areas are subtracted
 progressively for all 1-(i+n) interactions. Atomic SASAs are summed up
 to yield residue, chain and molecule SASAs.
 
+### Atom and residue surface areas
+Surface areas of atoms and residues are output in the Surf/A^2 columns.
+Atom surface areas (i.e. without neighbour shielding) were computed
+using the hard-coded atom radius and the formula for a spherical surface.
+Hard-coded residue surface areas were derived from tripeptides:
+"The SASAr values were calculated normalizing the SASA of each residue
+by that of the corresponding amino acid type X in the AXA tripeptide,
+where X is in an extended side chain conformation selected from the
+Dunbrack and Cohen rotamer library as implemented in PyMOL."
+(https://pubmed.ncbi.nlm.nih.gov/24250278/)
+
 ### Output
 Flags controlling the amount and type of output.
 The default ouput is the overall SASA of the molecule, including the

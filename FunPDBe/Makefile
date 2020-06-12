@@ -55,7 +55,7 @@ all : pdbupdate jsondir jsonsubdir getstr mkpops1 mkpops2 mkpops3 rename jsonval
 .PHONY : pdbupdate jsondir jsonsubdir getstr mkpops1 mkpops2 mkpops3 rename jsonvaldir jsonvalsubdir linkoutput validate rsyncval mkupload
 
 pdbupdate :
-	rsync -rlpt -v -z --delete rsync.ebi.ac.uk::pub/databases/pdb/data/structures/divided/XML ${DBDIR}/
+	rsync -rlpt -v -z --delete rsync.ebi.ac.uk::pub/databases/pdb/data/structures/divided/XML/ ${DBDIR}/
 
 jsondir :
 	$(info --- Creating output directory.)
