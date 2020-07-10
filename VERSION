@@ -1,6 +1,7 @@
 3.1.5
 version number is used in:
 - POPSC/configure.ac
+- POPSC/src/json.c
 - POPSR/DESCRIPTION
 - POPSR/inst/popsr/app.R
 - tag of Docker image
