@@ -4,7 +4,7 @@
 # There are three 'mkpops' targets to improve parallelisation, because the file
 # list per subdirectory lingers obviously on the slowest one in regard to POPS
 # execution and that means only one CPU is used during that time.
-# Copyright (C) 2019 Jens Kleinjung
+# Copyright (C) 2019-2020 Jens Kleinjung
 #===============================================================================
 
 #_______________________________________________________________________________
@@ -15,7 +15,7 @@ ROOTDIR = /home/jkleinj
 POPSC = ${ROOTDIR}/0/POPScomp/POPSC/src/pops
 POPSFLAGS = --zipped --jsonOut --silent
 ## database directory
-DBDIR = ${ROOTDIR}/database
+DBDIR = ${ROOTDIR}/0/databases
 ## home of PDB database
 PDBDIR = ${DBDIR}/XML
 ## PDB subdirectories
@@ -51,11 +51,13 @@ FUNPDBEDIR = ${ROOTDIR}/0/POPScomp/FunPDBe
 ## Note: PDBSUBDIR is also used for JSONDIR, because it is the reference array
 ##         that is completely known from the start.
 
-all : pdbupdate jsondir jsonsubdir getstr mkpops1 mkpops2 mkpops3 rename jsonvaldir jsonvalsubdir linkoutput validate rsyncval mkupload
-.PHONY : pdbupdate jsondir jsonsubdir getstr mkpops1 mkpops2 mkpops3 rename jsonvaldir jsonvalsubdir linkoutput validate rsyncval mkupload
+all : pdbupdate  jsondir jsonsubdir linkinput mkpops rename jsonvaldir jsonvalsubdir linkoutput validate rsyncval mkupload
+.PHONY : pdbupdate jsondir jsonsubdir linkinput mkpops mkpops1 mkpops2 mkpops3 rename jsonvaldir jsonvalsubdir linkoutput validate rsyncval mkupload
+
 
 pdbupdate :
 	rsync -rlpt -v -z --delete rsync.ebi.ac.uk::pub/databases/pdb/data/structures/divided/XML/ ${DBDIR}/
+
 
 jsondir :
 	$(info --- Creating output directory.)
@@ -70,7 +72,7 @@ jsonsubdir :
 
 linkinput :
 	$(info --- Linking structure files to output directory.)
-	cd ${PDBDIR} ; find ?? -depth -name *.xml.gz | xargs -i bash -c "ln -s ${PDBDIR}/{} ${JSONDIR}/{}"
+	cd ${PDBDIR} ; find ?? -depth -name *.xml.gz -mtime -28 | xargs -i bash -c "ln -s ${PDBDIR}/{} ${JSONDIR}/{}"
 
 
 #.PHONY: mkpops $(PDBSUBDIRS)
@@ -79,6 +81,13 @@ linkinput :
 
 #$(PDBSUBDIRS) :
 #	${MAKE} -f ../Makefile.subdir all "ROOTDIR = ${ROOTDIR}" "POPSC = ${POPSC}" "POPSFLAGS = ${POPSFLAGS}" "PDBDIR = ${PDBDIR}" $@ 
+
+mkpops :
+	$(info --- Run POPS on all structures.)
+	for X in ${PDBSUBDIR} ; do \
+		cd ${JSONDIR}/$$X ; \
+		${MAKE} -i -f ../Makefile.subdir all "ROOTDIR = ${ROOTDIR}" "POPSC = ${POPSC}" "POPSFLAGS = ${POPSFLAGS}" "PDBDIR = ${PDBDIR}" "X = $$X" ; \
+	done
 
 mkpops1 :
 	$(info --- Run POPS on structures [a-h]?.)
@@ -102,7 +111,7 @@ mkpops3 :
 	done
 
 rename :
-	cd ${JSONDIR} ; find ?? -depth -name *[A-Z]*.json | xargs -n 1 rename -f -v 'y/A-Z/a-z/' {} 
+	cd ${JSONDIR} ; find ?? -depth -name "*[A-Z]*".json -mtime -28 | xargs -n 1 rename -f -v 'y/A-Z/a-z/' {} 
 
 #_______________________________________________________________________________
 ## validation
@@ -119,21 +128,21 @@ jsonvalsubdir :
 
 linkoutput :
 	$(info --- Linking POPS output files to validation directory.)
-	cd ${JSONDIR} ; find ?? -depth -name *.json | xargs -i bash -c "ln -s ${JSONDIR}/{} ${JSONVALDIR}/{}"
+	cd ${JSONDIR} ; find ?? -depth -name *.json -mtime -28 | xargs -i bash -c "ln -s ${JSONDIR}/{} ${JSONVALDIR}/{}"
 
 
 validate :
 	$(info --- Validating all output files.)
 	for X in ${PDBSUBDIR} ; do \
 		cd ${JSONVALDIR}/$$X ; \
-		${MAKE} -i -f ../Makefile.validate validate "JSONDIR = ${JSONDIR}" "X = $$X" "FUNPDBEDIR = ${FUNPDBEDIR}" ; \
+		${MAKE} -i -f ../Makefile.validate validate "JSONDIR=${JSONDIR}" "X=$$X" "FUNPDBEDIR=${FUNPDBEDIR}" ; \
 	done
 
 rsyncval :
 	$(info --- Get validated targets via rsync from JSONVAL on mito.)
 	for X in ${PDBSUBDIR} ; do \
 		cd ${JSONVALDIR}/$$X ; \
-		${MAKE} -i -f ../Makefile.validate rsyncval "JSONDIR = ${JSONDIR}" "X = $$X" "FUNPDBEDIR = ${FUNPDBEDIR}" ; \
+		${MAKE} -i -f ../Makefile.validate rsyncval "JSONDIR=${JSONDIR}" "X=$$X" "FUNPDBEDIR=${FUNPDBEDIR}" ; \
 	done
 
 #_______________________________________________________________________________

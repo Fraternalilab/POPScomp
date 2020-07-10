@@ -1,0 +1,80 @@
+#===============================================================================
+# Makefile.weekly : POPScomp pipeline for FunPDBe 
+# Components of 'Makefile' for (cron-)automated weekly updates. 
+# Will act on new structures from indpendent cron-triggered updates of PDB database.
+# Configured for virtual machine 'ace' on Synology DiskStation.
+# Copyright (C) 2020 Jens Kleinjung
+#===============================================================================
+
+#_______________________________________________________________________________
+## start-up macros
+## root directory
+ROOTDIR = /home/jkleinj
+## POPSC program
+POPSC = ${ROOTDIR}/0/POPScomp/POPSC/src/pops
+POPSFLAGS = --zipped --jsonOut --silent
+## database directory
+DBDIR = ${ROOTDIR}/0/databases
+## home of PDB database
+PDBDIR = ${DBDIR}/XML
+## PDB subdirectories
+PDBSUBDIR = $(notdir $(shell find ${PDBDIR}/ -type d))
+## home of JSON output files
+JSONDIR = ${DBDIR}/JSON
+## JSON subdirectories
+JSONSUBDIR = $(notdir $(shell find ${JSONDIR}/ -type d))
+## home of JSON validation output files
+JSONVALDIR = ${DBDIR}/JSONVAL
+## JSON validation subdirectories
+JSONVALSUBDIR = $(notdir $(shell find ${JSONVALDIR}/ -type d))
+## FunPDBe directory
+FUNPDBEDIR = ${ROOTDIR}/0/POPScomp/FunPDBe
+
+#_______________________________________________________________________________
+## targets
+all : linkinput mkpops rename linkoutput validate rsyncval mkupload
+.PHONY : linkinput mkpops rename jsonvaldir jsonvalsubdir linkoutput validate rsyncval mkupload
+
+linkinput :
+	$(info --- Linking structure files to output directory.)
+	cd ${PDBDIR} ; find ?? -depth -name *.xml.gz | xargs -i bash -c "ln -s ${PDBDIR}/{} ${JSONDIR}/{}"
+
+mkpops :
+	$(info --- Run POPS on all structures.)
+	for X in ${PDBSUBDIR} ; do \
+		cd ${JSONDIR}/$$X ; \
+		${MAKE} -i -f ../Makefile.subdir all "ROOTDIR = ${ROOTDIR}" "POPSC = ${POPSC}" "POPSFLAGS = ${POPSFLAGS}" "PDBDIR = ${PDBDIR}" "X = $$X" ; \
+	done
+
+rename :
+	cd ${JSONDIR} ; find ?? -depth -name "*[A-Z]*".json | xargs -n 1 rename -f -v 'y/A-Z/a-z/' {} 
+
+#_______________________________________________________________________________
+## validation
+linkoutput :
+	$(info --- Linking POPS output files to validation directory.)
+	cd ${JSONDIR} ; find ?? -depth -name *.json | xargs -i bash -c "ln -s ${JSONDIR}/{} ${JSONVALDIR}/{}.tovalidate"
+
+
+validate :
+	$(info --- Validating all output files.)
+	for X in ${PDBSUBDIR} ; do \
+		cd ${JSONVALDIR}/$$X ; \
+		${MAKE} -i -f ../Makefile.validate validate "JSONDIR = ${JSONDIR}" "X = $$X" "FUNPDBEDIR = ${FUNPDBEDIR}" ; \
+	done
+
+rsyncval :
+	$(info --- Get validated targets via rsync from JSONVAL on mito.)
+	for X in ${PDBSUBDIR} ; do \
+		cd ${JSONVALDIR}/$$X ; \
+		${MAKE} -i -f ../Makefile.validate rsyncval "JSONDIR = ${JSONDIR}" "X = $$X" "FUNPDBEDIR = ${FUNPDBEDIR}" ; \
+	done
+
+#_______________________________________________________________________________
+mkupload :
+	$(info --- Uploading validated output files.)
+	${MAKE} -i -f Makefile.upload upload "JSONVALDIR = ${JSONVALDIR}"
+
+
+#===============================================================================
+

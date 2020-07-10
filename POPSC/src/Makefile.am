@@ -6,7 +6,7 @@
 bin_PROGRAMS = pops
 
 AM_CPPFLAGS = $(INTI_CFLAGS) $(XML_CFLAGS) $(ZLIB_CFLAGS)
-AM_CFLAGS = -Wall
+AM_CFLAGS = -Wall -D_FORTIFY_SOURCE=2
 
 pops_SOURCES = \
 arg.c arg.h argpdb.h atomgroup.c atomgroup.h atomgroup_data.h \
