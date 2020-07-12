@@ -86,28 +86,28 @@ mkpops :
 	$(info --- Run POPS on all structures.)
 	for X in ${PDBSUBDIR} ; do \
 		cd ${JSONDIR}/$$X ; \
-		${MAKE} -i -f ../Makefile.subdir all "ROOTDIR = ${ROOTDIR}" "POPSC = ${POPSC}" "POPSFLAGS = ${POPSFLAGS}" "PDBDIR = ${PDBDIR}" "X = $$X" ; \
+		${MAKE} -i -f ../Makefile.subdir all "ROOTDIR=${ROOTDIR}" "POPSC=${POPSC}" "POPSFLAGS=${POPSFLAGS}" "PDBDIR=${PDBDIR}" "X=$$X" ; \
 	done
 
 mkpops1 :
 	$(info --- Run POPS on structures [a-h]?.)
 	for X in ${PDBSUBDIR1} ; do \
 		cd ${JSONDIR}/$$X ; \
-		${MAKE} -i -f ../Makefile.subdir all "ROOTDIR = ${ROOTDIR}" "POPSC = ${POPSC}" "POPSFLAGS = ${POPSFLAGS}" "PDBDIR = ${PDBDIR}" "X = $$X" ; \
+		${MAKE} -i -f ../Makefile.subdir all "ROOTDIR=${ROOTDIR}" "POPSC=${POPSC}" "POPSFLAGS=${POPSFLAGS}" "PDBDIR=${PDBDIR}" "X=$$X" ; \
 	done
 
 mkpops2 : 
 	$(info --- Run POPS on structures [i-p]?.)
 	for X in ${PDBSUBDIR2} ; do \
 		cd ${JSONDIR}/$$X ; \
-		${MAKE} -i -f ../Makefile.subdir all "ROOTDIR = ${ROOTDIR}" "POPSC = ${POPSC}" "POPSFLAGS = ${POPSFLAGS}" "PDBDIR = ${PDBDIR}" "X = $$X" ; \
+		${MAKE} -i -f ../Makefile.subdir all "ROOTDIR=${ROOTDIR}" "POPSC=${POPSC}" "POPSFLAGS=${POPSFLAGS}" "PDBDIR=${PDBDIR}" "X=$$X" ; \
 	done
 
 mkpops3 : 
 	$(info --- Run POPS on all structures [q-z]?.)
 	for X in ${PDBSUBDIR3} ; do \
 		cd ${JSONDIR}/$$X ; \
-		${MAKE} -i -f ../Makefile.subdir all "ROOTDIR = ${ROOTDIR}" "POPSC = ${POPSC}" "POPSFLAGS = ${POPSFLAGS}" "PDBDIR = ${PDBDIR}" "X = $$X" ; \
+		${MAKE} -i -f ../Makefile.subdir all "ROOTDIR=${ROOTDIR}" "POPSC=${POPSC}" "POPSFLAGS=${POPSFLAGS}" "PDBDIR=${PDBDIR}" "X=$$X" ; \
 	done
 
 rename :
