@@ -36,6 +36,8 @@ JSONFILES := $(patsubst %.xml.gz,%.json,$(shell find ${PDBDIR}/$X -name '*.xml.g
 
 .SUFFIXES : .json
 
+vpath %.xml.gz ${PDBDIR}/$X
+
 %.json : %.xml.gz
 	-@ touch $@
 	-@${POPSC} --pdbml $^ ${POPSFLAGS}

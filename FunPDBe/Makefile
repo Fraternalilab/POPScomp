@@ -2,10 +2,17 @@
 # Makefile : POPScomp pipeline for FunPDBe 
 # Invokes Makefile.subdir for each subdirectory of PDBML.
 # There are three 'mkpops' targets to improve parallelisation, because the file
-# list per subdirectory lingers obviously on the slowest one in regard to POPS
-# execution and that means only one CPU is used during that time.
+#   list per subdirectory lingers obviously on the slowest one in regard to POPS
+#   execution and that means only one CPU is used during that time.
+# The 'for' loops over PDB subdirectories avoid problems with too long
+#   argument lists. This implementation seems to work robustly.
+#
 # Copyright (C) 2019-2020 Jens Kleinjung
 #===============================================================================
+
+#_______________________________________________________________________________
+## time since last update
+MTIME = -28
 
 #_______________________________________________________________________________
 ## start-up macros
@@ -39,8 +46,6 @@ FUNPDBEDIR = ${ROOTDIR}/0/POPScomp/FunPDBe
 ## pdbupdate: Synchronise local PDB database with EBI's.
 ## jsondir: Create JSON output directory if not existing.
 ## jsonsubdir: Create JSON (output) subdirectory structure, mirroring the PDB's.
-## linkinput: Create symbolic links to all (input) PDBML entries,
-##              required to derive the dependency/target file names for Make.
 ## mkpops: Run POPS over all subdirectories and PDBML entries, only if
 ##           JSON output is missing or older than PDBML input.
 ## rename: Convert JSON output filenames to lower case, otherwise Make would not
@@ -51,8 +56,13 @@ FUNPDBEDIR = ${ROOTDIR}/0/POPScomp/FunPDBe
 ## Note: PDBSUBDIR is also used for JSONDIR, because it is the reference array
 ##         that is completely known from the start.
 
-all : pdbupdate  jsondir jsonsubdir linkinput mkpops rename jsonvaldir jsonvalsubdir linkoutput validate rsyncval mkupload
-.PHONY : pdbupdate jsondir jsonsubdir linkinput mkpops mkpops1 mkpops2 mkpops3 rename jsonvaldir jsonvalsubdir linkoutput validate rsyncval mkupload
+## complete pipeline including database (sub)directory creation
+all : pdbupdate jsondir jsonsubdir mkpops rename jsonvaldir jsonvalsubdir validate mkupload
+
+## pipeline for weekly updates, assuming the source PDB does not contain new subdirectories
+weekly : pdbupdate mkpops rename validate mkupload
+
+.PHONY : pdbupdate jsondir jsonsubdir mkpops mkpops1 mkpops2 mkpops3 rename jsonvaldir jsonvalsubdir validate mkupload
 
 
 pdbupdate :
@@ -69,11 +79,6 @@ jsonsubdir :
 	for X in ${PDBSUBDIR} ; do \
 		mkdir -p ${JSONDIR}/$$X ; \
 	done
-
-linkinput :
-	$(info --- Linking structure files to output directory.)
-	cd ${PDBDIR} ; find ?? -depth -name *.xml.gz -mtime -28 | xargs -i bash -c "ln -s ${PDBDIR}/{} ${JSONDIR}/{}"
-
 
 #.PHONY: mkpops $(PDBSUBDIRS)
 
@@ -111,7 +116,7 @@ mkpops3 :
 	done
 
 rename :
-	cd ${JSONDIR} ; find ?? -depth -name "*[A-Z]*".json -mtime -28 | xargs -n 1 rename -f -v 'y/A-Z/a-z/' {} 
+	cd ${JSONDIR} ; find ?? -depth -name "*[A-Z]*".json -mtime ${MTIME} | xargs -n 1 rename -f -v 'y/A-Z/a-z/' {} 
 
 #_______________________________________________________________________________
 ## validation
@@ -126,23 +131,11 @@ jsonvalsubdir :
 		mkdir -p ${JSONVALDIR}/$$X ; \
 	done
 
-linkoutput :
-	$(info --- Linking POPS output files to validation directory.)
-	cd ${JSONDIR} ; find ?? -depth -name *.json -mtime -28 | xargs -i bash -c "ln -s ${JSONDIR}/{} ${JSONVALDIR}/{}"
-
-
 validate :
 	$(info --- Validating all output files.)
 	for X in ${PDBSUBDIR} ; do \
 		cd ${JSONVALDIR}/$$X ; \
 		${MAKE} -i -f ../Makefile.validate validate "JSONDIR=${JSONDIR}" "X=$$X" "FUNPDBEDIR=${FUNPDBEDIR}" ; \
-	done
-
-rsyncval :
-	$(info --- Get validated targets via rsync from JSONVAL on mito.)
-	for X in ${PDBSUBDIR} ; do \
-		cd ${JSONVALDIR}/$$X ; \
-		${MAKE} -i -f ../Makefile.validate rsyncval "JSONDIR=${JSONDIR}" "X=$$X" "FUNPDBEDIR=${FUNPDBEDIR}" ; \
 	done
 
 #_______________________________________________________________________________
