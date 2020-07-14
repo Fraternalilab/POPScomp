@@ -1,2 +1,1 @@
-2018-05-13 22:23:30,111 - client - INFO - JSON parsed
-2018-05-13 22:23:30,176 - client - ERROR - JSON does not comply with FunPDBe schema
+2020-06-25 11:00:42,244 - client - ERROR - [Errno 2] No such file or directory: '../data/pops.pdb.coarse.json'

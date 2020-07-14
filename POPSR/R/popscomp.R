@@ -31,13 +31,14 @@ popscompR = function(inputPDB, outDir) {
 	#________________________________________________________________________________
 	## ISO: split input PDB into chains
 	chain.files = pdbsplit(paste(outDir, inputPDB, sep = "/"),  path = outDir, multi = FALSE);
-	## don not continue if input PDB is not a complex
+	
+	## if input PDB is not a complex, do not run this 'popscompR' for complex processing
 	if (length(chain.files) < 2) {
 	  return(0);
 	}
 
 	## short names
-	chain.files.short = sub('\\.pdb$', '', basename(chain.files));
+	chain.files.short = sub('\\.pdb$', '', basename(as.character(chain.files)));
 
 	#________________________________________________________________________________
 	## ISO: run POPS over all single (= isolated) chains via system (= shell) call
@@ -47,7 +48,7 @@ popscompR = function(inputPDB, outDir) {
 	                   " --atomOut --residueOut --chainOut",
 	                   " --pdb ", chain.files[x], " 1> ", outDir, "/", chain.files.short[x], ".o",
 	                   " 2> ", outDir, "/", chain.files.short[x], ".e");
-	  system_status = system(command);
+	  system_status = system(command, wait = TRUE);
 	  paste("Exit code:", system_status);
 	});
 
@@ -58,20 +59,20 @@ popscompR = function(inputPDB, outDir) {
 	## Atom
 	## first just the header line
 	command1.1 = paste0("head -n 1 ", outDir, "/id.rpopsAtom > ", outDir, "/isoSASA.rpopsAtom");
-	system_status1.1 = system(command1.1);
+	system_status1.1 = system(command1.1, wait = TRUE);
 	## then concatenate output file, without file name header (-q) and table header (-n+2)
 	command1.2 = paste0("tail -q -n+2 ", outDir, "/*.iso.rpopsAtom >> ", outDir, "/isoSASA.rpopsAtom");
-	system_status1.2 = system(command1.2);
+	system_status1.2 = system(command1.2, wait = TRUE);
 	## Residue
 	command2.1 = paste0("head -n 1 ", outDir, "/id.rpopsResidue > ", outDir, "/isoSASA.rpopsResidue");
-	system_status2.1 = system(command2.1);
+	system_status2.1 = system(command2.1, wait = TRUE);
 	command2.2 = paste0("tail -q -n+2 ", outDir, "/*.iso.rpopsResidue >> ", outDir, "/isoSASA.rpopsResidue");
-	system_status2.2 = system(command2.2);
+	system_status2.2 = system(command2.2, wait = TRUE);
 	## Chain
 	command3.1 = paste0("head -n 1 ", outDir, "/id.rpopsChain > ", outDir, "/isoSASA.rpopsChain");
-	system_status3.1 = system(command3.1);
+	system_status3.1 = system(command3.1, wait = TRUE);
 	command3.2 = paste0("tail -q -n+2 ", outDir, "/*.iso.rpopsChain >> ", outDir, "/isoSASA.rpopsChain");
-	system_status3.2 = system(command3.2);
+	system_status3.2 = system(command3.2, wait = TRUE);
 
 	#________________________________________________________________________________
 	## PAIR: create PDB files for all pairwise chain combinations
@@ -86,12 +87,12 @@ popscompR = function(inputPDB, outDir) {
 	  command = paste("cat", chain.files[pair.cmbn[1, x]],
 	                         chain.files[pair.cmbn[2, x]], ">",
 	                         chainpair.files[[x]]);
-	  system_status = system(command);
+	  system_status = system(command, wait = TRUE);
 	  paste("Chain pair:", x, "; Exit code:", system_status);
-	  return(chainpair.files);
+	  return(chainpair.files[[x]]);
 	});
 
-	chainpair.files.short = sub('\\.pdb$', '', basename(chainpair.files));
+	chainpair.files.short = sub('\\.pdb$', '', basename(as.character(chainpair.files)));
 
 	#________________________________________________________________________________
 	## PAIR: run POPS over all pairwise chain combinations via system (= shell) call
@@ -101,7 +102,7 @@ popscompR = function(inputPDB, outDir) {
 	                  " --atomOut --residueOut --chainOut",
 	                  " --pdb ", chainpair.files[x], " 1> ", outDir, "/POPScomp_chainpair", x, ".o",
                                                   " 2> ", outDir, "/POPScomp_chainpair", x, ".e");
-	  system_status = system(command);
+	  system_status = system(command, wait = TRUE);
 	  paste("Exit code:", system_status);
 	});
 
@@ -119,7 +120,8 @@ popscompR = function(inputPDB, outDir) {
 	  for (i in 1:length(chain.files)) {
 	    ## read isolated chain output
 	    iso.sasa.level.files[[j]][[i]] = read.table(paste0(outDir, "/", chain.files.short[i],
-	                                        ".iso.", rpopsLevel[j]), header = TRUE);
+	                                        ".iso.", rpopsLevel[j]),
+	                                        header = TRUE, stringsAsFactors = FALSE);
 	  };
 	  names(iso.sasa.level.files[[j]]) = chain.files.short;
 	};
@@ -127,14 +129,15 @@ popscompR = function(inputPDB, outDir) {
 
   ## initialise list of lists with predefined number of output files
   pair.sasa.level.files = vector(mode = "list", length = length(rpopsLevel));
-  pair.veclist = function(x) { vector(mode = "list", length = length(dim(pair.cmbn)[2])) };
+  pair.veclist = function(x) { vector(mode = "list", length = dim(pair.cmbn)[2]) };
   pair.sasa.level.files = lapply(pair.sasa.level.files, pair.veclist);
   ## read PAIR SASA files
   for (j in 1:length(rpopsLevel)) {
-    for (i in 1:length(dim(pair.cmbn)[2])) {
+    for (i in 1:dim(pair.cmbn)[2]) {
       ## read paired chain output
       pair.sasa.level.files[[j]][[i]] = read.table(paste0(outDir, "/", chainpair.files.short[i],
-                                          ".pair.", rpopsLevel[j]), header = TRUE);
+                                          ".pair.", rpopsLevel[j]),
+                                          header = TRUE, stringsAsFactors = FALSE);
     }
     names(pair.sasa.level.files[[j]]) = chainpair.files.short;
   }
@@ -147,25 +150,25 @@ popscompR = function(inputPDB, outDir) {
   ##   PAIR and ISO files is reconstructed here.
   ## initialise list of lists with predefined number of SASA difference tables
   diff.sasa.level = vector(mode = "list", length = length(rpopsLevel));
-  diff.veclist = function(x) { vector(mode = "list", length = length(dim(pair.cmbn)[2])) };
+  diff.veclist = function(x) { vector(mode = "list", length = dim(pair.cmbn)[2]) };
   diff.sasa.level = lapply(diff.sasa.level, diff.veclist);
   ## compute SASA differences
   for (j in 1:length(rpopsLevel)) {
-    for (i in 1:length(dim(pair.cmbn)[2])) {
+    for (i in 1:dim(pair.cmbn)[2]) {
       if (j %in% 1:3) {
         ## rbind ISO chain SASAs
         iso.rbind.tmp = rbind(iso.sasa.level.files[[j]][[pair.cmbn[1, i]]],
                               iso.sasa.level.files[[j]][[pair.cmbn[2, i]]]);
         ## assert consistency between 'rbind' ISO files and PAIR file
-        #stopifnot(dim(iso.rbind.tmp) == dim(pair.sasa.level.files[[j]][[i]]));
-        print(paste(j, i, dim(iso.rbind.tmp), dim(pair.sasa.level.files[[j]][[i]])));
+        stopifnot(dim(iso.rbind.tmp) == dim(pair.sasa.level.files[[j]][[i]]));
+        #print(paste(j, i, dim(iso.rbind.tmp), dim(pair.sasa.level.files[[j]][[i]])));
         ## SASA DIFF values, applies to all levels
         D_SASA.A.2 = round(iso.rbind.tmp[ , "SASA.A.2"] - pair.sasa.level.files[[j]][[i]][ , "SASA.A.2"], 2);
         ## more level-specific delta values
         if (j == 1) {
           diff.tmp.df = cbind(iso.rbind.tmp, D_SASA.A.2);
           diff.sasa.level[[j]][[i]] = diff.tmp.df[diff.tmp.df[ , "D_SASA.A.2"] > 0,
-            c("ResidNe", "Chain", "ResidNr", "iCode", "D_SASA.A.2")];
+          c("ResidNe", "Chain", "ResidNr", "iCode", "D_SASA.A.2")];
         } else if (j == 2) {
           D_Phob.A.2 = round(iso.rbind.tmp[ , "Phob.A.2"] - pair.sasa.level.files[[j]][[i]][ , "Phob.A.2"], digits = 2);
           D_Phil.A.2 = round(iso.rbind.tmp[ , "Phil.A.2"] - pair.sasa.level.files[[j]][[i]][ , "Phil.A.2"], digits = 2);

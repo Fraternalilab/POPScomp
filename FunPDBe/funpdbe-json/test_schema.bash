@@ -1,4 +1,4 @@
-#! /usr/bin/bash
+#! /bin/bash
 ## validate example schema
 python3 ./funpdbe_client.py --path=../funpdbe-json/funpdbe_example.json --mode=validate
 ## validate POPS atom schema

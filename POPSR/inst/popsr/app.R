@@ -1,5 +1,5 @@
 #===============================================================================
-# Shiny application as interface of POPS & POPSCOMP
+# Shiny application as interface of POPScomp
 # (C) 2019 -2020 Jens Kleinjung and Franca Fraternali
 #===============================================================================
 
@@ -177,7 +177,7 @@ ui <- fluidPage(
         ),
         tabPanel("About",
 			    h3("Shiny App"),
-			    p("This is version 3.1.5 of the POPScomp Shiny App."),
+			    p("This is version 3.1.6 of the POPScomp Shiny App."),
 			    p("For detailed information about the software visit Fraternali Lab's ",
 			      a("POPScomp GitHub repository", href="https://github.com/Fraternalilab/POPScomp"),
 			      "; the Wiki pages contain detailed installation and usage instructions."
@@ -322,7 +322,7 @@ server <- function(input, output) {
     ##   for isolated chains and difference SASAs.
     initDir = "POPScomp_init"
     cpInit = paste0("cp ", mainDir, "/", initDir, "/* .")
-    system(cpInit)
+    system(cpInit, wait = TRUE)
     
     ## to proceed, we require one PDB identifier or uploaded PDB file
     validate(need(((input$pdbentry != "") || (! is.null(input$PDBfile))),
@@ -339,7 +339,7 @@ server <- function(input, output) {
     } else {
       ## move uploaded PDB file from its temporary directory to output directory
       system(paste("mv ", input$PDBfile[[4]], " ", outDir, "/",
-                   input$PDBfile[[1]],  sep = ""))
+                   input$PDBfile[[1]],  sep = ""), wait = TRUE)
       inputPDB = input$PDBfile[[1]]
     }
 
@@ -353,7 +353,8 @@ server <- function(input, output) {
                       "--rout --coarse --chainOut --residueOut --chainOut",
                       "--rProbe", input$rprobe, "--pdb", inputPDB, "1> POPScomp.o 2> POPScomp.e");
     }
-    system_status = system(command)
+    system_status = system(command, wait = TRUE)
+
     ## run POPScomp
     popscompR(inputPDB, outDir)
     ## zip output directory for potential All-Result download
