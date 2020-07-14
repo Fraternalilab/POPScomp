@@ -4,19 +4,17 @@
 # Existing *.xml.gz structure files are POPSed if their JSON output file
 # is missing or outdated. The corresponding dependency list is created by
 # the 'JSONFILES' macro and used by the 'all' target.
-# 'JSONFILES' uses a file size cutoff to avoid hang-ups on single files.
+# 'JSONFILES' may use a file size cutoff to avoid hang-ups on single files.
 # The 'touch' command is a technicality to avoid re-computing failed POPS runs.
 # Resulting zero-size files will be worked through with patience in a
 # low-throughput mode.
 # 
-# Copyright (C) 2019 Jens Kleinjung
+# Copyright (C) 2019-2020 Jens Kleinjung
 #===============================================================================
 
 #_______________________________________________________________________________
 ## macros
 ## creates .json dependencies from list of *.xml.gz
-#JSONFILES := $(patsubst %.xml.gz,%.json,$(wildcard *.xml.gz))
-## creates .json dependencies from list of *.xml.gz using upper file size limit
 ## the printf command is needed to remove the path of the target file name,
 ##   because file size comes from 'XML/', but output goes to 'JSON/'
 ##   -500k :  5-20 s
@@ -25,15 +23,20 @@
 ##  -4000k : 8-30 min
 ##  -8000k : hours
 ## -16000k : many hours
+## small to medium size structures
 #JSONFILES := $(patsubst %.xml.gz,%.json,$(shell find ${PDBDIR}/$X -name '*.xml.gz' -size '-16000k' -printf "%f\n"))
-## only the fat ones
-JSONFILES := $(patsubst %.xml.gz,%.json,$(shell find ${PDBDIR}/$X -name '*.xml.gz' -size '+16000k' -printf "%f\n"))
+## large structures
+#JSONFILES := $(patsubst %.xml.gz,%.json,$(shell find ${PDBDIR}/$X -name '*.xml.gz' -size '+16000k' -printf "%f\n"))
+## not size dependent
+JSONFILES := $(patsubst %.xml.gz,%.json,$(shell find ${PDBDIR}/$X -name '*.xml.gz' -printf "%f\n"))
 
 #_______________________________________________________________________________
 ## suffix rules
 .SUFFIXES :
 
 .SUFFIXES : .json
+
+vpath %.xml.gz ${PDBDIR}/$X
 
 %.json : %.xml.gz
 	-@ touch $@

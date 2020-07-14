@@ -1,7 +1,20 @@
 
 # POPS all XML files of the PDB database
-
 Run POPS over the entire PDB database (in XML format).
+
+## Directory layout
+- PDBML : clone of PDB database in *XML* format containing \*.xml.gz
+- JSON : contains POPS output in *JSON* format
+- JSONVAL : contains symbolic links to validated *JSON* output files
+
+These directories live under *DBDIR*, which is diefferent from
+the program path *FUNPDBEDIR*, both of which can be set in the
+master Makefile. 
+
+For *make* it would be easier to have all files, i.e. PDB input,
+*JSON* and symbolic link in the same directory, but for running weekly
+PDB updates (rsync --delete), *lftp* uploads and general debugging purposes
+the layout in separate directories seems to work better.
 
 ## Master *Makefile*
 - The *XML* version of the PDB database (PDBML) is updated.
@@ -14,21 +27,18 @@ Run POPS over the entire PDB database (in XML format).
 ## Invoked *Makefile.subdir*
 - Run various targets using *Makefile*.
 - A macro creates a list of all structure files in the current
-    (sub)directory and parses *.xml.gz into *.json dependencies.
+    (sub)directory and parses \*.xml.gz into \*.json dependencies.
 - POPS is invoked for each dependency file.
-- POPS errors are ignored because of the leading '-' in the command call.
+- POPS errors are ignored (i.e. *make* processing is not terminated)
+    because of the leading '-' in the command call.
 
 ## Invoked *Makefile.validate*
 - Run 'make validate' using *Makefile*.
-- A macro creates a list of all *JSON* files in the current
-	(sub)directory) and parses \*.json into \*.jsonval dependencies.
+- A macro creates a list of all *JSON* files.
 - The python validator *funpdbe\_client.py* is invoked for each
 	dependency file.
-- If validation is successful, a symbolic link \*.jsonval is created
-	that points to \*.json.
-- Run 'make rsyncval' to create a directory (remote or local) with all
-	validated source *JSON* files. This is to upload the validated
-	output to FunPDBe as one data structure.
+- If validation is successful, a symbolic link is created
+	that points to the *JSON* file.
 
 ## Invoked *Makefile.upload*
 - Run 'make mkupload' using *Makefile*.
