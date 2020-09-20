@@ -1,5 +1,9 @@
 #===============================================================================
-# Makefile.upload : POPScomp pipeline for FunPDBe 
+# Makefile.upload.nopass : POPScomp pipeline for FunPDBe with masked password
+# Copy this file to Makefile.upload, insert the password and remove
+# these first 3 lines. Makefile.upload is listed in .gitignore.
+#
+# Makefile.upload : POPScomp pipeline for FunPDBe
 # This script uploads the local validated JSON source files to the
 # FunPDBe site. Instead of the too basic 'ftp' program, the 'lftp' capable
 # of sending a directory recursively ('mirror -RL') is used.
