@@ -185,7 +185,13 @@ static void print_residue_sasa(FILE *sasaOutFile, Arg *arg, Str *pdb, MolSasa *m
 			surface_ratio = 0./0.;
 #endif
 		}
-			
+
+		/* for compatibility with POPSR Shiny, replace emtpy chain identifier */
+		/*   with '-' character */
+		if (strcmp(pdb->atom[molSasa->resSasa[i].atomRef].chainIdentifier, " ") == 0) {
+			strcpy(pdb->atom[molSasa->resSasa[i].atomRef].chainIdentifier, "-");
+		}
+
 		fprintf(sasaOutFile, "%8s\t%3s\t%8d\t%1s\t%10.2f\t%10.2f\t%10.2f\t%10.4f\t%8d\t%10.2f\n",
 			pdb->atom[molSasa->resSasa[i].atomRef].residueName,
 			pdb->atom[molSasa->resSasa[i].atomRef].chainIdentifier,
@@ -213,7 +219,14 @@ static void print_chain_sasa(FILE *sasaOutFile, Arg *arg, Str *pdb, MolSasa *mol
 		fprintf(sasaOutFile, "Chain\tId\tAtomRange\tResidRange\t\tPhob/A^2\t\tPhil/A^2\t\tSASA/A^2\n");
 	}
 
-    for (i = 0; i < pdb->nChain; ++ i)
+
+    for (i = 0; i < pdb->nChain; ++ i) {
+		/* for compatibility with POPSR Shiny, replace emtpy chain identifier */
+		/*   with '-' character */
+		if (strcmp(pdb->atom[molSasa->chainSasa[i].first].chainIdentifier, " ") == 0) {
+			strcpy(pdb->atom[molSasa->chainSasa[i].first].chainIdentifier, "-");
+		}
+
 		fprintf(sasaOutFile, "%3d\t%3s\t%6d->%-6d\t%5d->%-5d\t%10.2f\t%10.2f\t%10.2f\n",
 			i,
 			pdb->atom[molSasa->chainSasa[i].first].chainIdentifier,
@@ -224,6 +237,7 @@ static void print_chain_sasa(FILE *sasaOutFile, Arg *arg, Str *pdb, MolSasa *mol
 			molSasa->chainSasa[i].phobicSasa,
 			molSasa->chainSasa[i].philicSasa,
 			molSasa->chainSasa[i].sasa);
+	}
 }
 
 /*____________________________________________________________________________*/
