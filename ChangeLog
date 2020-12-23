@@ -5,6 +5,12 @@
 ## Docker image released at version 3.1
 #===============================================================================
 
+- 3.1.7
+Wed 23 Dec 09:30:46 GMT 2020
+	The Shiny interface fails when a (single-chain) protein has no chain name,
+	because the white space is interpreted as missing "chain" column.
+	This has now been corrected in POPS by inserting a '-' chain character.
+
 - 3.1.6
 Sun 20 Sep 18:18:55 BST 2020
 	Fixed multi-chain error; 'wait' switch for system calls

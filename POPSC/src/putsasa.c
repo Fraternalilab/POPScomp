@@ -84,9 +84,9 @@ static void print_atom_sasa(FILE *sasaOutFile, Arg *arg, Str *pdb, MolSasa *molS
 				j,
 				"XXX",
 				pdb->atom[0].residueName,
-				" ",
+				"-",
 				pdb->atom[0].residueNumber,
-				" ",
+				"-",
 				0.,
 				0.,
 				0,
@@ -115,6 +115,12 @@ static void print_atom_sasa(FILE *sasaOutFile, Arg *arg, Str *pdb, MolSasa *molS
 		} else {
 			atomName = &(pdb->atom[i].atomName[0]);
 			residueName = &(pdb->atom[i].residueName[0]);
+		}
+
+		/* for compatibility with POPSR Shiny, replace emtpy chain identifier */
+		/*   with '-' character */
+		if (strcmp(pdb->atom[i].chainIdentifier, " ") == 0) {
+			strcpy(pdb->atom[i].chainIdentifier, "-");
 		}
 
 		fprintf(sasaOutFile, "%8d\t%3s\t%3s\t%1s\t%6d\t%1s\t%10.2f\t%10.4f\t%8d\t\t%2d\t\t%2d\t%10.2f\n",

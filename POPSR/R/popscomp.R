@@ -18,7 +18,8 @@ library("bio3d");
 
 #_______________________________________________________________________________
 ## POPScomp function implemented in R
-## Prefixes:
+## The folling prefixes are used to label the sections and output files
+##   for clarity (DIFF output files are called 'delta' for historic reasons):
 ## ID: the default '--popsr' prefix of POPS for the unmodified input PDB
 ##      (computed by 'input$popscomp' function in 'app.R')
 ## ISO: POPS on isolated chains
@@ -31,9 +32,10 @@ popscompR = function(inputPDB, outDir) {
 	#________________________________________________________________________________
 	## ISO: split input PDB into chains
 	chain.files = pdbsplit(paste(outDir, inputPDB, sep = "/"),  path = outDir, multi = FALSE);
-	
+
 	## if input PDB is not a complex, do not run this 'popscompR' for complex processing
 	if (length(chain.files) < 2) {
+	  print("Single-chain POPScomp")
 	  return(0);
 	}
 
@@ -52,7 +54,7 @@ popscompR = function(inputPDB, outDir) {
 	  paste("Exit code:", system_status);
 	});
 
-	## Concatenate output files of single (= isolated) chains.
+	## Concatenate output files of single (ISO = isolated) chains.
 	## We do that here because there is only one tab on the interface for each resolution level
 	##   and the number of chains to be processed/shown will vary. Otherwise we would need
 	##   a dynamic tab structure on the interface that creates a tab for each chain.
@@ -108,13 +110,14 @@ popscompR = function(inputPDB, outDir) {
 
 	#________________________________________________________________________________
 	## read SASA files
-  ## the structure will be a list (levels) of lists (structures)
+  ## the data structure will be a list (levels = 'rpopsLevel') of lists (structures)
 	rpopsLevel = c("rpopsAtom", "rpopsResidue", "rpopsChain", "rpopsMolecule");
 
-	## initialise list of lists with predefined number of output files
+	## ISO: initialise list of lists with predefined number of output files
 	iso.sasa.level.files = vector(mode = "list", length = length(rpopsLevel));
 	iso.veclist = function(x) { vector(mode = "list", length = length(chain.files)) };
 	iso.sasa.level.files = lapply(iso.sasa.level.files, iso.veclist);
+
 	## read ISO SASA files
 	for (j in 1:length(rpopsLevel)) {
 	  for (i in 1:length(chain.files)) {
@@ -127,11 +130,12 @@ popscompR = function(inputPDB, outDir) {
 	};
   names(iso.sasa.level.files) = rpopsLevel;
 
-  ## initialise list of lists with predefined number of output files
+  ## PAIR: initialise list of lists with predefined number of output files
   pair.sasa.level.files = vector(mode = "list", length = length(rpopsLevel));
   pair.veclist = function(x) { vector(mode = "list", length = dim(pair.cmbn)[2]) };
   pair.sasa.level.files = lapply(pair.sasa.level.files, pair.veclist);
-  ## read PAIR SASA files
+
+	## read PAIR SASA files
   for (j in 1:length(rpopsLevel)) {
     for (i in 1:dim(pair.cmbn)[2]) {
       ## read paired chain output
@@ -152,6 +156,7 @@ popscompR = function(inputPDB, outDir) {
   diff.sasa.level = vector(mode = "list", length = length(rpopsLevel));
   diff.veclist = function(x) { vector(mode = "list", length = dim(pair.cmbn)[2]) };
   diff.sasa.level = lapply(diff.sasa.level, diff.veclist);
+
   ## compute SASA differences
   for (j in 1:length(rpopsLevel)) {
     for (i in 1:dim(pair.cmbn)[2]) {
