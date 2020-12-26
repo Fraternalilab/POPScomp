@@ -7,6 +7,7 @@ library(shiny)
 library(bio3d)
 library(DT)
 library(digest)
+library(shinysky)
 library(POPSR)
 
 #_______________________________________________________________________________
@@ -53,6 +54,8 @@ ui <- fluidPage(
       actionButton("popscomp", label = "run POPScomp", class = "btn-primary"),
       textOutput("nil"),
       tags$hr(),
+
+      busyIndicator(wait = 1000),
 
       ## i5 download button
       downloadButton('downloadAllResults', 'Download All Results')
@@ -165,6 +168,45 @@ ui <- fluidPage(
 		        The 'Download All Results' button on the side panel returns the zipped content of the entire output directory,
 		        i.e. all results produced for a given POPScomp job."
 		      ),
+			h3("Output Columns"),
+			h4("ATOM SASAs"),
+			p("AtomNr : atom number in molecular coordinate file"),
+			p("AtomNe : atom name in molecular coordinate file"),
+			p("ResidNe : residue name in molecular coordinate file"),
+			p("Chain : chain name in molecular coordinate file ('-' if unspecified)"),
+			p("ResidNr : residue number in molecular coordinate file"),
+			p("SASA.A.2 : solvent accessible surace area in Angstrom^2 units"),
+			p("Q.SASA. : quotient of SASA and Surf (below), i.e. the fraction of SASA"),
+			p("N.overl. : number of overlaps with atom neighbours"),
+			p("AtomTp : atom type code (GROMOS van der Waals atom type)"),
+			p("AtomGp : atom group code: positive=1, negative=2, polar=3, aromatic=4, aliphatic=5"),
+			p("Surf/A^2 : surface area of isolated atom"),
+
+			h4("RESIDUE SASAs"),
+			p("ResidNe : residue name in molecular coordinate file"),
+			p("Chain : chain name in molecular coordinate file ('-' if unspecified)"),
+			p("ResidNr : residue number in molecular coordinate file"),
+			p("Phob.A.2 : hydrophobic solvent accessible surace area in Angstrom^2 units"),
+			p("Phil.A.2 : hydrophilic solvent accessible surace area in Angstrom^2 units"),
+			p("SASA.A.2 : total solvent accessible surace area in Angstrom^2 units"),
+			p("Q.SASA. : quotient of SASA and Surf (below), i.e. the fraction of SASA"),
+			p("N.overl. : number of overlaps with residue neighbours"),
+			p("Surf.A.2 : surface area of isolated residue"),
+
+			h4("CHAIN SASAs"),
+			p("Chain : chain number"),
+			p("Id : chain name in molecular coordinate file ('-' if unspecified)"),
+			p("AtomRange : range of atom numbers in chain"),
+			p("ResidRange : range of residue numbers in chain"),
+			p("Phob.A.2 : hydrophobic solvent accessible surace area in Angstrom^2 units"),
+			p("Phil.A.2 : hydrophilic solvent accessible surace area in Angstrom^2 units"),
+			p("SASA.A.2 : total solvent accessible surace area in Angstrom^2 units"),
+
+			h4("MOLECULE SASAs"),
+			p("Phob.A.2 : hydrophobic solvent accessible surace area in Angstrom^2 units"),
+			p("Phil.A.2 : hydrophilic solvent accessible surace area in Angstrom^2 units"),
+			p("SASA.A.2 : total solvent accessible surace area in Angstrom^2 units"),
+
 		      h3("Help"),
           p("In case the server does not work as expected or server-related issues
 		        need clarification, please email the maintainers:
@@ -176,71 +218,71 @@ ui <- fluidPage(
           )
         ),
         tabPanel("About",
-			    h3("Shiny App"),
-			    p("This is version 3.1.7 of the POPScomp Shiny App."),
-			    p("For detailed information about the software visit Fraternali Lab's ",
-			      a("POPScomp GitHub repository", href="https://github.com/Fraternalilab/POPScomp"),
-			      "; the Wiki pages contain detailed installation and usage instructions."
-			    ),
-			    h3("References"),
-			    p("Users publishing results obtained with the program and
-			        its applications should acknowledge its use by citation."),
-			    h4("Implicit solvent"),
-			    p("Fraternali, F. and van Gunsteren, W.F.
-			        An efficient mean solvation force model for use in
-			        molecular dynamics simulations of proteins in aqueous solution.
-			        Journal of Molecular Biology 256 (1996) 939-948.",
-			      a("DOI", href="https://dx.doi.org/10.1016%2Fj.sbi.2014.04.003"),
-			      a("Pubmed", href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4045398/")
-			    ),
-			    p("Kleinjung, J. and Fraternali, F.
-				Design and Application of Implicit Solvent Models
-				in Biomolecular Simulations.
-                                Current Opinion in Structural Biology 25 (2014) 126-134.",
-			      a("DOI", href="http://dx.doi.org/10.1016/j.sbi.2014.04.003"),
-			      a("Pubmed", href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4045398/")
-			    ),
-			    h4("POPS method"),
-			    p("Fraternali, F. and Cavallo, L.
-			        Parameter optimized surfaces (POPS): analysis of key interactions
-			        and conformational changes in the ribosome.
-			        Nucleic Acids Research 30 (2002) 2950-2960.",
-			      a("DOI", href="https://dx.doi.org/10.1093%2Fnar%2Fgkf373"),
-			      a("Pubmed", href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC117037/")
-			    ),
-			    h4("POPS server"),
-			    p("Cavallo, L., Kleinjung, J. and Fraternali, F.
-			        POPS: A fast algorithm for solvent accessible surface areas
-			        at atomic and residue level.
-			        Nucleic Acids Research 31 (2003) 3364-3366.",
-			      a("DOI", href="https://dx.doi.org/10.1093%2Fnar%2Fgkg601"),
-			      a("Pubmed", href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC169007/")
-			    ),
-			    h4("POPSCOMP server"),
-			    p("Kleinjung, J. and Fraternali, F.
-			        POPSCOMP: an automated interaction analysis of biomolecular complexes.
-			        Nucleic Acids Research 33 (2005) W342-W346.",
-			      a("DOI", href="https://dx.doi.org/10.1093%2Fnar%2Fgki369"),
-			      a("Pubmed", href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1160130/")
-			    ),
-			    h3("License and Copyright"),
-			    p("Usage of the software and server is free under the
-			        GNU General Public License v3.0."
-			    ),
-			    h4("Copyright Holders, Authors and Maintainers"),
-			    p("2002-2020 Franca Fraternali (author, maintainer)"),
-			    p("2008-2020 Jens Kleinjung (author, maintainer)"),
-			    h4("Contributors"),
-			    p("2002 Kuang Lin and Valerie Hindie (translation to C)"),
-			    p("2002 Luigi Cavallo (parametrisation)")
+			h3("Shiny App"),
+			p("This is version 3.1.7 of the POPScomp Shiny App."),
+			p("For detailed information about the software visit Fraternali Lab's ",
+			  a("POPScomp GitHub repository", href="https://github.com/Fraternalilab/POPScomp"),
+			  "; the Wiki pages contain detailed installation and usage instructions."
+			),
+			h3("References"),
+			p("Users publishing results obtained with the program and
+			    its applications should acknowledge its use by citation."),
+			h4("Implicit solvent"),
+			p("Fraternali, F. and van Gunsteren, W.F.
+			    An efficient mean solvation force model for use in
+			    molecular dynamics simulations of proteins in aqueous solution.
+			    Journal of Molecular Biology 256 (1996) 939-948.",
+			  a("DOI", href="https://dx.doi.org/10.1016%2Fj.sbi.2014.04.003"),
+			  a("Pubmed", href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4045398/")
+			),
+			p("Kleinjung, J. and Fraternali, F.
+			Design and Application of Implicit Solvent Models
+			in Biomolecular Simulations.
+                            Current Opinion in Structural Biology 25 (2014) 126-134.",
+			  a("DOI", href="http://dx.doi.org/10.1016/j.sbi.2014.04.003"),
+			  a("Pubmed", href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4045398/")
+			),
+			h4("POPS method"),
+			p("Fraternali, F. and Cavallo, L.
+			    Parameter optimized surfaces (POPS): analysis of key interactions
+			    and conformational changes in the ribosome.
+			    Nucleic Acids Research 30 (2002) 2950-2960.",
+			  a("DOI", href="https://dx.doi.org/10.1093%2Fnar%2Fgkf373"),
+			  a("Pubmed", href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC117037/")
+			),
+			h4("POPS server"),
+			p("Cavallo, L., Kleinjung, J. and Fraternali, F.
+			    POPS: A fast algorithm for solvent accessible surface areas
+			    at atomic and residue level.
+			    Nucleic Acids Research 31 (2003) 3364-3366.",
+			  a("DOI", href="https://dx.doi.org/10.1093%2Fnar%2Fgkg601"),
+			  a("Pubmed", href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC169007/")
+			),
+			h4("POPSCOMP server"),
+			p("Kleinjung, J. and Fraternali, F.
+			    POPSCOMP: an automated interaction analysis of biomolecular complexes.
+			    Nucleic Acids Research 33 (2005) W342-W346.",
+			  a("DOI", href="https://dx.doi.org/10.1093%2Fnar%2Fgki369"),
+			  a("Pubmed", href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1160130/")
+			),
+			h3("License and Copyright"),
+			p("Usage of the software and server is free under the
+			    GNU General Public License v3.0."
+			),
+			h4("Copyright Holders, Authors and Maintainers"),
+			p("2002-2020 Franca Fraternali (author, maintainer)"),
+			p("2008-2020 Jens Kleinjung (author, maintainer)"),
+			h4("Contributors"),
+			p("2002 Kuang Lin and Valerie Hindie (translation to C)"),
+			p("2002 Luigi Cavallo (parametrisation)")
         ),
         tabPanel("Exit Codes",
-	  h3("Overview"),
-	  p("POPScomp uses a combination of *Shell* (system) calls and R *Shiny* routines.
-	    Therefore, the return value shown as exit code may come from *Shell* or *Shiny*.
-	    A successful run will return 'Exit code: 0'. Any error will return an exit code
-	    different from '0'. A commented list of exit codes is given below together with
-	    troubleshooting tips. In case you get stuck, please contact the maintainers."),
+			h3("Overview"),
+			p("POPScomp uses a combination of *Shell* (system) calls and R *Shiny* routines.
+				Therefore, the return value shown as exit code may come from *Shell* or *Shiny*.
+				A successful run will return 'Exit code: 0'. Any error will return an exit code
+				different from '0'. A commented list of exit codes is given below together with
+				troubleshooting tips. In case you get stuck, please contact the maintainers."),
           h3("Shell command exit codes"),
           p("* 0 - Success"),
           p("* 1 - Catchall for general errors"),
@@ -283,7 +325,7 @@ server <- function(input, output) {
   outDir = paste(mainDir, subDir, sep = "/")
   dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
   setwd(file.path(mainDir, subDir))
-  
+
   ## o1.1 display input PDB entry
   output$pdbentry <- renderText({
     input$pdbentry
@@ -316,14 +358,14 @@ server <- function(input, output) {
     outDir = paste(mainDir, subDir, sep = "/")
     dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
     setwd(file.path(mainDir, subDir))
-    
+
     ## Copy initialisation files to the new output directory,
     ##   otherwise error messages will appear in non-complex structure results
     ##   for isolated chains and difference SASAs.
     initDir = "POPScomp_init"
     cpInit = paste0("cp ", mainDir, "/", initDir, "/* .")
     system(cpInit, wait = TRUE)
-    
+
     ## to proceed, we require one PDB identifier or uploaded PDB file
     validate(need(((input$pdbentry != "") || (! is.null(input$PDBfile))),
           message = "No PDB source input!"))
