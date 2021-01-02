@@ -1,5 +1,9 @@
 #===============================================================================
 # Shiny application as interface of POPScomp
+# Here POPS is run only on the original input file (tagged 'iso').
+# All other POPS(comp) computations (for processing protein complexes)
+#   are coded in .../POPScomp/R/popscomp.R.
+# For single-chain proteins, "popscomp.R" returns without computations.
 # (C) 2019 -2020 Jens Kleinjung and Franca Fraternali
 #===============================================================================
 
