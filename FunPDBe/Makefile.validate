@@ -22,7 +22,7 @@ JSONFILES := $(shell find ${JSONDIR}/$X -name '*.json' -size '+0c' -printf "%f\n
 .SUFFIXES : .json
 
 %.json :
-	(${FUNPDBEDIR}/funpdbe-client/funpdbe_client.py --path=${JSONDIR}/$X/$@ --mode=validate 2>&1 | grep -q complies && ln -s ${JSONDIR}/$X/$@) || rm $@
+	(${FUNPDBEDIR}/funpdbe-client/funpdbe_client.py --path=${JSONDIR}/$X/$@ --mode=validate 2>&1 | grep -q complies && ln -s ${JSONDIR}/$X/$@) || rm -f $@
 
 #_______________________________________________________________________________
 ## targets

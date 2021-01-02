@@ -57,16 +57,16 @@ FUNPDBEDIR = ${ROOTDIR}/0/POPScomp/FunPDBe
 ##         that is completely known from the start.
 
 ## complete pipeline including database (sub)directory creation
-all : pdbupdate jsondir jsonsubdir mkpops rename jsonvaldir jsonvalsubdir validate mkupload
+all : pdbupdate jsondir jsonsubdir mkpops rename rmzero remode jsonvaldir jsonvalsubdir validate mkupload
 
 ## pipeline for weekly updates, assuming the source PDB does not contain new subdirectories
-weekly : pdbupdate mkpops rename validate mkupload
+weekly : pdbupdate mkpops rename rmzero remode validate rmbrokenlink mkupload
 
-.PHONY : pdbupdate jsondir jsonsubdir mkpops mkpops1 mkpops2 mkpops3 rename jsonvaldir jsonvalsubdir validate mkupload
+.PHONY : pdbupdate jsondir jsonsubdir mkpops mkpops1 mkpops2 mkpops3 rename rmzero remode jsonvaldir jsonvalsubdir validate rmbrokenlink mkupload
 
 
 pdbupdate :
-	rsync -rlpt -v -z --delete rsync.ebi.ac.uk::pub/databases/pdb/data/structures/divided/XML/ ${DBDIR}/
+	rsync -rlpt -v -z rsync.ebi.ac.uk::pub/databases/pdb/data/structures/divided/XML/ ${DBDIR}/XML/
 
 
 jsondir :
@@ -91,32 +91,43 @@ mkpops :
 	$(info --- Run POPS on all structures.)
 	for X in ${PDBSUBDIR} ; do \
 		cd ${JSONDIR}/$$X ; \
-		${MAKE} -i -f ../Makefile.subdir all "ROOTDIR=${ROOTDIR}" "POPSC=${POPSC}" "POPSFLAGS=${POPSFLAGS}" "PDBDIR=${PDBDIR}" "X=$$X" ; \
+		${MAKE} -i -f ${FUNPDBEDIR}/Makefile.subdir all "ROOTDIR=${ROOTDIR}" "POPSC=${POPSC}" "POPSFLAGS=${POPSFLAGS}" "PDBDIR=${PDBDIR}" "X=$$X" ; \
 	done
 
 mkpops1 :
 	$(info --- Run POPS on structures [a-h]?.)
 	for X in ${PDBSUBDIR1} ; do \
 		cd ${JSONDIR}/$$X ; \
-		${MAKE} -i -f ../Makefile.subdir all "ROOTDIR=${ROOTDIR}" "POPSC=${POPSC}" "POPSFLAGS=${POPSFLAGS}" "PDBDIR=${PDBDIR}" "X=$$X" ; \
+		${MAKE} -i -f ${FUNPDBEDIR}/Makefile.subdir all "ROOTDIR=${ROOTDIR}" "POPSC=${POPSC}" "POPSFLAGS=${POPSFLAGS}" "PDBDIR=${PDBDIR}" "X=$$X" ; \
 	done
 
 mkpops2 : 
 	$(info --- Run POPS on structures [i-p]?.)
 	for X in ${PDBSUBDIR2} ; do \
 		cd ${JSONDIR}/$$X ; \
-		${MAKE} -i -f ../Makefile.subdir all "ROOTDIR=${ROOTDIR}" "POPSC=${POPSC}" "POPSFLAGS=${POPSFLAGS}" "PDBDIR=${PDBDIR}" "X=$$X" ; \
+		${MAKE} -i -f ${FUNPDBEDIR}/Makefile.subdir all "ROOTDIR=${ROOTDIR}" "POPSC=${POPSC}" "POPSFLAGS=${POPSFLAGS}" "PDBDIR=${PDBDIR}" "X=$$X" ; \
 	done
 
 mkpops3 : 
 	$(info --- Run POPS on all structures [q-z]?.)
 	for X in ${PDBSUBDIR3} ; do \
 		cd ${JSONDIR}/$$X ; \
-		${MAKE} -i -f ../Makefile.subdir all "ROOTDIR=${ROOTDIR}" "POPSC=${POPSC}" "POPSFLAGS=${POPSFLAGS}" "PDBDIR=${PDBDIR}" "X=$$X" ; \
+		${MAKE} -i -f ${{FUNPDBEDIR}/Makefile.subdir all "ROOTDIR=${ROOTDIR}" "POPSC=${POPSC}" "POPSFLAGS=${POPSFLAGS}" "PDBDIR=${PDBDIR}" "X=$$X" ; \
 	done
 
 rename :
 	cd ${JSONDIR} ; find ?? -depth -name "*[A-Z]*".json -mtime ${MTIME} | xargs -n 1 rename -f -v 'y/A-Z/a-z/' {} 
+
+rmzero :
+	cd ${JSONDIR} ; find ?? -depth -name "*[a-z]*".json -size '-1c' | xargs -i bash -c "rm {}"
+
+remode :
+	cd ${JSONDIR} ; find ?? -depth -name "*[a-z]*".json \! -perm /o+x | xargs -i bash -c "chmod a+rwx {}"
+
+## as root, in case run by different user 
+reown :
+	cd ${JSONDIR} ; find ?? -depth -name "*[a-z]*".json -uid 1001 | xargs -i bash -c "chown 1028:100 {}"
+
 
 #_______________________________________________________________________________
 ## validation
@@ -135,13 +146,16 @@ validate :
 	$(info --- Validating all output files.)
 	for X in ${PDBSUBDIR} ; do \
 		cd ${JSONVALDIR}/$$X ; \
-		${MAKE} -i -f ../Makefile.validate validate "JSONDIR=${JSONDIR}" "X=$$X" "FUNPDBEDIR=${FUNPDBEDIR}" ; \
+		${MAKE} -i -f ${FUNPDBEDIR}/Makefile.validate validate "JSONDIR=${JSONDIR}" "X=$$X" "FUNPDBEDIR=${FUNPDBEDIR}" ; \
 	done
+
+rmbrokenlink :
+	cd {JSONVALDIR} ; find ?? -xtype l | xargs -i bash -c "rm {}"
 
 #_______________________________________________________________________________
 mkupload :
 	$(info --- Uploading validated output files.)
-	${MAKE} -i -f Makefile.upload upload "JSONVALDIR = ${JSONVALDIR}"
+	${MAKE} -i -f ${FUNPDBEDIR}/Makefile.upload upload "JSONVALDIR = ${JSONVALDIR}"
 
 
 #===============================================================================
