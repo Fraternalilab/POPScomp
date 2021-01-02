@@ -15,7 +15,7 @@ Description: The package serves as a front-end to the POPS program,
   spirit of POPSCOMP.
 Depends: R (>= 3.4),
 		 bio3d (>= 2.3),
-		 ggplot2 (>= 3.2)
+		 ggplot2 (>= 3.2),
 		 rgl (>= 0.1)
 Imports: 
 Suggests: knitr,
