@@ -33,13 +33,20 @@ popscompR = function(inputPDB, outDir) {
 	## ISO: split input PDB into chains
 	chain.files = pdbsplit(paste(outDir, inputPDB, sep = "/"),  path = outDir, multi = FALSE);
 
-	## if input PDB is not a complex, do not run this 'popscompR' for complex processing
+	## if input PDB is not a complex, return without any computations
+	##   bacause this routine "popscompR" is intended for processing protein complexes
 	if (length(chain.files) < 2) {
 	  print("Single-chain POPScomp")
 	  return(0);
 	}
 
 	## short names
+	sink(file = "/tmp/basename1")
+  print(as.character(chain.files))
+  print("")
+  print(basename(as.character(chain.files)))
+  sink()
+
 	chain.files.short = sub('\\.pdb$', '', basename(as.character(chain.files)));
 
 	#________________________________________________________________________________
@@ -94,6 +101,11 @@ popscompR = function(inputPDB, outDir) {
 	  return(chainpair.files[[x]]);
 	});
 
+	sink("/tmp/basename2")
+	print(as.character(chainpair.files));
+	print("")
+	print(basename(as.character(chainpair.files)));
+	sink()
 	chainpair.files.short = sub('\\.pdb$', '', basename(as.character(chainpair.files)));
 
 	#________________________________________________________________________________
@@ -160,6 +172,7 @@ popscompR = function(inputPDB, outDir) {
   ## compute SASA differences
   for (j in 1:length(rpopsLevel)) {
     for (i in 1:dim(pair.cmbn)[2]) {
+      ## not for level 4 (=molecule)
       if (j %in% 1:3) {
         ## rbind ISO chain SASAs
         iso.rbind.tmp = rbind(iso.sasa.level.files[[j]][[pair.cmbn[1, i]]],
