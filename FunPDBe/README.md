@@ -47,7 +47,7 @@ the layout in separate directories seems to work better.
 ## Parallelism
 Make is run in parallel by using the '-j' flag:
 ```
-make -j 8 mkpops 2>&1 | tee mkpops.`date +%Y%m%d.%H%M`.log
+make -j 8 mkpops 2>&1 | tee mkpops.`date +%Y%m%d.%H%M`.log &
 ```
 For split runs:
 ```
