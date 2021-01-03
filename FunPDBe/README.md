@@ -2,12 +2,21 @@
 # POPS all XML files of the PDB database
 Run POPS over the entire PDB database (in XML format).
 
+## Weekly run
+The pipeline is run weekly via a cron job, because the PDB database
+is updated weekly, on the virtual machine 'ace' hosted by the Synology computer 'FFJK'.
+Some larger PDB files create a stack buffer overflow on 'FFJK', which is not
+reproducible on a laptop running the same software. Also 'valgrind' does not
+show any memory leaks. For this type of PDB structure, occasionally the pipeline
+needs to be manually run on a laptop and the access mode of the created JSON files
+should be adjusted via the 'make reown' step of the pipeline.
+
 ## Directory layout
 - PDBML : clone of PDB database in *XML* format containing \*.xml.gz
 - JSON : contains POPS output in *JSON* format
 - JSONVAL : contains symbolic links to validated *JSON* output files
 
-These directories live under *DBDIR*, which is diefferent from
+These directories live under *DBDIR*, which is different from
 the program path *FUNPDBEDIR*, both of which can be set in the
 master Makefile. 
 
@@ -31,18 +40,22 @@ the layout in separate directories seems to work better.
 - POPS is invoked for each dependency file.
 - POPS errors are ignored (i.e. *make* processing is not terminated)
     because of the leading '-' in the command call.
+- Run quality controls: rename output files after POPS success,
+    remove empty files where POPS failed and change the file access mode.
 
 ## Invoked *Makefile.validate*
 - Run 'make validate' using *Makefile*.
 - A macro creates a list of all *JSON* files.
 - The python validator *funpdbe\_client.py* is invoked for each
-	dependency file.
+    dependency file.
 - If validation is successful, a symbolic link is created
-	that points to the *JSON* file.
+    that points to the *JSON* file.
+- Remove all files with a broken symbolic link.
 
 ## Invoked *Makefile.upload*
 - Run 'make mkupload' using *Makefile*.
 - Uploads add *JSON* output via 'lftp' to FunPDBe site.
+    The 'mirror -RL' option uploads the files to which the symbolic links point. 
 
 ## Parallelism
 Make is run in parallel by using the '-j' flag:

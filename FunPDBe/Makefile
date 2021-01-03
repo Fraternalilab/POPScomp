@@ -57,7 +57,7 @@ FUNPDBEDIR = ${ROOTDIR}/0/POPScomp/FunPDBe
 ##         that is completely known from the start.
 
 ## complete pipeline including database (sub)directory creation
-all : pdbupdate jsondir jsonsubdir mkpops rename rmzero remode jsonvaldir jsonvalsubdir validate mkupload
+all : pdbupdate jsondir jsonsubdir mkpops rename rmzero remode jsonvaldir jsonvalsubdir validate rmbrokenlink mkupload
 
 ## pipeline for weekly updates, assuming the source PDB does not contain new subdirectories
 weekly : pdbupdate mkpops rename rmzero remode validate rmbrokenlink mkupload
