@@ -57,9 +57,11 @@ Please refer to the [Wiki](https://github.com/Fraternalilab/POPScomp/wiki/Docker
 for detailed guidelines on downloading and usage of the Docker image.
 
 #### FunPDBe
-Scripts to run POPScomp over the PDB database and feed the output into the Elixir FunPDBe project.
-This directory has been included purely as a reference for the FunPDBe project and is not intended to
-be used for POPScomp applications.
+A 'Make' pipeline to run POPScomp over the PDB database and to feed the JSON output into the Elixir FunPDBe project.
+To include newly added PDB structures, the pipeline is run *via* a cron *@weekly* job on a virtual
+Ubuntu machine hosted on a Synology DS218+ computer. 
+This directory has been included purely as a reference for the FunPDBe project and is not intended as a user-facing application.
+However, some users might find the pipeline or parts of it useful for their own purposes.
 
 
 ## Servers
