@@ -173,6 +173,13 @@ debug :
 		${MAKE} -i -f ${FUNPDBEDIR}/Makefile.debug all "PDBDIR=${PDBDIR}" "X=$$X" ; \
 	done
 
+lsnull :
+	$(info --- List all symbolic links pointing to NULL.)
+	for X in ${PDBSUBDIR} ; do \
+		cd ${JSONVALDIR}/$$X ; \
+		ls -l | grep NULL ; \
+	done
+
 
 #===============================================================================
 
