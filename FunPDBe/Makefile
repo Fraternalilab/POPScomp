@@ -116,7 +116,7 @@ mkpops3 :
 	done
 
 rename :
-	cd ${JSONDIR} ; find ?? -depth -name "*[A-Z]*".json -mtime ${MTIME} | xargs -n 1 rename -f -v 'y/A-Z/a-z/' {} 
+	cd ${JSONDIR} ; find ?? -depth -name "*[A-Z]*".json | xargs -n 1 rename -f -v 'y/A-Z/a-z/' {} 
 
 rmzero :
 	cd ${JSONDIR} ; find ?? -depth -name "*[a-z]*".json -size '-1c' | xargs -i bash -c "rm {}"
@@ -125,7 +125,7 @@ remode :
 	cd ${JSONDIR} ; find ?? -depth -name "*[a-z]*".json \! -perm /o+x | xargs -i bash -c "chmod a+rwx {}"
 
 ## as root, in case run by different user 
-reown :
+reownjson :
 	cd ${JSONDIR} ; find ?? -depth -name "*[a-z]*".json -uid 1001 | xargs -i bash -c "chown 1028:100 {}"
 
 
@@ -150,12 +150,28 @@ validate :
 	done
 
 rmbrokenlink :
-	cd {JSONVALDIR} ; find ?? -xtype l | xargs -i bash -c "rm {}"
+	cd ${JSONVALDIR} ; find ?? -xtype l | xargs -i bash -c "rm {}"
+
+## as root, in case run by different user 
+reownval :
+	cd ${JSONVALDIR} ; find ?? -depth -name "*[a-z]*".json -uid 1001 | xargs -i bash -c "chown 1028:100 {}"
+
 
 #_______________________________________________________________________________
+## upload JSONVALDIR to EBI FunPDBe server
 mkupload :
 	$(info --- Uploading validated output files.)
-	${MAKE} -i -f ${FUNPDBEDIR}/Makefile.upload upload "JSONVALDIR = ${JSONVALDIR}"
+	${MAKE} -i -f ${FUNPDBEDIR}/Makefile.upload upload "JSONVALDIR=${JSONVALDIR}"
+
+
+#_______________________________________________________________________________
+## debug 
+debug :
+	$(info --- Debugging missing output files.)
+	for X in ${PDBSUBDIR} ; do \
+		cd ${JSONVALDIR}/$$X ; \
+		${MAKE} -i -f ${FUNPDBEDIR}/Makefile.debug all "PDBDIR=${PDBDIR}" "X=$$X" ; \
+	done
 
 
 #===============================================================================

@@ -1,0 +1,40 @@
+#===============================================================================
+# Makefile.debug : POPScomp pipeline for FunPDBe 
+# Some PDB structures fail to yield JSON output, partialy because atom
+#   distances are too close and POPS exits cleanly, partially because a buffer
+#   overflow leads POPS to crash out. In both cases, after the 'rmzero' step,
+#   there is no matching JSON file to the input structure. The aim of this
+#   script to create a list of those structures for two reasons:
+# 1. Remove the PDB structures and add the list as '-exclude-from' to the
+#   weekly rsync update command. That way the pipeline does to repeat the
+#   same failing computations.
+# 2. POPS those failing structures in a logged run so that the different error
+#   types can be separated and progresively debugged.
+# 
+# Copyright (C) 2021 Jens Kleinjung
+#===============================================================================
+
+#_______________________________________________________________________________
+## macros
+## creates .json dependencies from list of *.xml.gz
+## the printf command is needed to remove the path of the target file name,
+##   because file size comes from 'XML/', but output goes to 'JSON/'
+JSONFILES := $(patsubst %.xml.gz,%.json,$(shell find ${PDBDIR}/$X -name '*.xml.gz' -printf "%f\n"))
+
+#_______________________________________________________________________________
+## suffix rules
+.SUFFIXES :
+
+.SUFFIXES : .json
+
+vpath %.xml.gz ${PDBDIR}/$X
+
+%.json : %.xml.gz
+	-@ ln -s NULL $@
+
+#_______________________________________________________________________________
+## targets
+all : ${JSONFILES}
+
+#===============================================================================
+
