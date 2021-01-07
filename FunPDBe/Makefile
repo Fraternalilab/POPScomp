@@ -57,17 +57,16 @@ FUNPDBEDIR = ${ROOTDIR}/0/POPScomp/FunPDBe
 ##         that is completely known from the start.
 
 ## complete pipeline including database (sub)directory creation
-all : pdbupdate jsondir jsonsubdir mkpops rename rmzero remode jsonvaldir jsonvalsubdir validate rmbrokenlink mkupload
+all : pdbupdate jsondir jsonsubdir mkpops rename zerotonull remode jsonvaldir jsonvalsubdir validate rmbrokenlink mkupload
 
 ## pipeline for weekly updates, assuming the source PDB does not contain new subdirectories
-weekly : pdbupdate mkpops rename rmzero remode validate rmbrokenlink mkupload
+weekly : pdbupdate mkpops rename zerotonull remode validate rmbrokenlink mkupload
 
-.PHONY : pdbupdate jsondir jsonsubdir mkpops mkpops1 mkpops2 mkpops3 rename rmzero remode jsonvaldir jsonvalsubdir validate rmbrokenlink mkupload
+.PHONY : pdbupdate jsondir jsonsubdir mkpops mkpops1 mkpops2 mkpops3 rename zerotonull remode jsonvaldir jsonvalsubdir validate rmbrokenlink mkupload
 
 
 pdbupdate :
-	rsync -rlpt -v -z rsync.ebi.ac.uk::pub/databases/pdb/data/structures/divided/XML/ ${DBDIR}/XML/
-
+	rsync -rlpt -v -z --exclude-from=/home/jkleinj/POPScomp/FunPDBe/nullFiles_200106.dat rsync.ebi.ac.uk::pub/databases/pdb/data/structures/divided/XML/ ${DBDIR}/XML/
 
 jsondir :
 	$(info --- Creating output directory.)
@@ -118,8 +117,8 @@ mkpops3 :
 rename :
 	cd ${JSONDIR} ; find ?? -depth -name "*[A-Z]*".json | xargs -n 1 rename -f -v 'y/A-Z/a-z/' {} 
 
-rmzero :
-	cd ${JSONDIR} ; find ?? -depth -name "*[a-z]*".json -size '-1c' | xargs -i bash -c "rm {}"
+zerotonull :
+	cd ${JSONDIR} ; find ?? -depth -name "*[a-z]*".json -size '-1c' | xargs -i bash -c "ln -fs NULL {}"
 
 remode :
 	cd ${JSONDIR} ; find ?? -depth -name "*[a-z]*".json \! -perm /o+x | xargs -i bash -c "chmod a+rwx {}"

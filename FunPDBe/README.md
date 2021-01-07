@@ -57,6 +57,24 @@ the layout in separate directories seems to work better.
 - Uploads add *JSON* output via 'lftp' to FunPDBe site.
     The 'mirror -RL' option uploads the files to which the symbolic links point. 
 
+## Invoked *Makefile.debug*
+This is intended to be run manually and not as part of the weekly pipeline.
+Some structures fail to create *JSON* output because of problems in the structure
+(too close atoms) or because of technical problems (buffer overflow).
+Those structures should be removed from the local reference PDB database to avoid weekly
+re-computation of the same failure. This is done via a file 'nullFiles.dat' that contains
+the names of all the filed PDB structures and that is used for '--exclude-from'
+in the weekly *rsync* from the public PDB database. The 'nullFiles.dat' structures are
+to be moved to the *XMLexclude* directory for further analysis.
+The *Makefile.debug* replaces zero-sized *JSON* files with symbolic links to NULL
+to mark the missing output. Running the 'run\_nullFiles.bash' script logs the *POPS*
+output containing the error message in the *JSON* directory under the structure's name.
+- Run 'make lsnull' using *Makefile* to create a 'nullFiles.dat' list of failed structures.
+    Remember that this file is also used by the weekly *rsync* of the PDB database.
+- Move all structures in 'nullFiles.dat' to *XMLexclude*.
+- Run 'make debug' using *Makefile*.
+- Run 'run\_nullFiles.bash' to create error logs for all failed structrures.
+
 ## Parallelism
 Make is run in parallel by using the '-j' flag:
 ```
