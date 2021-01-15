@@ -1,10 +1,18 @@
 
 # POPS all XML files of the PDB database
-Run POPS over the entire PDB database (in XML format).
+Run POPS over the entire PDB database (in XML format)
+and create output in JSON format for the FunPDBe daabase.
 
 ## Weekly run
-The pipeline is run weekly via a cron job, because the PDB database
-is updated weekly, on the virtual machine 'ace' hosted by the Synology computer 'FFJK'.
+The pipeline is run weekly via a cron job on the virtual machine 'ace'
+hosted by the Synology computer 'FFJK'.
+The main steps are a PDB update, POPS invocation for new structures and
+uploading of the new JSON output to the FunPDBe database.
+
+Failed POPS computations lead to a NULL symbolic link as JSON output
+and those structures will be (occasionally) debugged in batch mode,
+which is explained in *Makefile.debug* below.
+
 Some larger PDB files create a stack buffer overflow on 'FFJK', which is not
 reproducible on a laptop running the same software. Also 'valgrind' does not
 show any memory leaks. For this type of PDB structure, occasionally the pipeline
@@ -20,10 +28,10 @@ These directories live under *DBDIR*, which is different from
 the program path *FUNPDBEDIR*, both of which can be set in the
 master Makefile. 
 
-For *make* it would be easier to have all files, i.e. PDB input,
-*JSON* and symbolic link in the same directory, but for running weekly
-PDB updates (rsync --delete), *lftp* uploads and general debugging purposes
-the layout in separate directories seems to work better.
+PDB input, *JSON* and *JSONVAL* are in separate directories,
+which works best for updates (rsync --delete), *lftp* uploads and
+general debugging purposes. *make* has been adpted to that
+directory structure through macros and *vpath* directives.
 
 ## Master *Makefile*
 - The *XML* version of the PDB database (PDBML) is updated.
