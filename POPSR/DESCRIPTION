@@ -16,7 +16,8 @@ Description: The package serves as a front-end to the POPS program,
 Depends: R (>= 3.5),
 		 bio3d (>= 2.3),
 		 ggplot2 (>= 3.2),
-		 rgl (>= 0.1)
+		 rgl (>= 0.1),
+		 optparse (>= 1.6.6)
 Imports: 
 Suggests: knitr,
           rmarkdown
