@@ -1,4 +1,4 @@
-3.1.7
+3.2
 update version number in:
 - POPSC/configure.ac
 - POPSC/src/json.c
