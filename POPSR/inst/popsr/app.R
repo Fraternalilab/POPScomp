@@ -223,7 +223,7 @@ ui <- fluidPage(
         ),
         tabPanel("About",
 			h3("Shiny App"),
-			p("This is version 3.2 of the POPScomp Shiny App."),
+			p("This is version 3.2.1 of the POPScomp Shiny App."),
 			p("For detailed information about the software visit Fraternali Lab's ",
 			  a("POPScomp GitHub repository", href="https://github.com/Fraternalilab/POPScomp"),
 			  "; the Wiki pages contain detailed installation and usage instructions."
@@ -330,6 +330,12 @@ server <- function(input, output) {
   dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
   setwd(file.path(mainDir, subDir))
 
+  ## reference time stamp
+  time_stamp = format(Sys.time(), "%y%m%d_%H%M%S")
+  ## zipped file's name with time stamp
+  zipfile_path.name = paste0("/tmp/POPScomp_download_all_zip/POPScomp_all_", time_stamp, ".zip", sep = '')
+  print(zipfile_path.name)
+
   ## o1.1 display input PDB entry
   output$pdbentry <- renderText({
     input$pdbentry
@@ -362,6 +368,8 @@ server <- function(input, output) {
     outDir = paste(mainDir, subDir, sep = "/")
     dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
     setwd(file.path(mainDir, subDir))
+    ## create new output directory for zipped content
+    dir.create(file.path("/tmp/POPScomp_download_zip"), showWarnings = FALSE)
 
     ## Copy initialisation files to the new output directory,
     ##   otherwise error messages will appear in non-complex structure results
@@ -404,7 +412,7 @@ server <- function(input, output) {
     ## run POPScomp
     popscompR(inputPDB, outDir)
     ## zip output directory for potential All-Result download
-    zip(paste0(mainDir, "/", subDir, ".zip"), outDir)
+    zip(zipfile_path.name, outDir)
     ## return exit code of POPS command
     paste("Exit code:", system_status)
   })
@@ -625,10 +633,10 @@ server <- function(input, output) {
   ## d2 download all results
   output$downloadAllResults <- downloadHandler(
     filename = function() {
-      paste0(mainDir, "/", subDir, ".zip")
+      zipfile_path.name
     },
     content = function(file) {
-      file.copy(paste0(mainDir, "/", subDir, ".zip"), file)
+      file.copy(zipfile_path.name, file)
     },
     contentType = "application/zip"
   )

@@ -54,7 +54,7 @@ void make_resSasaJson(Arg *arg, Str *pdb, ResSasa *resSasa, cJSON *json)
 	/* header: attached to 'json' */
 	cJSON_AddStringToObject(json, "data_resource", "POPScomp_PDBML");
 	cJSON_AddStringToObject(json, "resource_version", "20210307");
-	cJSON_AddStringToObject(json, "software_version", "3.20");
+	cJSON_AddStringToObject(json, "software_version", "3.2.1");
 	cJSON_AddStringToObject(json, "resource_entry_url", "https://github.com/Fraternalilab/POPScomp");
 	cJSON_AddStringToObject(json, "release_date", "14/07/2020");
 	cJSON_AddStringToObject(json, "pdb_id", pdb->pdbID);

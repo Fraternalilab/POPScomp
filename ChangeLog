@@ -5,6 +5,13 @@
 ## Docker image released at version 3.1
 #===============================================================================
 
+- 3.2.1
+Sat 28 Aug 12:13:14 BST 2021
+	Fixed non functional button 'Download All Results'.
+	A time-stamped output zip file is created from the output directory:
+	  "/tmp/POPScomp_download_all_zip/POPScomp_all_", time_stamp, ".zip"
+	  and referenced as download file from the button.
+
 - 3.1.8
 	Added "busyIndicator" from "shinysky" library to flag background computation.
 

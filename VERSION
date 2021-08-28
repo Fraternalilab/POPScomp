@@ -1,5 +1,5 @@
-3.2
-update version number in:
+3.2.1
+version number is also given in:
 - POPSC/configure.ac
 - POPSC/src/json.c
 - POPSR/DESCRIPTION
