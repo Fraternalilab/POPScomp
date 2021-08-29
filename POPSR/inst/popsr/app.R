@@ -59,6 +59,11 @@ ui <- fluidPage(
       textOutput("nil"),
       tags$hr(),
 
+      ## info1 run ID
+      tags$hr(),
+      textOutput("runid"),
+      tags$hr(),
+
       busyIndicator(wait = 1000),
 
       ## i5 download button
@@ -351,6 +356,19 @@ server <- function(input, output) {
     input$rprobe
   })
 
+  ## info1 run identifier
+  ## the run identifier is a digest of the combined
+  ## PDB identifier and system time
+  runid_string <- reactive({
+    as.character(digest(paste0(input$pdbentry, as.character(digest(format(Sys.time(), "%H%M%OS3"))))))
+  })
+  output$runid <- renderText({
+    paste("runID", runid_string(), sep = '_')
+  })
+  #output$runid <- renderText({
+  #  paste("runID", "time", sep = '_')
+  #})
+
   ## o4 download PDB entry or upload input file
   ## run POPS on specified PDB file
   ## Comments:
@@ -369,7 +387,7 @@ server <- function(input, output) {
     dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
     setwd(file.path(mainDir, subDir))
     ## create new output directory for zipped content
-    dir.create(file.path("/tmp/POPScomp_download_zip"), showWarnings = FALSE)
+    dir.create(file.path("/tmp/POPScomp_download_all_zip"), showWarnings = FALSE)
 
     ## Copy initialisation files to the new output directory,
     ##   otherwise error messages will appear in non-complex structure results
