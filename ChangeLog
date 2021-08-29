@@ -8,9 +8,11 @@
 - 3.2.1
 Sat 28 Aug 12:13:14 BST 2021
 	Fixed non functional button 'Download All Results'.
-	A time-stamped output zip file is created from the output directory:
-	  "/tmp/POPScomp_download_all_zip/POPScomp_all_", time_stamp, ".zip"
-	  and referenced as download file from the button.
+	Now a run ID is created as a digest of the system time whenever
+	the input parameters are modified. That run ID is used for the name of
+	the output directory and its zip file. It is also used for all other
+	downloaded files. That way files belonging to the same run are tied
+	together by a unique identifier.
 
 - 3.1.8
 	Added "busyIndicator" from "shinysky" library to flag background computation.

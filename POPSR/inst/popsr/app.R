@@ -159,8 +159,11 @@ ui <- fluidPage(
             the POPS program on the selected PDB file. The output is SASA tables,
             which are automatically loaded into the respective tabs.
             The success of the computation is returned as exit code and shown below
-	    the 'run POPScomp' button: 'Exit code: 0' means success and that is what you
-	    should expect to see, otherwise consult the 'Exit Codes' tab."
+	          the 'run POPScomp' button: 'Exit code: 0' means success and that is what you
+	          should expect to see, otherwise consult the 'Exit Codes' tab.
+            The 'run ID' identifier is a random string that is updated upon changes in the
+            input parameters. It is used to uniquely identify (downloaded) output
+            from a given run, where it forms part of the output directory/file name."
           ),
 		      h3("Results"),
 		      p("The SASA result tabs are 'Atom', 'Residue', 'Chain' and 'Molecule'.
