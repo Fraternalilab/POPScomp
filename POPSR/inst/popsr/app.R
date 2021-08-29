@@ -755,6 +755,16 @@ server <- function(input, output) {
       write.csv(moleculeSASAOutputData(), fname)
     }
   )
+
+  ## d7 download molecule DeltaSASA
+  output$downloadMoleculeDeltaSASA <- downloadHandler(
+    filename = function() {
+      paste('moleculeDeltaSASA_', runid_string(), '.csv', sep = '')
+    },
+    content = function(fname) {
+      write.csv(moleculeDeltaSASAOutputData(), fname)
+    }
+  )
 }
 
 #_______________________________________________________________________________
