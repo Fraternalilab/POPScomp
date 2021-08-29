@@ -60,7 +60,6 @@ ui <- fluidPage(
       tags$hr(),
 
       ## info1 run ID
-      tags$hr(),
       textOutput("runid"),
       tags$hr(),
 
@@ -335,11 +334,8 @@ server <- function(input, output) {
   dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
   setwd(file.path(mainDir, subDir))
 
-  ## reference time stamp
-  time_stamp = format(Sys.time(), "%y%m%d_%H%M%S")
   ## zipped file's name with time stamp
-  zipfile_path.name = paste0("/tmp/POPScomp_download_all_zip/POPScomp_all_", time_stamp, ".zip", sep = '')
-  print(zipfile_path.name)
+  #zipfile_path.name = paste0("/tmp/POPScomp_download_all_zip/POPScomp_all_", time_stamp, ".zip", sep = '')
 
   ## o1.1 display input PDB entry
   output$pdbentry <- renderText({
@@ -359,15 +355,13 @@ server <- function(input, output) {
   ## info1 run identifier
   ## the run identifier is a digest of the combined
   ## PDB identifier and system time
-  runid_string <- reactive({
-    as.character(digest(paste0(input$pdbentry, as.character(digest(format(Sys.time(), "%H%M%OS3"))))))
+  runid_string <- eventReactive(input$pdbentry, {
+    #as.character(digest(paste0(input$pdbentry, as.character(digest(format(Sys.time(), "%H%M%OS3"))))))
+    as.character(input$pdbentry)
   })
   output$runid <- renderText({
     paste("runID", runid_string(), sep = '_')
   })
-  #output$runid <- renderText({
-  #  paste("runID", "time", sep = '_')
-  #})
 
   ## o4 download PDB entry or upload input file
   ## run POPS on specified PDB file
@@ -381,13 +375,10 @@ server <- function(input, output) {
   ## - POPS will be run on the PDB file and the output will be zipped.
   output$nil <- eventReactive(input$popscomp, {
     ## create a new output directory for each POPScomp run
-    rndString = as.character(digest(format(Sys.time(), "%H:%M:%OS3")))
-    subDir = paste0("POPScomp_", rndString)
+    subDir = paste0("POPScomp_", runid_string())
     outDir = paste(mainDir, subDir, sep = "/")
     dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
     setwd(file.path(mainDir, subDir))
-    ## create new output directory for zipped content
-    dir.create(file.path("/tmp/POPScomp_download_all_zip"), showWarnings = FALSE)
 
     ## Copy initialisation files to the new output directory,
     ##   otherwise error messages will appear in non-complex structure results
@@ -430,7 +421,7 @@ server <- function(input, output) {
     ## run POPScomp
     popscompR(inputPDB, outDir)
     ## zip output directory for potential All-Result download
-    zip(zipfile_path.name, outDir)
+    zip(paste0("POPScomp_", runid_string()), outDir)
     ## return exit code of POPS command
     paste("Exit code:", system_status)
   })
@@ -651,10 +642,11 @@ server <- function(input, output) {
   ## d2 download all results
   output$downloadAllResults <- downloadHandler(
     filename = function() {
-      zipfile_path.name
+      paste0("POPScomp_", runid_string(),".zip")
     },
     content = function(file) {
-      file.copy(zipfile_path.name, file)
+      #file.copy(paste0("/tmp/", "POPScomp_", runid_sting(), "/","POPScomp_", runid_sting(), ".zip"), file)
+      file.copy(paste0("POPScomp_", runid_string(),".zip"), file)
     },
     contentType = "application/zip"
   )
