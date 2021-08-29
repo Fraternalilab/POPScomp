@@ -334,9 +334,6 @@ server <- function(input, output) {
   dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
   setwd(file.path(mainDir, subDir))
 
-  ## zipped file's name with time stamp
-  #zipfile_path.name = paste0("/tmp/POPScomp_download_all_zip/POPScomp_all_", time_stamp, ".zip", sep = '')
-
   ## o1.1 display input PDB entry
   output$pdbentry <- renderText({
     input$pdbentry
@@ -356,8 +353,7 @@ server <- function(input, output) {
   ## the run identifier is a digest of the combined
   ## PDB identifier and system time
   runid_string <- eventReactive(input$pdbentry, {
-    #as.character(digest(paste0(input$pdbentry, as.character(digest(format(Sys.time(), "%H%M%OS3"))))))
-    as.character(input$pdbentry)
+    as.character(digest(paste0(input$pdbentry, as.character(digest(format(Sys.time(), "%H%M%OS3"))))))
   })
   output$runid <- renderText({
     paste("runID", runid_string(), sep = '_')
