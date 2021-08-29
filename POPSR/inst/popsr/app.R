@@ -163,7 +163,11 @@ ui <- fluidPage(
 	          should expect to see, otherwise consult the 'Exit Codes' tab.
             The 'run ID' identifier is a random string that is updated upon changes in the
             input parameters. It is used to uniquely identify (downloaded) output
-            from a given run, where it forms part of the output directory/file name."
+            from a given run, where it forms part of the output directory/file name.
+            If you want to download the results of a particular run, please do not change any
+            input parameters after the run, otherwise the 'run ID' changes and the
+            'Download All Results' will not work, additionally other downloads will have an
+            uncorrelated identifier in their names."
           ),
 		      h3("Results"),
 		      p("The SASA result tabs are 'Atom', 'Residue', 'Chain' and 'Molecule'.
@@ -647,7 +651,6 @@ server <- function(input, output) {
       paste0("POPScomp_", runid_string(),".zip")
     },
     content = function(file) {
-      #file.copy(paste0("/tmp/", "POPScomp_", runid_sting(), "/","POPScomp_", runid_sting(), ".zip"), file)
       file.copy(paste0("POPScomp_", runid_string(),".zip"), file)
     },
     contentType = "application/zip"
