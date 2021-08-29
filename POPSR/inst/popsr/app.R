@@ -350,13 +350,16 @@ server <- function(input, output) {
   })
 
   ## info1 run identifier
-  ## the run identifier is a digest of the combined
-  ## PDB identifier and system time
-  runid_string <- eventReactive(input$pdbentry, {
-    as.character(digest(paste0(input$pdbentry, as.character(digest(format(Sys.time(), "%H%M%OS3"))))))
+  ## creation of the run identifier is reactive to any input parameter change
+  ## the run identifier is a digest of the system time
+  runid_string <- eventReactive({input$pdbentry
+                                 input$popsmode
+                                 input$rprobe
+                                 },{
+    as.character(digest(format(Sys.time(), "%H%M%OS3")))
   })
   output$runid <- renderText({
-    paste("runID", runid_string(), sep = '_')
+    paste("run ID: ", runid_string(), sep = '')
   })
 
   ## o4 download PDB entry or upload input file
@@ -650,7 +653,7 @@ server <- function(input, output) {
   ## d3.1 download atom SASA
   output$downloadAtomSASA <- downloadHandler(
     filename = function() {
-      paste('atomSASA_', format(Sys.time(), "%Y%m%d%H%M"), '.csv', sep = '')
+      paste('atomSASA_', runid_string(), '.csv', sep = '')
     },
     content = function(fname) {
       write.csv(atomSASAOutputData(), fname)
@@ -660,7 +663,7 @@ server <- function(input, output) {
   ## d3.2 download atom DeltaSASA
   output$downloadAtomDeltaSASA <- downloadHandler(
     filename = function() {
-      paste('atomDeltaSASA_', format(Sys.time(), "%Y%m%d%H%M"), '.csv', sep = '')
+      paste('atomDeltaSASA_', runid_string(), '.csv', sep = '')
     },
     content = function(fname) {
       write.csv(atomDeltaSASAOutputData(), fname)
@@ -670,7 +673,7 @@ server <- function(input, output) {
   ## d3.3 download atom isolated-chains SASA
   output$downloadAtomIsoSASA <- downloadHandler(
     filename = function() {
-      paste('atomIsoSASA_', format(Sys.time(), "%Y%m%d%H%M"), '.csv', sep = '')
+      paste('atomIsoSASA_', runid_string(), '.csv', sep = '')
     },
     content = function(fname) {
       write.csv(atomIsoSASAOutputData(), fname)
@@ -680,7 +683,7 @@ server <- function(input, output) {
   ## d4.1 download residue SASA
   output$downloadResidueSASA <- downloadHandler(
     filename = function() {
-      paste('residueSASA_', format(Sys.time(), "%Y%m%d%H%M"), '.csv', sep = '')
+      paste('residueSASA_', runid_string(), '.csv', sep = '')
     },
     content = function(fname) {
       write.csv(residueSASAOutputData(), fname)
@@ -690,7 +693,7 @@ server <- function(input, output) {
   ## d4.2 download residue DeltaSASA
   output$downloadResidueDeltaSASA <- downloadHandler(
     filename = function() {
-      paste('residueDeltaSASA_', format(Sys.time(), "%Y%m%d%H%M"), '.csv', sep = '')
+      paste('residueDeltaSASA_', runid_string(), '.csv', sep = '')
     },
     content = function(fname) {
       write.csv(residueDeltaSASAOutputData(), fname)
@@ -700,7 +703,7 @@ server <- function(input, output) {
   ## d4.1 download residue isolated-chains SASA
   output$downloadResidueIsoSASA <- downloadHandler(
     filename = function() {
-      paste('residueIsoSASA_', format(Sys.time(), "%Y%m%d%H%M"), '.csv', sep = '')
+      paste('residueIsoSASA_', runid_string(), '.csv', sep = '')
     },
     content = function(fname) {
       write.csv(residueIsoSASAOutputData(), fname)
@@ -710,7 +713,7 @@ server <- function(input, output) {
   ## d5.1 download chain SASA
   output$downloadChainSASA <- downloadHandler(
     filename = function() {
-      paste('chainSASA_', format(Sys.time(), "%Y%m%d%H%M"), '.csv', sep = '')
+      paste('chainSASA_', runid_string(), '.csv', sep = '')
     },
     content = function(fname) {
       write.csv(chainSASAOutputData(), fname)
@@ -720,7 +723,7 @@ server <- function(input, output) {
   ## d5.2 download chain DeltaSASA
   output$downloadChainDeltaSASA <- downloadHandler(
     filename = function() {
-      paste('chainDeltaSASA_', format(Sys.time(), "%Y%m%d%H%M"), '.csv', sep = '')
+      paste('chainDeltaSASA_', runid_string(), '.csv', sep = '')
     },
     content = function(fname) {
       write.csv(chainDeltaSASAOutputData(), fname)
@@ -730,7 +733,7 @@ server <- function(input, output) {
   ## d5.1 download chain isolated-chains SASA
   output$downloadChainIsoSASA <- downloadHandler(
     filename = function() {
-      paste('chainIsoSASA_', format(Sys.time(), "%Y%m%d%H%M"), '.csv', sep = '')
+      paste('chainIsoSASA_', runid_string(), '.csv', sep = '')
     },
     content = function(fname) {
       write.csv(chainIsoSASAOutputData(), fname)
@@ -740,7 +743,7 @@ server <- function(input, output) {
   ## d6 download molecule SASA
   output$downloadMoleculeSASA <- downloadHandler(
     filename = function() {
-      paste('moleculeSASA_', format(Sys.time(), "%Y%m%d%H%M"), '.csv', sep = '')
+      paste('moleculeSASA_', runid_string(), '.csv', sep = '')
     },
     content = function(fname) {
       write.csv(moleculeSASAOutputData(), fname)
