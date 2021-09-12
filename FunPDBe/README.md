@@ -71,7 +71,7 @@ Some structures fail to create *JSON* output because of problems in the structur
 (too close atoms) or because of technical problems (buffer overflow).
 Those structures should be removed from the local reference PDB database to avoid weekly
 re-computation of the same failure. This is done via a file 'nullFiles.dat' that contains
-the names of all the filed PDB structures and that is used for '--exclude-from'
+the names of all the failed PDB structures and that is used for '--exclude-from'
 in the weekly *rsync* from the public PDB database. The 'nullFiles.dat' structures are
 to be moved to the *XMLexclude* directory for further analysis.
 The *Makefile.debug* replaces zero-sized *JSON* files with symbolic links to NULL
@@ -82,6 +82,13 @@ output containing the error message in the *JSON* directory under the structure'
 - Move all structures in 'nullFiles.dat' to *XMLexclude*.
 - Run 'make debug' using *Makefile*.
 - Run 'run\_nullFiles.bash' to create error logs for all failed structrures.
+
+### nullFiles\_210106.dat
+First complete list of failed structures.
+Using the script *run_nullFiles.bash*,
+this list was run again to create logfiles in the directory *JSON*.
+The files *nullFiles\_210106\_debugged\_..._210220.dat* list different subsets
+of structures depending on the presence and content of their log files. 
 
 ## Parallelism
 Make is run in parallel by using the '-j' flag:
