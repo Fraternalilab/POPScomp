@@ -1,6 +1,6 @@
 ## POPScomp: Solvent Accessible Surface Areas of Biomolecules and their Complexes
-[![release](https://img.shields.io/badge/release-v3.2-green?logo=github)](https://github.com/Fraternalilab/POPScomp/releases)
-[![release](https://img.shields.io/badge/release-v3.2-green?logo=docker)](https://hub.docker.com/u/popscomp)
+[![release](https://img.shields.io/badge/release-v3.2.1-green?logo=github)](https://github.com/Fraternalilab/POPScomp/releases)
+[![release](https://img.shields.io/badge/release-v3.2.1-green?logo=docker)](https://hub.docker.com/u/popscomp)
 [![wiki](https://img.shields.io/badge/wiki-orange)](https://github.com/Fraternalilab/POPScomp/wiki)
 [![License](https://img.shields.io/badge/license-GPL-blue.svg)](http://www.gnu.org/licenses/gpl-3.0.en.html)
 [![DOI](https://zenodo.org/badge/182454886.svg)](https://zenodo.org/badge/latestdoi/182454886)
@@ -130,8 +130,8 @@ We have no formal procedure to process contributed code, but we will revise code
 Usage of the software and server is free under the GNU General Public License v3.0.
 
 #### Copyright Holders, Authors and Maintainers 
-- 2002-2020 Franca Fraternali (author, maintainer) franca.fraternali@kcl.ac.uk
-- 2008-2020 Jens Kleinjung (author, maintainer) jens@jkleinj.eu
+- 2002-2021 Franca Fraternali (author, maintainer) franca.fraternali@kcl.ac.uk
+- 2008-2021 Jens Kleinjung (author, maintainer) jens@jkleinj.eu
 
 #### Contributors
 - 2002 Kuang Lin and Valerie Hindie (translation to C)

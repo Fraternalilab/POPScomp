@@ -57,16 +57,17 @@ FUNPDBEDIR = ${ROOTDIR}/0/POPScomp/FunPDBe
 ##         that is completely known from the start.
 
 ## complete pipeline including database (sub)directory creation
-all : pdbupdate jsondir jsonsubdir mkpops rename zerotonull remode jsonvaldir jsonvalsubdir validate rmbrokenlink mkupload
+#init : pdbupdate jsondir jsonsubdir mkpops rename zerotonull remode jsonvaldir jsonvalsubdir validate rmbrokenlink mkupload
 
 ## pipeline for weekly updates, assuming the source PDB does not contain new subdirectories
-weekly : pdbupdate mkpops rename zerotonull remode validate rmbrokenlink mkupload
+all : pdbupdate mkpops rename zerotonull remode validate rmbrokenlink mkupload
 
 .PHONY : pdbupdate jsondir jsonsubdir mkpops mkpops1 mkpops2 mkpops3 rename zerotonull remode jsonvaldir jsonvalsubdir validate rmbrokenlink mkupload
 
 
 pdbupdate :
-	rsync -rlpt -v -z --exclude-from=/home/jkleinj/POPScomp/FunPDBe/nullFiles_200106.dat rsync.ebi.ac.uk::pub/databases/pdb/data/structures/divided/XML/ ${DBDIR}/XML/
+	rsync -rlpt -v -z --port=33444 --exclude-from=/home/jkleinj/POPScomp/FunPDBe/nullFiles_210106.dat rsync.rcsb.org::ftp_data/structures/divided/XML/ /home/jkleinj/0/databases/XML/
+#	rsync -rlpt -v -z --port=873 --exclude-from=/home/jkleinj/POPScomp/FunPDBe/nullFiles_210106.dat rsync.ebi.ac.uk::pub/databases/pdb/data/structures/divided/XML/ /home/jkleinj/0/databases/XML/
 
 jsondir :
 	$(info --- Creating output directory.)
