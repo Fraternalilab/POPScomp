@@ -4,7 +4,7 @@
 # All other POPS(comp) computations (for processing protein complexes)
 #   are coded in .../POPScomp/R/popscomp.R.
 # For single-chain proteins, "popscomp.R" returns without computations.
-# (C) 2019 -2020 Jens Kleinjung and Franca Fraternali
+# (C) 2019 -2021 Jens Kleinjung and Franca Fraternali
 #===============================================================================
 
 library(shiny)
@@ -285,8 +285,8 @@ ui <- fluidPage(
 			    GNU General Public License v3.0."
 			),
 			h4("Copyright Holders, Authors and Maintainers"),
-			p("2002-2020 Franca Fraternali (author, maintainer)"),
-			p("2008-2020 Jens Kleinjung (author, maintainer)"),
+			p("2002-2021 Franca Fraternali (author, maintainer)"),
+			p("2008-2021 Jens Kleinjung (author, maintainer)"),
 			h4("Contributors"),
 			p("2002 Kuang Lin and Valerie Hindie (translation to C)"),
 			p("2002 Luigi Cavallo (parametrisation)")

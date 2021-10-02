@@ -1,6 +1,6 @@
 /*==============================================================================
 arg.c : parse command line arguments
-Copyright (C) 2007-2020 Jens Kleinjung
+Copyright (C) 2007-2021 Jens Kleinjung
 Read the COPYING file for license information.
 ==============================================================================*/
 
@@ -34,8 +34,8 @@ static void print_license()
     fprintf(stdout, "\nhttp://popscomp.org\n"
 			"\n(C) Copyright\n"
 			"Copyright Holders, Authors and Maintainers\n"
-			"\t2002-2020 Franca Fraternali (author, maintainer)\n"
-			"\t2008-2020 Jens Kleinjung (author, maintainer)\n"
+			"\t2002-2021 Franca Fraternali (author, maintainer)\n"
+			"\t2008-2021 Jens Kleinjung (author, maintainer)\n"
 			"Contributors\n"
 			"\t2002 Kuang Lin and Valerie Hindie (translation to C)\n"
 			"\t2002 Luigi Cavallo (parametrisation)\n"
