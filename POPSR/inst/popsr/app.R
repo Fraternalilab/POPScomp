@@ -35,7 +35,8 @@ ui <- fluidPage(
                 value = ""),
 
       ## i1.2
-      fileInput("PDBfile", "OR upload PDB file",
+      fileInput(inputId = "PDBfile",
+                label = "OR upload PDB file",
                 multiple = FALSE,
                 accept = c("text/csv",
                            "text/comma-separated-values,text/plain",
@@ -45,8 +46,8 @@ ui <- fluidPage(
 
       ## i2
       selectInput(inputId = "popsmode",
-                label = "Resolution:",
-                choices = c("atomistic", "coarse")),
+                  label = "Resolution:",
+                  choices = c("atomistic", "coarse")),
 
       ## i3
       numericInput(inputId = "rprobe",
@@ -150,7 +151,7 @@ ui <- fluidPage(
 			      For protein or RNA/DNA complexes, the POPScomp server creates internally
 			      all pair combinations of chains to compute the buried SASA upon complexation.
 			      Details of those functionalities are explained in the published papers
-			      on implicit solvent, POPS and POPSCOMP; see 'About' tab for the list of publications."
+			      on implicit solvent, POPS and POPSCOMP; see the 'About' tab for the list of publications."
           ),
 		      h3("Run"),
           p("SASA tables are initialised without any values; therefore, before 'run POPScomp' execution,
@@ -159,25 +160,23 @@ ui <- fluidPage(
             the POPS program on the selected PDB file. The output is SASA tables,
             which are automatically loaded into the respective tabs.
             The success of the computation is returned as exit code and shown below
-	          the 'run POPScomp' button: 'Exit code: 0' means success and that is what you
-	          should expect to see, otherwise consult the 'Exit Codes' tab.
+	        the 'run POPScomp' button: 'Exit code: 0' means success and that is what you
+	        should expect to see, otherwise consult the 'Exit Codes' tab.
             The 'run ID' identifier is a random string that is updated upon changes in the
-            input parameters. It is used to uniquely identify (downloaded) output
-            from a given run, where it forms part of the output directory/file name.
-            If you want to download the results of a particular run, please do not change any
-            input parameters after the run, otherwise the 'run ID' changes and the
-            'Download All Results' will not work, additionally other downloads will have an
-            uncorrelated identifier in their names."
+            input parameters. The identifier is used in the names of the downloadable output
+            file names, therefore parameters must not be changed between a run and
+            a download action of its output files."
           ),
 		      h3("Results"),
 		      p("The SASA result tabs are 'Atom', 'Residue', 'Chain' and 'Molecule'.
-            Those tabs contain a second layer of tabs to accommodate the POPSCOMP functionality, as follows.
-            'Input Structure': SASA values of the PDB structure as input.
-            'DeltaSASA': The SASA difference between isolated chains and chain pair complexes.
-            'Isolated Chains': SASA values of isolated chains.
-            Only structures containing multiple chains will yield values for
-            'DeltaSASA' and 'Isolated Chains' tabs."
-		      ),
+                Those tabs contain a second layer of tabs to accommodate the POPSCOMP functionality, as follows."),
+              p("'Input Structure': SASA values of the input PDB structure."),
+              p("'DeltaSASA': The SASA difference between isolated chains and chain pair complexes.
+					The DeltaSASA values correspond to the buried surface area upon complexation between the two chains
+                    in the given chain pair."
+			  ),
+              p("'Isolated Chains': SASA values of isolated chains. These values form the basis of the DeltaSASA data."),
+              p("Only structures containing multiple chains will yield values for 'DeltaSASA' and 'Isolated Chains' tabs."),
 		      p("Results will be stored on the server until midnight GMT time and then automatically removed.
 		        Please use the 'Download ...' buttons under the tables to save your results in 'csv' format.
 		        The 'Download All Results' button on the side panel returns the zipped content of the entire output directory,
@@ -234,7 +233,7 @@ ui <- fluidPage(
         ),
         tabPanel("About",
 			h3("Shiny App"),
-			p("This is version 3.2.1 of the POPScomp Shiny App."),
+			p("This is version 3.2.2 of the POPScomp Shiny App."),
 			p("For detailed information about the software visit Fraternali Lab's ",
 			  a("POPScomp GitHub repository", href="https://github.com/Fraternalilab/POPScomp"),
 			  "; the Wiki pages contain detailed installation and usage instructions."
@@ -313,7 +312,7 @@ ui <- fluidPage(
             at the top of the side panel."
           ),
           p("* Two PDB sources input! - Only one PDB source is accepted per computation. Refresh the
-            browser page and either speficy a PDB identifier or upload a PDB file, not both."
+            browser page and either specify a PDB identifier or upload a PDB file, not both."
           ),
           h3("Troubleshooting Errors"),
           h4("Exit code: 1 AND Error: Cannot open the connection"),
@@ -360,6 +359,7 @@ server <- function(input, output) {
   ## creation of the run identifier is reactive to any input parameter change
   ## the run identifier is a digest of the system time
   runid_string <- eventReactive({input$pdbentry
+                                 input$PDBfile
                                  input$popsmode
                                  input$rprobe
                                  },{
