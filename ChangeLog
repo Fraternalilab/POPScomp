@@ -7,6 +7,10 @@
 
 - 3.2.2
 Sun 26 Mar 12:28:23 BST 2023
+	
+	Changed branch name 'master' to 'main', because that is now the
+	standard in GitHub and the CI failed.	
+
 	Virtual instance updated to Ubuntu 22.04.2 LTS (GNU/Linux 5.15.0-1030-gcp x86_64)
 	Re-installation of R packages, POPSR and re-compilation of POPSC.
 
