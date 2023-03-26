@@ -156,20 +156,20 @@ ui <- fluidPage(
 		      h3("Run"),
           p("SASA tables are initialised without any values; therefore, before 'run POPScomp' execution,
             the user sees only the table header and below the notice 'Showing 0 to 0 of 0 entries'.
-            After selecting a PDB file and pressing 'run POPScomp', the server runs
-            the POPS program on the selected PDB file. The output is SASA tables,
-            which are automatically loaded into the respective tabs.
+            After selecting a PDB identifier or uploading a PDB file and pressing 'run POPScomp', the server runs
+            the POPS program on the PDB input. The output are SASA tables,
+            which are automatically loaded into the respective tabs on the POPScomp interface.
             The success of the computation is returned as exit code and shown below
 	        the 'run POPScomp' button: 'Exit code: 0' means success and that is what you
 	        should expect to see, otherwise consult the 'Exit Codes' tab.
             The 'run ID' identifier is a random string that is updated upon changes in the
-            input parameters. The identifier is used in the names of the downloadable output
-            file names, therefore parameters must not be changed between a run and
-            a download action of its output files."
+            input parameters. The identifier is used in the ouput path for the results,
+            Therefore, when re-running POPScomp on the same PDB input, changed parameters will always yield
+            a separate output, whereas unchanged settings (identical random string) will overwrite the previous results."
           ),
 		      h3("Results"),
 		      p("The SASA result tabs are 'Atom', 'Residue', 'Chain' and 'Molecule'.
-                Those tabs contain a second layer of tabs to accommodate the POPSCOMP functionality, as follows."),
+                Those tabs contain a second layer of tabs to accommodate POPSCOMP's complex analysis, as follows."),
               p("'Input Structure': SASA values of the input PDB structure."),
               p("'DeltaSASA': The SASA difference between isolated chains and chain pair complexes.
 					The DeltaSASA values correspond to the buried surface area upon complexation between the two chains
