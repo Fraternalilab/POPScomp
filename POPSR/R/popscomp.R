@@ -7,7 +7,7 @@
 # Returns a list of POPS output files for single-chain and pair-chain structures
 #   plus a list of buried SASA values.
 #
-# (C) 2019-2020 Jens Kleinjung and Franca Fraternali
+# (C) 2019-2023 Jens Kleinjung and Franca Fraternali
 #===============================================================================
 
 library("bio3d");
@@ -44,11 +44,10 @@ popscompR = function(inputPDB, outDir) {
 	}
 
 	## short names
-	sink(file = "/tmp/basename1")
-	print(as.character(chain.files))
-	print("")
-	print(basename(as.character(chain.files)))
-	sink()
+    print(as.character(chain.files))
+    print("+++++")
+    print(basename(as.character(chain.files)))
+    sink()
 
 	chain.files.short = sub('\\.pdb$', '', basename(as.character(chain.files)));
 
@@ -106,7 +105,7 @@ popscompR = function(inputPDB, outDir) {
 
 	sink("/tmp/basename2")
 	print(as.character(chainpair.files));
-	print("")
+	print("+++++")
 	print(basename(as.character(chainpair.files)));
 	sink()
 	chainpair.files.short = sub('\\.pdb$', '', basename(as.character(chainpair.files)));

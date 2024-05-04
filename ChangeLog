@@ -5,11 +5,16 @@
 ## Docker image released at version 3.1
 #===============================================================================
 
+- 3.3
+Thu 29 Feb 08:39:24 GMT 2024
+
+  Added README file of C code as new tab to the interface.
+
 - 3.2.2
 Sun 26 Mar 12:28:23 BST 2023
-	
+
 	Changed branch name 'master' to 'main', because that is now the
-	standard in GitHub and the CI failed.	
+	standard in GitHub and the CI failed.
 
 	Virtual instance updated to Ubuntu 22.04.2 LTS (GNU/Linux 5.15.0-1030-gcp x86_64)
 	Re-installation of R packages, POPSR and re-compilation of POPSC.
@@ -230,7 +235,7 @@ Tue Mar 15 16:38:37 GMT 2011
 Fri Mar  4 14:46:37 GMT 2011
 	Modified output of neighbour list to match the PDB numbering.
 
-- 1.3.0 : released 01.02.2011	
+- 1.3.0 : released 01.02.2011
 Tue Feb  1 20:26:48 GMT 2011
 	Addded modified cutoff for 'P' atoms in coarse grained mode.
 	Improved warning for format error and added format examples to README.
@@ -245,7 +250,7 @@ Thu Jan 21 13:20:44 GMT 2010
 	Added output file name to stdout.
 
 Fri Dec 11 13:42:24 GMT 2009
-	Added external variable 'status' which is the return value of 'main', 
+	Added external variable 'status' which is the return value of 'main',
 	to indicate 0=error-free, -1=warning or 1=error.
 
 - 1.2.3
@@ -298,9 +303,9 @@ Fri Dec 12 16:07:28 GMT 2008
 
 - 1.1.4
 Wed Dec  3 00:10:04 GMT 2008
-	Ticket#3 'nan' result for ASTRAL-SCOP domains 
+	Ticket#3 'nan' result for ASTRAL-SCOP domains
 	'd1bd8__' and 'd1gsma1'. This is caused by too short atom distances, which
-	create 'circular' diheder angles. Addded error handling for that case: 
+	create 'circular' diheder angles. Addded error handling for that case:
 	"Problematic conformation at atom 1168
 	Error: Check input structure for too short atom distances!"
 	Exits with error code 1.

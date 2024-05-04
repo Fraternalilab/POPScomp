@@ -1,10 +1,12 @@
 #===============================================================================
 # Shiny application as interface of POPScomp
-# Here POPS is run only on the original input file (tagged 'iso').
-# All other POPS(comp) computations (for processing protein complexes)
-#   are coded in .../POPScomp/R/popscomp.R.
-# For single-chain proteins, "popscomp.R" returns without computations.
-# (C) 2019 -2021 Jens Kleinjung and Franca Fraternali
+# Here the C program POPS is called directly only on the original input file
+#   (tagged 'iso'). All additional POPS(comp) calls/computations
+#   are related to processing protein complexes,
+#   and those are coded in .../POPScomp/R/popscomp.R.
+# For single-chain proteins, "popscomp.R" returns without additional computations.
+#
+# (C) 2019 -2023 Jens Kleinjung and Franca Fraternali
 #===============================================================================
 
 library(shiny)
@@ -13,6 +15,10 @@ library(DT)
 library(digest)
 library(shinysky)
 library(POPSR)
+
+#_______________________________________________________________________________
+## load 'Readme' text
+readme = readRDS("readme.rds")
 
 #_______________________________________________________________________________
 # POPS UI
@@ -233,7 +239,7 @@ ui <- fluidPage(
         ),
         tabPanel("About",
 			h3("Shiny App"),
-			p("This is version 3.2.2 of the POPScomp Shiny App."),
+			p("This is version 3.3 of the POPScomp Shiny App."),
 			p("For detailed information about the software visit Fraternali Lab's ",
 			  a("POPScomp GitHub repository", href="https://github.com/Fraternalilab/POPScomp"),
 			  "; the Wiki pages contain detailed installation and usage instructions."
@@ -284,8 +290,8 @@ ui <- fluidPage(
 			    GNU General Public License v3.0."
 			),
 			h4("Copyright Holders, Authors and Maintainers"),
-			p("2002-2021 Franca Fraternali (author, maintainer)"),
-			p("2008-2021 Jens Kleinjung (author, maintainer)"),
+			p("2002-2023 Franca Fraternali (author, maintainer)"),
+			p("2008-2023 Jens Kleinjung (author, maintainer)"),
 			h4("Contributors"),
 			p("2002 Kuang Lin and Valerie Hindie (translation to C)"),
 			p("2002 Luigi Cavallo (parametrisation)")
@@ -300,7 +306,7 @@ ui <- fluidPage(
           h3("Shell command exit codes"),
           p("* 0 - Success"),
           p("* 1 - Catchall for general errors"),
-          p("* 2 - Misuse of shell builtins (according to Bash documentation"),
+          p("* 2 - Misuse of shell builtins (according to Bash documentation)"),
           p("* 126 - Command invoked cannot execute"),
           p("* 127 - Command not found"),
           p("* 128 - Invalid argument to exit"),
@@ -319,7 +325,11 @@ ui <- fluidPage(
           p("The PDB file could not be read, most possibly because something went wrong during up/down-loading.
             If you used the 'Enter PDB entry' field, check your internet connection."
           )
-        )
+        ),
+			tabPanel("Readme",
+			    h3("Readme (C code)"),
+			    textOutput("readme")
+			  )
       )
     )
   )
@@ -768,6 +778,9 @@ server <- function(input, output) {
       write.csv(moleculeDeltaSASAOutputData(), fname)
     }
   )
+
+  ## Readme panel text output (loaded as variable 'readme' at top of App)
+  output$readme = renderText(readme)
 }
 
 #_______________________________________________________________________________

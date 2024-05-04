@@ -3,7 +3,7 @@
 #===============================================================================
 # POPSR package
 # Auxiliary function to call Shiny app
-# (C) 2019 Jens Kleinjung and Franca Fraternali
+# (C) 2019-2023 Jens Kleinjung and Franca Fraternali
 #===============================================================================
 
 #' @export
