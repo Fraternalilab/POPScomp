@@ -4,8 +4,9 @@
 [![wiki](https://img.shields.io/badge/wiki-orange)](https://github.com/Fraternalilab/POPScomp/wiki)
 [![License](https://img.shields.io/badge/license-GPL-blue.svg)](http://www.gnu.org/licenses/gpl-3.0.en.html)
 [![DOI](https://zenodo.org/badge/182454886.svg)](https://zenodo.org/badge/latestdoi/18245488?event=push6)
-![C CI](https://github.com/Fraternalilab/POPScomp/workflows/C%20CI/badge.svg?event=push) 
-![R CI](https://github.com/Fraternalilab/POPScomp/workflows/R%20CI/badge.svg?event=push)
+[![C CI](https://github.com/Fraternalilab/POPScomp/workflows/C%20CI/badge.svg)](https://github.com/thereapr/reincarnated_mod/actions/workflows/ccpp.yml)
+[![R CI](https://github.com/Fraternalilab/POPScomp/workflows/R%20CI/badge.svg)](https://github.com/thereapr/reincarnated_mod/actions/workflows/main.yml)
+
 
 The POPScomp program computes the Solvent Accessible Surface Area (SASA)
 of a given PDB structure. If the structure is a complex, *i.e.* composed of more than one chain
