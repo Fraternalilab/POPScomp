@@ -7,12 +7,10 @@
 
 - 3.3
 Thu 29 Feb 08:39:24 GMT 2024
-
-  Added README file of C code as new tab to the interface.
+	Added README file of C code as new tab to the interface.
 
 - 3.2.2
 Sun 26 Mar 12:28:23 BST 2023
-
 	Changed branch name 'master' to 'main', because that is now the
 	standard in GitHub and the CI failed.
 
