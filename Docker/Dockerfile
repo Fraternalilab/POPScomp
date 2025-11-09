@@ -1,15 +1,60 @@
-# Use the official R Shiny image
+
+# Base image with R and Shiny Server
 FROM rocker/shiny:latest
 
-# Install any required R packages
-RUN R -e "install.packages(c('tidyverse', 'shiny', 'shinydashboard'))"
+## Install system dependencies
+RUN apt-get update && \
+	apt-get upgrade
 
-# Copy your Shiny app into the image
-COPY ./app /srv/shiny-server/app
+RUN	apt-get install -y build-essential && \
+	apt-get install -y autotools-dev && \
+	apt-get install -y autoconf && \
+    apt-get install -y automake && \
+	apt-get install -y libtool
 
-# Expose port 3838
+RUN	apt-get install -y zlib1g-dev && \
+	apt-get install -y libgsl-dev && \
+	apt-get install -y libxml2-dev
+	
+RUN apt-get install -y libglu1-mesa && \
+	apt-get install -y libssl-dev && \
+	apt-get install -y vim-tiny
+
+
+# C code
+WORKDIR /build/POPSC
+COPY POPSC/ .
+
+## Run the Autotools bootstrap + build
+RUN ./bootstrap && \
+    ./configure && \
+    make && \
+    make install DESTDIR=/build/install
+
+
+# R code
+RUN R -e "install.packages(c('shiny', 'bio3d', 'data.table', 'DT', 'rgl', \
+							 'digest', 'devtools', 'ggplot2', 'optparse'))"
+
+RUN R -e "devtools::install_github('AnalytixWare/ShinySky')"
+
+## Compile and install POPSR
+COPY POPSR /app/POPSR
+WORKDIR /app/POPSR
+RUN R CMD build .
+RUN R CMD INSTALL *.tar.gz
+
+
+# Shiny App 
+## Create app directory
+WORKDIR /app
+
+COPY POPSR/inst/popsr/app.R /app/
+
+## Expose Shiny port
 EXPOSE 3838
 
-# Run Shiny Server
-CMD ["/usr/bin/shiny-server"]
+## Run Shiny server
+#CMD ["/usr/bin/shiny-server"]
+CMD ["R", "-e", "shiny::runApp('/app', host='0.0.0.0', port=3838)"]
 

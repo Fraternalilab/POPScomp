@@ -18,7 +18,7 @@ library(optparse)
 
 #_______________________________________________________________________________
 ## POPScomp function implemented in R
-## The folling prefixes are used to label the sections and output files
+## The following prefixes are used to label the sections and output files
 ##   for clarity (DIFF output files are called 'delta' for historic reasons):
 ## ID: the default '--popsr' prefix of POPS for the unmodified input PDB
 ##      (computed by 'input$popscomp' function in 'app.R')
