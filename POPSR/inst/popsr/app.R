@@ -329,6 +329,9 @@ ui <- fluidPage(
 # server routines
 server <- function(input, output) {
 
+  ## pops binary in Shiny installation via Dockerfile
+  pops_shiny = c("/build/install/usr/local/bin/pops")
+
   ## initialisation output directory
   ## Shiny needs empty output files to be present here,
   ##   otherwise it shows error messages on the start page before the POPScomp run.
@@ -372,7 +375,7 @@ server <- function(input, output) {
   ## o4 download PDB entry or upload input file
   ## run POPS on specified PDB file
   ## Comments:
-  ## - Expects 'pops' binary as /usr/local/bin/pops.
+  ## - 'pops' binary defined as 'pops_shiny' at beginning of server section.
   ## - The App will set its own working directory to a temporary directory,
   ##     to which the specified PDB file will be up/down-loaded.
   ## - For uploaded files: The 'fileInput' function returns the object 'input$file1',
@@ -414,11 +417,11 @@ server <- function(input, output) {
 
     ## run POPS as system command
     if (input$popsmode == "atomistic") {
-      command = paste("/usr/local/bin/pops --outDirName", outDir,
+      command = paste(pops_shiny, "--outDirName", outDir,
                       "--rout --atomOut --residueOut --chainOut",
                       "--rProbe", input$rprobe, "--pdb", inputPDB, "1> POPScomp.o 2> POPScomp.e");
     } else if (input$popsmode == "coarse") {
-      command = paste("/usr/local/bin/pops --outDirName", outDir,
+      command = paste(pops_shiny, "--outDirName", outDir,
                       "--rout --coarse --chainOut --residueOut --chainOut",
                       "--rProbe", input$rprobe, "--pdb", inputPDB, "1> POPScomp.o 2> POPScomp.e");
     }

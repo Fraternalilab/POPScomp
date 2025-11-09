@@ -18,7 +18,7 @@ library("bio3d");
 
 #_______________________________________________________________________________
 ## POPScomp function implemented in R
-## The folling prefixes are used to label the sections and output files
+## The following prefixes are used to label the sections and output files
 ##   for clarity (DIFF output files are called 'delta' for historic reasons):
 ## ID: the default '--popsr' prefix of POPS for the unmodified input PDB
 ##      (computed by 'input$popscomp' function in 'app.R')
@@ -28,6 +28,9 @@ library("bio3d");
 popscompR = function(inputPDB, outDir) {
 	## number of cores
 	#nCore = detectCores() - 1;
+
+	## path to pops program in Shiny installation via Dockerfile
+	pops_shiny = c("/build/install/usr/local/bin/pops")
 
 	#________________________________________________________________________________
 	## ISO: split input PDB into chains
@@ -42,17 +45,17 @@ popscompR = function(inputPDB, outDir) {
 
 	## short names
 	sink(file = "/tmp/basename1")
-  print(as.character(chain.files))
-  print("")
-  print(basename(as.character(chain.files)))
-  sink()
+	print(as.character(chain.files))
+	print("")
+	print(basename(as.character(chain.files)))
+	sink()
 
 	chain.files.short = sub('\\.pdb$', '', basename(as.character(chain.files)));
 
 	#________________________________________________________________________________
 	## ISO: run POPS over all single (= isolated) chains via system (= shell) call
 	sapply(1:length(chain.files), function(x) {
-	  command = paste0("pops --outDirName ", outDir,
+	  command = paste0(pops_shiny, " --outDirName ", outDir,
 	                   " --rout --routPrefix ", paste0(chain.files.short[x], ".iso"),
 	                   " --atomOut --residueOut --chainOut",
 	                   " --pdb ", chain.files[x], " 1> ", outDir, "/", chain.files.short[x], ".o",
@@ -111,7 +114,7 @@ popscompR = function(inputPDB, outDir) {
 	#________________________________________________________________________________
 	## PAIR: run POPS over all pairwise chain combinations via system (= shell) call
 	sapply(1:length(chainpair.files), function(x) {
-	  command = paste0("pops --outDirName ", outDir,
+	  command = paste0(pops_shiny, " --outDirName ", outDir,
 	                  " --rout --routPrefix ", paste0(chainpair.files.short[x], ".pair"),
 	                  " --atomOut --residueOut --chainOut",
 	                  " --pdb ", chainpair.files[x], " 1> ", outDir, "/POPScomp_chainpair", x, ".o",
