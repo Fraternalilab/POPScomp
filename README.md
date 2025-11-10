@@ -20,7 +20,7 @@ Details of those routines are explained in the
 ## Installation
 There are 2 ways to (install and) use POPScomp,
 please refer to the [Wiki](https://github.com/Fraternalilab/POPScomp/wiki) for details:
-1. Download the new [POPScomp *Docker* image](https://hub.docker.com/repository/docker/jkleinj150999/popscomp/)
+1. Download the [new POPScomp *Docker* image](https://hub.docker.com/repository/docker/jkleinj150999/popscomp/)
   (or the [old POPScomp *Docker* image](https://hub.docker.com/u/popscomp)) and run the *Shiny* App on your local computer.
 3. To install from source code, either download the [latest release](https://github.com/Fraternalilab/POPScomp/releases/latest) or the development version by cloning this POPScomp repository.
 [Compile/install](https://github.com/Fraternalilab/POPScomp/wiki/Installation) the program suite and run the *Shiny* App on your local computer.
