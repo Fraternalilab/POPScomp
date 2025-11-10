@@ -66,15 +66,14 @@ However, some users might find the pipeline or parts of it useful for their own 
 
 ## Servers
 
-#### POPScomp *Shiny* server at [popscomp.org](http://popscomp.org:3838)
-Publically available server with an intuitive user interface.
-Results will be stored on the server until midnight (GMT).
-For permanent storage, please download your results via the 'Download' buttons.
+#### Legacy POPScomp *Shiny* server at [popscomp.org](http://popscomp.org:3838)
+This server has been discontinued in November 2025.
+Please download the Docker image instead to run POPScomp on your local machine.
 
 #### FunPDBe
 POPScomp is part of the [FunPDBe resources](https://www.ebi.ac.uk/pdbe/funpdbe/deposition).
 
-#### Note on legacy sites
+#### Note on older legacy sites
 * mathbio.nimr.mrc.ac.uk/POPSCOMP : This was the original address of the POPS and POPSCOMP servers in the Division of Mathematical Biology at the NIMR institute, which has been closed in 2015 and became a part of the Francis Crick Institute.
 * mathbio.crick.mrc.ac.uk/POPSCOMP : Only for a short while the POPS and POPSCOMP servers were supported by the Francis Crick Institute.
 
