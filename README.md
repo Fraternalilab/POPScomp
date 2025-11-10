@@ -20,8 +20,9 @@ Details of those routines are explained in the
 ## Installation
 There are 2 ways to (install and) use POPScomp,
 please refer to the [Wiki](https://github.com/Fraternalilab/POPScomp/wiki) for details:
-1. Download the [new POPScomp *Docker* image](https://hub.docker.com/repository/docker/jkleinj150999/popscomp/)
-  (or the [old POPScomp *Docker* image](https://hub.docker.com/u/popscomp)) and run the *Shiny* App on your local computer.
+1. Download the [POPScomp *Docker* image](https://hub.docker.com/repository/docker/jkleinj150999/popscomp/)
+  (for backward compatibility, this is the [legacy POPScomp *Docker* image](https://hub.docker.com/u/popscomp))
+  and run the *Shiny* App on your local computer.
 3. To install from source code, either download the [latest release](https://github.com/Fraternalilab/POPScomp/releases/latest) or the development version by cloning this POPScomp repository.
 [Compile/install](https://github.com/Fraternalilab/POPScomp/wiki/Installation) the program suite and run the *Shiny* App on your local computer.
 
@@ -51,7 +52,7 @@ An R package to
 - provide a *Shiny* App as interface to the POPSC program.
 
 #### *Docker* Image
-A [POPScomp *Docker* image](https://hub.docker.com/u/popscomp) is available that provides 
+A [POPScomp *Docker* image](https://hub.docker.com/repository/docker/jkleinj150999/popscomp/) is available that provides 
 the program suite in fully functional form,
 *i.e.* pre-compiled POPSC, RStudio with POPSR and all dependencies installed.
 Please refer to the [Wiki](https://github.com/Fraternalilab/POPScomp/wiki/Docker-Image)
