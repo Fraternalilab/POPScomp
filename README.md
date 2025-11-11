@@ -54,7 +54,7 @@ An R package to
 #### *Docker* Image
 A [POPScomp *Docker* image](https://hub.docker.com/repository/docker/jkleinj150999/popscomp/) is available that provides 
 the program suite in fully functional form,
-*i.e.* pre-compiled POPSC, RStudio with POPSR and all dependencies installed.
+*i.e.* a Shiny server with integrated POPSC/POPSR as computational backbone.
 Please refer to the [Wiki](https://github.com/Fraternalilab/POPScomp/wiki/Docker-Image)
 for detailed guidelines on downloading and usage of the Docker image.
 
