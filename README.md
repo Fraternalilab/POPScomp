@@ -23,7 +23,7 @@ please refer to the [Wiki](https://github.com/Fraternalilab/POPScomp/wiki) for d
 1. Download the [POPScomp *Docker* image](https://hub.docker.com/repository/docker/jkleinj150999/popscomp/)
   (for backward compatibility, this is the [legacy POPScomp *Docker* image](https://hub.docker.com/u/popscomp))
   and run the *Shiny* App on your local computer.
-3. To install from source code, either download the [latest release](https://github.com/Fraternalilab/POPScomp/releases/latest) or the development version by cloning this POPScomp repository.
+3. To install from source code, either download the [latest POPScomp release](https://github.com/Fraternalilab/POPScomp/releases/latest) or the development version by cloning this POPScomp repository.
 [Compile/install](https://github.com/Fraternalilab/POPScomp/wiki/Installation) the program suite and run the *Shiny* App on your local computer.
 
 
@@ -36,10 +36,8 @@ Download individual results *via* the buttons underneath the tables or bundled *
 ![POPScomp Shiny Interface](https://github.com/Fraternalilab/POPScomp/blob/master/POPSR/inst/popsr/png/POPScomp_Shiny.png)
 
 
-## Documentation and Latest Relase
+## Documentation
 Please refer to the [Wiki](https://github.com/Fraternalilab/POPScomp/wiki) for documentation.
-
-This is the [latest POPScomp release](https://github.com/Fraternalilab/POPScomp/releases/latest).
 
 
 ## Software Design
