@@ -1,6 +1,6 @@
 #! /bin/bash
 
 ## on Linux
-docker build -t yourname/shinyapp:latest .
-docker push yourname/shinyapp:latest
+docker build -t popscomp .
+docker run  -p 3838:3838 popscomp
 

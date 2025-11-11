@@ -36,8 +36,10 @@ Download individual results *via* the buttons underneath the tables or bundled *
 ![POPScomp Shiny Interface](https://github.com/Fraternalilab/POPScomp/blob/master/POPSR/inst/popsr/png/POPScomp_Shiny.png)
 
 
-## Documentation
+## Documentation and Latest Relase
 Please refer to the [Wiki](https://github.com/Fraternalilab/POPScomp/wiki) for documentation.
+
+This is the [latest POPScomp release](https://github.com/Fraternalilab/POPScomp/releases/latest).
 
 
 ## Software Design
