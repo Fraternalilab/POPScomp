@@ -54,9 +54,6 @@ An R package to
 - split complexes into single and pair components to compute buried SASA using POPSC and 
 - provide a *Shiny* App as interface to the POPSC program.
 
-#### FunPDBe
-POPScomp is part of the [FunPDBe resources](https://www.ebi.ac.uk/pdbe/funpdbe/deposition).
-
 ### Legacy POPScomp *Shiny* servers
 * popscomp.org:3838 : This server has been discontinued in November 2025. [popscomp.org](http://popscomp.org) points now to this GitHub repository. 
 * mathbio.crick.mrc.ac.uk/POPSCOMP : Only for a short while the POPS and POPSCOMP servers were supported by the Francis Crick Institute.
