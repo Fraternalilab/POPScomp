@@ -61,10 +61,8 @@ An R package to
 
 
 ## References
-Users publishing results obtained with the program and its applications
-should acknowledge its use by citation.
 
-#### POPScomp software
+### POPScomp software
 [![DOI](https://zenodo.org/badge/182454886.svg)](https://zenodo.org/badge/latestdoi/182454886)
 
 #### Implicit solvent
