@@ -54,33 +54,13 @@ An R package to
 - split complexes into single and pair components to compute buried SASA using POPSC and 
 - provide a *Shiny* App as interface to the POPSC program.
 
-#### *Docker* Image
-A [POPScomp *Docker* image](https://hub.docker.com/repository/docker/jkleinj150999/popscomp/) is available that provides 
-the program suite in fully functional form,
-*i.e.* a Shiny server with integrated POPSC/POPSR as computational backbone.
-Please refer to the [Wiki](https://github.com/Fraternalilab/POPScomp/wiki/Docker-Image)
-for detailed guidelines on downloading and usage of the Docker image.
-
-#### FunPDBe
-A *Make* pipeline to run POPScomp over the PDB database and to feed the JSON output into the [Elixir FunPDBe project](https://www.ebi.ac.uk/pdbe/pdbe-kb/funpdbe).
-To include newly added PDB structures, the pipeline is run *via* a cron *@weekly* job on a virtual
-Ubuntu machine hosted on a Synology DS218+ computer. 
-This directory has been included purely as a reference for the FunPDBe project and is not intended as a user-facing application.
-However, some users might find the pipeline or parts of it useful for their own purposes.
-
-
-## Servers
-
-#### Legacy POPScomp *Shiny* server at [popscomp.org](http://popscomp.org:3838)
-This server has been discontinued in November 2025.
-Please download the Docker image instead to run POPScomp on your local machine.
-
 #### FunPDBe
 POPScomp is part of the [FunPDBe resources](https://www.ebi.ac.uk/pdbe/funpdbe/deposition).
 
-#### Note on older legacy sites
-* mathbio.nimr.mrc.ac.uk/POPSCOMP : This was the original address of the POPS and POPSCOMP servers in the Division of Mathematical Biology at the NIMR institute, which has been closed in 2015 and became a part of the Francis Crick Institute.
+### Legacy POPScomp *Shiny* servers
+* [popscomp.org](http://popscomp.org:3838): This server has been discontinued in November 2025.
 * mathbio.crick.mrc.ac.uk/POPSCOMP : Only for a short while the POPS and POPSCOMP servers were supported by the Francis Crick Institute.
+* mathbio.nimr.mrc.ac.uk/POPSCOMP : This was the original address of the POPS and POPSCOMP servers in the Division of Mathematical Biology at the NIMR institute, which has been closed in 2015 and became a part of the Francis Crick Institute.
 
 
 ## References
