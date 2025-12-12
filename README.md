@@ -28,7 +28,7 @@ please refer to the [Wiki](https://github.com/Fraternalilab/POPScomp/wiki) for d
 
 ## Usage
 Enter a PDB identifier or upload a custom PDB file and press 'run POPScomp'.
-Results will be shown as tables for different resolutions: Atom, Residue, Chain and Molecule.
+SASA values and related information will be shown as tables for different resolutions: Atom, Residue, Chain and Molecule.
 Download individual results *via* the buttons underneath the tables or bundled *via* the
 'Download All Results' button.
 
