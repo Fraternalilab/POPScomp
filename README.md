@@ -25,7 +25,6 @@ please refer to the [Wiki](https://github.com/Fraternalilab/POPScomp/wiki) for d
 3. To install from source code, either download the [latest POPScomp release](https://github.com/Fraternalilab/POPScomp/releases/latest) or the development version by cloning this POPScomp repository.
 [Compile/install](https://github.com/Fraternalilab/POPScomp/wiki/Installation) the program suite and run the *Shiny* App on your local computer.
 
-
 ## Usage
 Enter a PDB identifier or upload a custom PDB file and press 'run POPScomp'.
 SASA values and related information will be shown as tables for different resolutions: Atom, Residue, Chain and Molecule.
@@ -36,7 +35,7 @@ Here is a snapshot of the ![POPScomp Shiny Interface](https://github.com/Fratern
 
 
 ## Documentation
-Please refer to the [Wiki](https://github.com/Fraternalilab/POPScomp/wiki) for documentation.
+The [Wiki](https://github.com/Fraternalilab/POPScomp/wiki) contains additional documentation about the POPS model and implementation.
 
 
 ## Software Design
