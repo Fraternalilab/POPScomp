@@ -32,7 +32,7 @@ SASA values and related information will be shown as tables for different resolu
 Download individual results *via* the buttons underneath the tables or bundled *via* the
 'Download All Results' button.
 
-![POPScomp Shiny Interface](https://github.com/Fraternalilab/POPScomp/blob/master/POPSR/inst/popsr/png/POPScomp_Shiny.png)
+Here is a snapshot of the ![POPScomp Shiny Interface](https://github.com/Fraternalilab/POPScomp/blob/master/POPSR/inst/popsr/png/POPScomp_Shiny.png).
 
 
 ## Documentation
