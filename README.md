@@ -108,8 +108,8 @@ Iussues with the program can be logged on the [Issues](https://github.com/Frater
 Usage of the software and server is free under the GNU General Public License v3.0.
 
 #### Copyright Holders, Authors and Maintainers 
-- 2002-2021 Franca Fraternali (author, maintainer) franca.fraternali@kcl.ac.uk
-- 2008-2021 Jens Kleinjung (author, maintainer) jens@jkleinj.eu
+- 2002-2026 Franca Fraternali (author, maintainer) f.fraternali@ucl.ac.uk
+- 2008-2026 Jens Kleinjung (author, maintainer) jens@jkleinj.eu
 
 #### Contributors
 - 2002 Kuang Lin and Valerie Hindie (translation to C)
