@@ -1,4 +1,4 @@
-3.3
+3.4
 version number is also given in:
 - POPSC/configure.ac
 - POPSC/src/json.c

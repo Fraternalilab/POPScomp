@@ -4,21 +4,23 @@ FROM rocker/shiny:latest
 
 ## Install system dependencies
 RUN apt-get update && \
-	apt-get upgrade
+	apt-get -y upgrade
 
-RUN	apt-get install -y build-essential && \
-	apt-get install -y autotools-dev && \
-	apt-get install -y autoconf && \
-    apt-get install -y automake && \
-	apt-get install -y libtool
+RUN	apt-get install -y --no-install-recommends build-essential && \
+	apt-get install -y --no-install-recommends autotools-dev && \
+	apt-get install -y --no-install-recommends autoconf && \
+    apt-get install -y --no-install-recommends automake && \
+	apt-get install -y --no-install-recommends libtool
 
-RUN	apt-get install -y zlib1g-dev && \
-	apt-get install -y libgsl-dev && \
-	apt-get install -y libxml2-dev
+RUN	apt-get install -y --no-install-recommends zlib1g-dev && \
+	apt-get install -y --no-install-recommends libgsl-dev && \
+	apt-get install -y --no-install-recommends libxml2-dev
 	
-RUN apt-get install -y libglu1-mesa && \
-	apt-get install -y libssl-dev && \
-	apt-get install -y vim-tiny
+RUN apt-get install -y --no-install-recommends libglu1-mesa && \
+	apt-get install -y --no-install-recommends libssl-dev && \
+	apt-get install -y --no-install-recommends vim-tiny
+
+RUN rm -rf /var/lib/apt/lists/*
 
 
 # C code
