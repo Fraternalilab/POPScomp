@@ -54,7 +54,7 @@ void make_resSasaJson(Arg *arg, Str *pdb, ResSasa *resSasa, cJSON *json)
 	/* header: attached to 'json' */
 	cJSON_AddStringToObject(json, "data_resource", "POPScomp_PDBML");
 	cJSON_AddStringToObject(json, "resource_version", "weekly");
-	cJSON_AddStringToObject(json, "software_version", "3.3");
+	cJSON_AddStringToObject(json, "software_version", "3.4");
 	cJSON_AddStringToObject(json, "resource_entry_url", "https://github.com/Fraternalilab/POPScomp");
 	cJSON_AddStringToObject(json, "release_date", "25/10/2021");
 	cJSON_AddStringToObject(json, "pdb_id", pdb->pdbID);
@@ -217,10 +217,10 @@ void make_resbSasaJson(Arg *arg, Str *pdb, ResSasa *resSasa, cJSON *jsonb)
 
 	/* header: attached to 'jsonb' */
 	cJSON_AddStringToObject(jsonb, "data_resource", "popscomp");
-	cJSON_AddStringToObject(jsonb, "resource_version", "3.0.0");
-	cJSON_AddStringToObject(jsonb, "software_version", "3.0.0");
-	cJSON_AddStringToObject(jsonb, "resource_entry_url", "https://github.com/Fraternalilab/POPSCOMP");
-	cJSON_AddStringToObject(jsonb, "release_date", "21/02/2018");
+	cJSON_AddStringToObject(jsonb, "resource_version", "3.4");
+	cJSON_AddStringToObject(jsonb, "software_version", "3.4");
+	cJSON_AddStringToObject(jsonb, "resource_entry_url", "https://github.com/Fraternalilab/POPScomp");
+	cJSON_AddStringToObject(jsonb, "release_date", "24/12/2025");
 	cJSON_AddStringToObject(jsonb, "pdb_id", "1f3r");
 
 	/* add Chain array */

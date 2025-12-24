@@ -239,7 +239,7 @@ ui <- fluidPage(
         ),
         tabPanel("About",
 			h3("Shiny App"),
-			p("This is version 3.3 of the POPScomp Shiny App."),
+			p("This is version 3.4 of the POPScomp Shiny App."),
 			p("For detailed information about the software visit Fraternali Lab's ",
 			  a("POPScomp GitHub repository", href="https://github.com/Fraternalilab/POPScomp"),
 			  "; the Wiki pages contain detailed installation and usage instructions."
@@ -416,8 +416,8 @@ server <- function(input, output) {
     ## download (PDB database) or upload (local file system) the PDB structure
     if (input$pdbentry != "") {
       ## get.pdb downloads the PDB structure from the database
-      get.pdb(input$pdbentry, path = outDir);
-      inputPDB = paste(input$pdbentry, "pdb", sep = ".")
+      get.pdb(input$pdbentry, path = outDir, format = "cif")
+      inputPDB = paste(input$pdbentry, "cif", sep = ".")
     } else {
       ## move uploaded PDB file from its temporary directory to output directory
       system(paste("mv ", input$PDBfile[[4]], " ", outDir, "/",
