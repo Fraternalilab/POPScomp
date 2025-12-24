@@ -100,8 +100,8 @@ Kleinjung, J. and Fraternali, F.<br>
 [![pubmed](https://img.shields.io/badge/pubmed-1160130-blue.svg?style=flat)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1160130/)
 
 
-## Contributing
-Iussues with the program can be logged on the [Issues](https://github.com/Fraternalilab/POPScomp/issues) page.
+## Issues
+Iussues can be recorded on the [Issues](https://github.com/Fraternalilab/POPScomp/issues) page.
 
 
 ## License and Copyright
