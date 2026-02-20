@@ -4,10 +4,23 @@ on: [push]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-    
+
     steps:
-    - uses: actions/checkout@v2
-    - name: compile POPSC
-      run: cd POPSC; ./bootstrap; ./configure; make
+      - name: Checkout (with submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install build deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y autoconf automake libtool pkg-config \
+            libxml2-dev zlib1g-dev
+
+      - name: Compile POPSC
+        run: |
+          cd POPSC
+          ./bootstrap
+          ./configure
+          make -j$(nproc)
