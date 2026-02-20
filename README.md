@@ -29,6 +29,9 @@ for detailed guidelines on downloading and usage of the Docker image.
 
 2. To install from source code, either download the [latest POPScomp release](https://github.com/Fraternalilab/POPScomp/releases/latest) or the development version by cloning this POPScomp repository.
 [Compile/install](https://github.com/Fraternalilab/POPScomp/wiki/Installation) the program suite and run the *Shiny* App on your local computer.
+```
+git clone --recurse-submodules https://github.com/Fraternalilab/POPScomp.git 
+```
 
 ## Usage
 Enter a PDB identifier or upload a custom PDB file and press 'run POPScomp'.
