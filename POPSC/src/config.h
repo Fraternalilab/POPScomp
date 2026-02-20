@@ -10,24 +10,24 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
 
-/* Define to 1 if you have the 'm' library (-lm). */
+/* Define to 1 if you have the `m' library (-lm). */
 #define HAVE_LIBM 1
 
-/* Define to 1 if your system has a GNU libc compatible 'malloc' function, and
+/* Define to 1 if your system has a GNU libc compatible `malloc' function, and
    to 0 otherwise. */
 #define HAVE_MALLOC 1
 
 /* Define if OpenMP is enabled */
 /* #undef HAVE_OPENMP */
 
-/* Define to 1 if you have the 'pow' function. */
+/* Define to 1 if you have the `pow' function. */
 #define HAVE_POW 1
 
-/* Define to 1 if your system has a GNU libc compatible 'realloc' function,
+/* Define to 1 if your system has a GNU libc compatible `realloc' function,
    and to 0 otherwise. */
 #define HAVE_REALLOC 1
 
-/* Define to 1 if you have the 'sqrt' function. */
+/* Define to 1 if you have the `sqrt' function. */
 #define HAVE_SQRT 1
 
 /* Define to 1 if you have the <stdint.h> header file. */
@@ -70,7 +70,7 @@
 #define PACKAGE_NAME "pops"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "pops 3.2.2"
+#define PACKAGE_STRING "pops 3.4"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "pops"
@@ -79,18 +79,18 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "3.2.2"
+#define PACKAGE_VERSION "3.4"
 
 /* Define to compile with PROFILING settings. */
 /* #undef PROFILING */
 
-/* Define to 1 if all of the C89 standard headers exist (not just the ones
+/* Define to 1 if all of the C90 standard headers exist (not just the ones
    required in a freestanding environment). This macro is provided for
    backward compatibility; new code need not use it. */
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "3.2.2"
+#define VERSION "3.4"
 
 /* Define to rpl_malloc if the replacement function should be used. */
 /* #undef malloc */
@@ -98,5 +98,5 @@
 /* Define to rpl_realloc if the replacement function should be used. */
 /* #undef realloc */
 
-/* Define as 'unsigned int' if <stddef.h> doesn't define. */
+/* Define to `unsigned int' if <sys/types.h> does not define. */
 /* #undef size_t */

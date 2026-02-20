@@ -66,8 +66,8 @@ chain.files.short = sub('\\.pdb$', '', basename(as.character(chain.files)));
 message("Isolated chains")
 exit_codes = sapply(1:length(chain.files), function(x) {
  	command = paste0("pops --outDirName ", outDir,
-					" --rout --routPrefix ", paste0(chain.files.short[x], ".iso"),
-					" --atomOut --residueOut --chainOut",
+          " --rout --routPrefix ", paste0(chain.files.short[x], ".iso"),
+					" --atomOut --residueOut --chainOut --neighbourOut --interfaceOut",
 					" --pdb ", chain.files[x], " 1> ", outDir, "/", chain.files.short[x], ".o",
 					" 2> ", outDir, "/", chain.files.short[x], ".e");
 	system_status = system(command, wait = TRUE);
