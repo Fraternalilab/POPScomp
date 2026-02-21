@@ -7,15 +7,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout (with submodules)
+      - name: Checkout
         uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           submodules: recursive
+
+      - name: Ensure submodules are present
+        run: |
+          git submodule sync --recursive
+          git submodule update --init --recursive
+          echo "Submodule status:"
+          git submodule status --recursive
+          echo "Checking Gemmi headers:"
+          ls -l POPSC/gemmi/include/gemmi/cif.hpp
 
       - name: Install build deps
         run: |
           sudo apt-get update
           sudo apt-get install -y autoconf automake libtool pkg-config \
+            g++ make \
             libxml2-dev zlib1g-dev
 
       - name: Compile POPSC
@@ -23,4 +34,4 @@ jobs:
           cd POPSC
           ./bootstrap
           ./configure
-          make -j$(nproc)
+          make -j$(nproc) V=1
