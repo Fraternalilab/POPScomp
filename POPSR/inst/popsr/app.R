@@ -428,11 +428,11 @@ server <- function(input, output) {
     ## run POPS as system command
     if (input$popsmode == "atomistic") {
       command = paste(pops_shiny, "--outDirName", outDir,
-                      "--rout --atomOut --residueOut --chainOut",
+                      "--rout --atomOut --residueOut --chainOut --neighbourOut",
                       "--rProbe", input$rprobe, "--pdb", inputPDB, "1> POPScomp.o 2> POPScomp.e");
     } else if (input$popsmode == "coarse") {
       command = paste(pops_shiny, "--outDirName", outDir,
-                      "--rout --coarse --chainOut --residueOut --chainOut",
+                      "--rout --coarse --chainOut --residueOut --chainOut --neighbourOut",
                       "--rProbe", input$rprobe, "--pdb", inputPDB, "1> POPScomp.o 2> POPScomp.e");
     }
     system_status = system(command, wait = TRUE)
