@@ -14,8 +14,6 @@ int map_structure_mmcif(Arg *arg, Argpdb *argpdb, Str *str, Structure *s) {
 	int i;
 	int min_res = INT_MAX;
 	int max_res = INT_MIN;
-	int min_chain = INT_MAX;
-	int max_chain = INT_MIN;
 
 	/*____________________________________________________________________________*/
 	/* initialise/allocate memory for set of (64) selected (CA) atom entries */
@@ -41,15 +39,6 @@ int map_structure_mmcif(Arg *arg, Argpdb *argpdb, Str *str, Structure *s) {
 	str->nAllResidue = str->nResidue;
 
 	/* number of chains */
-	/*
-	min_chain = INT_MAX;
-	max_chain = INT_MIN;
-	for (i = 0; i < str->nAtom; ++ i) {
-		min_chain = s->chain_number[i] < min_chain ? s->chain_number[i] : min_chain;
-		max_chain = s->chain_number[i] > max_chain ? s->chain_number[i] : max_chain;
-	}
-	str->nChain = max_chain - min_chain + 1;
-	*/
 	str->nChain = s->chain_number;
 
 	/*____________________________________________________________________________*/
@@ -63,7 +52,33 @@ int map_structure_mmcif(Arg *arg, Argpdb *argpdb, Str *str, Structure *s) {
 	/* allocate memory for sequence residues */
 	str->sequence.res = safe_malloc(str->nResidue * sizeof(char));
 
-	
+	/*____________________________________________________________________________*/
+	/* map entries from MMCIF structure 's' to PDB structure 'str' */
+	/* that could be done directly, but I wanted to have a clean separation
+		between the C++ reader and the 'getpdb'-type assignment that is used
+		in the PDB and XML reading functions */
+
+	for (i = 0; i < str->nAtom; ++ i) {
+		/* atoms */
+		str->atom[i].atomNumber = s->atom_number[i];
+		strcpy(str->atom[i].atomName, s->atom_name[i]);
+
+		/* residues */
+		str->atom[i].residueNumber = s->res_number[i];
+		strcpy(str->atom[i].residueName, s->res_name[i]);
+		str->atom[i].icode[0] = s->ins_code[i];
+		str->atom[i].icode[1] = '\0';
+
+		/* chains */
+		strcpy(str->atom[i].chainIdentifier, s->chain_name[i]);
+
+		/* coordinates */
+		str->atom[i].pos.x = s->xyz[3*i + 0];
+		str->atom[i].pos.y = s->xyz[3*i + 1];
+		str->atom[i].pos.z = s->xyz[3*i + 2];
+	}
+
+
 	/*____________________________________________________________________________*/
     free_structure(s);
 
