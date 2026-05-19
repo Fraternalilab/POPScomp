@@ -14,9 +14,11 @@ AM_CXXFLAGS = -Wall
 
 pops_SOURCES = \
 arg.c arg.h argpdb.h atomgroup.c atomgroup.h atomgroup_data.h \
+cif_header.h \
 cJSON.c cJSON.h \
 error.c error.h fs.c fs.h \
-getpdb.c getpdb.h getpdbml.c getpdbml.h gettraj.c gettraj.h \
+getmmcif.c getmmcif.h getpdb.c getpdb.h getpdbml.c getpdbml.h \
+gettraj.c gettraj.h \
 json.c json.h \
 matrix.c matrix.h modstring.c modstring.h \
 pattern.c pattern.h pdb_structure.h pops.c pops.h \

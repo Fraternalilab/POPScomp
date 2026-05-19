@@ -25,9 +25,12 @@ Read the COPYING file for license information.
 typedef struct  
 {
     FILE *pdbInFile;
+	char *mmcifInFileName;
 	char *pdbInFileName;
 	char *pdbmlInFileName;
 	char *pdbIn;
+	int mmcif;
+	int pdb;
 	int pdbml;
 	int zipped;
     FILE *trajInFile;

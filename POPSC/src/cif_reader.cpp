@@ -1,5 +1,6 @@
 /*==============================================================================
 cif_reader.cpp : C++ code to process mmcif structures 
+
 Copyright (C) 2026 Jens Kleinjung
 Read the COPYING file for license information.
 ==============================================================================*/

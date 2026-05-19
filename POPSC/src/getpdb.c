@@ -106,6 +106,7 @@ __inline__ static int process_het(Str *str, char *line, regex_t *regexPattern, c
 	return 0;
 }
 */
+
 /*____________________________________________________________________________*/
 /** read PDB file */
 

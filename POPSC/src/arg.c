@@ -73,8 +73,11 @@ static void print_citation()
 /** set defaults */
 static void set_defaults(Arg *arg, Argpdb *argpdb)
 {
+    arg->mmcifInFileName = "";
     arg->pdbInFileName = "";
     arg->pdbmlInFileName = "";
+	arg->mmcif = 0;
+	arg->pdb = 0;
 	arg->pdbml = 0;
 	arg->zipped = 0;
 	arg->trajInFileName = 0; /* trajectory input file */ 
@@ -118,9 +121,12 @@ static void set_defaults(Arg *arg, Argpdb *argpdb)
 /** check input */
 static void check_input(Arg *arg, Argpdb *argpdb)
 {
-	if ((strlen(arg->pdbInFileName) == 0) &&
+	if ((strlen(arg->mmcifInFileName) == 0) &&
+	    (strlen(arg->pdbInFileName) == 0) &&
 		(strlen(arg->pdbmlInFileName) == 0))
 		Error("Invalid PDB file name");
+	assert(arg->mmcif == 0 || arg->mmcif == 1);
+	assert(arg->pdb == 0 || arg->pdb == 1);
 	assert(arg->pdbml == 0 || arg->pdbml == 1);
 	assert(arg->zipped == 0 || arg->zipped == 1);
 	assert(argpdb->coarse == 0 || argpdb->coarse == 1);
@@ -162,7 +168,8 @@ static void print_args(Arg *arg, Argpdb *argpdb)
     time(&now);
 
     if (! arg->silent) fprintf(stdout, "date: %s", ctime(&now));
-    fprintf(stdout, "%s%s\n",
+    fprintf(stdout, "%s%s%s\n",
+					arg->mmcifInFileName,
 					arg->pdbInFileName, arg->pdbmlInFileName);
     if (! arg->silent) fprintf(stdout, \
 					"zipped: %d\n"
@@ -185,6 +192,7 @@ int parse_args(int argc, char **argv, Arg *arg, Argpdb *argpdb)
 	const char usage[] = "\npops [--pdb ... | --pdbml ...] [OPTIONS ...]\n\
 	 INPUT OPTIONS\n\
 	   Input syntax is either '--pdb <name>.pdb[.gz]' or '--pdbml <name>.xml[.gz]'.\n\
+	   --mmcif <PDB input>\t\t(type: char  , default: void)\n\
 	   --pdb <PDB input>\t\t(type: char  , default: void)\n\
 	   --pdbml <PDBML input>\t(type: char  , default: void)\n\
 	   --traj <trajectory input>\t(type: char  , default: void)\n\
@@ -267,6 +275,7 @@ int parse_args(int argc, char **argv, Arg *arg, Argpdb *argpdb)
         {"pdbml", required_argument, 0, 30},
         {"zipped", no_argument, 0, 31},
         {"outDirName", required_argument, 0, 32},
+        {"mmcif", required_argument, 0, 33},
         {"cite", no_argument, 0, 40},
         {"version", no_argument, 0, 41},
         {"help", no_argument, 0, 42},
@@ -274,7 +283,7 @@ int parse_args(int argc, char **argv, Arg *arg, Argpdb *argpdb)
     };
 
     /** assign parameters to long options */
-    while ((c = getopt_long(argc, argv, "1:2:3 4 5:6:7:8:9:10:11:12 13 14 15 16 17 18 19 20 21 22 23 24 25 26:27 28 29 30:31 32:40 41", long_options, NULL)) != -1) {
+    while ((c = getopt_long(argc, argv, "1:2:3 4 5:6:7:8:9:10:11:12 13 14 15 16 17 18 19 20 21 22 23 24 25 26:27 28 29 30:31 32:33:40 41", long_options, NULL)) != -1) {
         switch(c) {
             case 1:
                 arg->pdbInFileName = optarg;
@@ -373,6 +382,11 @@ int parse_args(int argc, char **argv, Arg *arg, Argpdb *argpdb)
 				break;
             case 32:
 				arg->outDirName = optarg;
+				break;
+            case 33:
+                arg->mmcifInFileName = optarg;
+				arg->pdbIn = basename(optarg);
+				arg->mmcif = 1;
 				break;
             case 40:
 				print_citation();

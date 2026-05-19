@@ -109,12 +109,12 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
 am_pops_OBJECTS = arg.$(OBJEXT) atomgroup.$(OBJEXT) cJSON.$(OBJEXT) \
-	error.$(OBJEXT) fs.$(OBJEXT) getpdb.$(OBJEXT) \
-	getpdbml.$(OBJEXT) gettraj.$(OBJEXT) json.$(OBJEXT) \
-	matrix.$(OBJEXT) modstring.$(OBJEXT) pattern.$(OBJEXT) \
-	pops.$(OBJEXT) putsasa.$(OBJEXT) putbsasa.$(OBJEXT) \
-	putsigma.$(OBJEXT) safe.$(OBJEXT) sasa.$(OBJEXT) \
-	sigma.$(OBJEXT) topol.$(OBJEXT) type.$(OBJEXT) \
+	error.$(OBJEXT) fs.$(OBJEXT) getmmcif.$(OBJEXT) \
+	getpdb.$(OBJEXT) getpdbml.$(OBJEXT) gettraj.$(OBJEXT) \
+	json.$(OBJEXT) matrix.$(OBJEXT) modstring.$(OBJEXT) \
+	pattern.$(OBJEXT) pops.$(OBJEXT) putsasa.$(OBJEXT) \
+	putbsasa.$(OBJEXT) putsigma.$(OBJEXT) safe.$(OBJEXT) \
+	sasa.$(OBJEXT) sigma.$(OBJEXT) topol.$(OBJEXT) type.$(OBJEXT) \
 	vector.$(OBJEXT) cif_reader.$(OBJEXT) \
 	../gemmi/src/mmcif.$(OBJEXT) ../gemmi/src/symmetry.$(OBJEXT) \
 	../gemmi/src/polyheur.$(OBJEXT) ../gemmi/src/resinfo.$(OBJEXT)
@@ -142,14 +142,15 @@ am__depfiles_remade = ../gemmi/src/$(DEPDIR)/mmcif.Po \
 	../gemmi/src/$(DEPDIR)/symmetry.Po ./$(DEPDIR)/arg.Po \
 	./$(DEPDIR)/atomgroup.Po ./$(DEPDIR)/cJSON.Po \
 	./$(DEPDIR)/cif_reader.Po ./$(DEPDIR)/error.Po \
-	./$(DEPDIR)/fs.Po ./$(DEPDIR)/getpdb.Po \
-	./$(DEPDIR)/getpdbml.Po ./$(DEPDIR)/gettraj.Po \
-	./$(DEPDIR)/json.Po ./$(DEPDIR)/matrix.Po \
-	./$(DEPDIR)/modstring.Po ./$(DEPDIR)/pattern.Po \
-	./$(DEPDIR)/pops.Po ./$(DEPDIR)/putbsasa.Po \
-	./$(DEPDIR)/putsasa.Po ./$(DEPDIR)/putsigma.Po \
-	./$(DEPDIR)/safe.Po ./$(DEPDIR)/sasa.Po ./$(DEPDIR)/sigma.Po \
-	./$(DEPDIR)/topol.Po ./$(DEPDIR)/type.Po ./$(DEPDIR)/vector.Po
+	./$(DEPDIR)/fs.Po ./$(DEPDIR)/getmmcif.Po \
+	./$(DEPDIR)/getpdb.Po ./$(DEPDIR)/getpdbml.Po \
+	./$(DEPDIR)/gettraj.Po ./$(DEPDIR)/json.Po \
+	./$(DEPDIR)/matrix.Po ./$(DEPDIR)/modstring.Po \
+	./$(DEPDIR)/pattern.Po ./$(DEPDIR)/pops.Po \
+	./$(DEPDIR)/putbsasa.Po ./$(DEPDIR)/putsasa.Po \
+	./$(DEPDIR)/putsigma.Po ./$(DEPDIR)/safe.Po \
+	./$(DEPDIR)/sasa.Po ./$(DEPDIR)/sigma.Po ./$(DEPDIR)/topol.Po \
+	./$(DEPDIR)/type.Po ./$(DEPDIR)/vector.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -319,15 +320,15 @@ AM_CPPFLAGS = $(INTI_CFLAGS) $(XML_CFLAGS) $(ZLIB_CFLAGS) \
 AM_CFLAGS = -Wall -D_FORTIFY_SOURCE=2
 AM_CXXFLAGS = -Wall
 pops_SOURCES = arg.c arg.h argpdb.h atomgroup.c atomgroup.h \
-	atomgroup_data.h cJSON.c cJSON.h error.c error.h fs.c fs.h \
-	getpdb.c getpdb.h getpdbml.c getpdbml.h gettraj.c gettraj.h \
-	json.c json.h matrix.c matrix.h modstring.c modstring.h \
-	pattern.c pattern.h pdb_structure.h pops.c pops.h putsasa.c \
-	putsasa.h putbsasa.c putbsasa.h putsigma.c putsigma.h safe.c \
-	safe.h sasa.c sasa.h sasa_const.h sasa_data.h seq.h sigma.c \
-	sigma.h sigma_const.h sigma_data.h topol.c topol.h type.c \
-	type.h vector.c vector.h cif_reader.cpp cif_reader.h \
-	../gemmi/src/mmcif.cpp ../gemmi/src/symmetry.cpp \
+	atomgroup_data.h cif_header.h cJSON.c cJSON.h error.c error.h \
+	fs.c fs.h getmmcif.c getmmcif.h getpdb.c getpdb.h getpdbml.c \
+	getpdbml.h gettraj.c gettraj.h json.c json.h matrix.c matrix.h \
+	modstring.c modstring.h pattern.c pattern.h pdb_structure.h \
+	pops.c pops.h putsasa.c putsasa.h putbsasa.c putbsasa.h \
+	putsigma.c putsigma.h safe.c safe.h sasa.c sasa.h sasa_const.h \
+	sasa_data.h seq.h sigma.c sigma.h sigma_const.h sigma_data.h \
+	topol.c topol.h type.c type.h vector.c vector.h cif_reader.cpp \
+	cif_reader.h ../gemmi/src/mmcif.cpp ../gemmi/src/symmetry.cpp \
 	../gemmi/src/polyheur.cpp ../gemmi/src/resinfo.cpp
 
 # Force link with the C++ linker if any C++ objects are present
@@ -463,6 +464,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cif_reader.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/error.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fs.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getmmcif.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getpdb.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getpdbml.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gettraj.Po@am__quote@ # am--include-marker
@@ -659,6 +661,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/cif_reader.Po
 	-rm -f ./$(DEPDIR)/error.Po
 	-rm -f ./$(DEPDIR)/fs.Po
+	-rm -f ./$(DEPDIR)/getmmcif.Po
 	-rm -f ./$(DEPDIR)/getpdb.Po
 	-rm -f ./$(DEPDIR)/getpdbml.Po
 	-rm -f ./$(DEPDIR)/gettraj.Po
@@ -731,6 +734,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/cif_reader.Po
 	-rm -f ./$(DEPDIR)/error.Po
 	-rm -f ./$(DEPDIR)/fs.Po
+	-rm -f ./$(DEPDIR)/getmmcif.Po
 	-rm -f ./$(DEPDIR)/getpdb.Po
 	-rm -f ./$(DEPDIR)/getpdbml.Po
 	-rm -f ./$(DEPDIR)/gettraj.Po

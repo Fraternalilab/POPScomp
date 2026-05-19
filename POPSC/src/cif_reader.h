@@ -1,5 +1,6 @@
 /*==============================================================================
-cif_header.h : wrapper header to use C++ functions from 'gemma' 
+cif_reader.h : wrapper header to use C++ functions from 'gemmi' 
+The 'gemmi' library provides functions for the now default mmcif format.
 Copyright (C) 2026 Jens Kleinjung
 Read the COPYING file for license information.
 ==============================================================================*/

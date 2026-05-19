@@ -3,11 +3,17 @@
 ## Adaptation to R-compatible output and FunPDBe starts at version 2.0
 ## Development of Shiny App starts at version 3.0
 ## Docker image released at version 3.1
+## Added mmcif capability at version 3.4
 #===============================================================================
+
+#_______________________________________________________________________________
+http://popscomp.org
+
+#_______________________________________________________________________________
 
 - 3.4
 Fri 20 Feb 11:18:33 GMT 2026
-	Added mmcif capability.
+	Added mmcif capability using the 'gemmi' cif reader.
 
 - 3.3
 Thu 29 Feb 08:39:24 GMT 2024
