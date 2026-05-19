@@ -10,9 +10,21 @@ extern "C" {
 #endif
 
 /*___________________________________________________________________________*/
+
 typedef struct {
     int natom;
-    double *xyz;   // length 3*natom
+
+    double* xyz;
+
+    char** atom_name;
+    int* atom_number;
+
+    char** res_name;
+    int* res_number;
+	char* ins_code;
+
+    char** chain_name;
+    int chain_number;
 } Structure;
 
 /*___________________________________________________________________________*/

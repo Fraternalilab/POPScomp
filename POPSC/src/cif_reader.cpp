@@ -5,22 +5,30 @@ Copyright (C) 2026 Jens Kleinjung
 Read the COPYING file for license information.
 ==============================================================================*/
 
-#include <gemmi/cif.hpp>     // gemmi::cif::Document, gemmi::cif::read_file
-#include <gemmi/mmcif.hpp>   // gemmi::make_structure_from_block
-#include <gemmi/model.hpp>   // gemmi::Structure, gemmi::Model, cra.atom
+#include <gemmi/cif.hpp>
+#include <gemmi/mmcif.hpp>
+#include <gemmi/model.hpp>
 #include <cstdlib>
+#include <cstring>
 #include <string>
 
 #include "cif_reader.h"
 
+/*___________________________________________________________________________*/
+static char* copy_string(const std::string& x) {
+    char* p = (char*) std::malloc(x.size() + 1);
+    if (!p) return nullptr;
+    std::memcpy(p, x.c_str(), x.size() + 1);
+    return p;
+}
+
+/*___________________________________________________________________________*/
 Structure* read_cif(const char* filename) {
-    // IMPORTANT: use read_file(), NOT read(filename)
     gemmi::cif::Document doc = gemmi::cif::read_file(std::string(filename));
 
     if (doc.blocks.empty())
         return nullptr;
 
-    // Convert mmCIF block -> Structure
     gemmi::Structure st = gemmi::make_structure_from_block(doc.blocks[0]);
 
     if (st.models.empty())
@@ -28,41 +36,90 @@ Structure* read_cif(const char* filename) {
 
     const gemmi::Model& model = st.models[0];
 
-    // Count atoms portably (older gemmi may not have Model::count_atoms())
     int n = 0;
-	for (auto it = model.all().begin(); it != model.all().end(); ++it)
-    	++n;
+    for (const gemmi::Chain& chain : model.chains)
+        for (const gemmi::Residue& res : chain.residues)
+            n += (int) res.atoms.size();
 
-    Structure* s = (Structure*) std::malloc(sizeof(Structure));
+    Structure* s = (Structure*) std::calloc(1, sizeof(Structure));
     if (!s) return nullptr;
 
     s->natom = n;
     s->xyz = (double*) std::malloc(sizeof(double) * 3 * n);
-    if (!s->xyz) {
-        std::free(s);
+    s->atom_name = (char**) std::calloc(n, sizeof(char*));
+	s->atom_number = (int*) std::malloc(sizeof(int) * n);
+    s->res_name = (char**) std::calloc(n, sizeof(char*));
+	s->res_number = (int*) std::malloc(sizeof(int) * n);
+    s->chain_name = (char**) std::calloc(n, sizeof(char*));
+
+    if (!s->xyz || !s->atom_name || !s->atom_number ||
+				   !s->res_name || !s->res_number ||
+        		   !s->chain_name) {
+        free_structure(s);
         return nullptr;
     }
 
     int i = 0;
-    for (auto cra : model.all()) {
-        // In your gemmi, cra.atom is a pointer (const gemmi::Atom*)
-        const gemmi::Atom* atom = cra.atom;
-        s->xyz[3*i + 0] = atom->pos.x;
-        s->xyz[3*i + 1] = atom->pos.y;
-        s->xyz[3*i + 2] = atom->pos.z;
-        ++i;
+    s->chain_number = 0;
+
+    for (const gemmi::Chain& chain : model.chains) {
+        for (const gemmi::Residue& res : chain.residues) {
+            for (const gemmi::Atom& atom : res.atoms) {
+                s->xyz[3*i + 0] = atom.pos.x;
+                s->xyz[3*i + 1] = atom.pos.y;
+                s->xyz[3*i + 2] = atom.pos.z;
+
+                s->atom_name[i] = copy_string(atom.name);
+                s->atom_number[i] = atom.serial;
+
+                s->res_name[i] = copy_string(res.name);
+				s->res_number[i] = res.seqid.num.has_value() ? res.seqid.num.value : 0;
+				s->ins_code[i] = res.seqid.icode;
+
+                s->chain_name[i] = copy_string(chain.name);
+
+                if (!s->atom_name[i] || !s->res_name[i] || !s->chain_name[i] ||
+					!s->atom_number[i] || !s->res_number[i]) {
+                    free_structure(s);
+                    return nullptr;
+                }
+
+                ++ i;
+            }
+        }
+        ++ s->chain_number;
     }
 
     return s;
 }
 
+/*___________________________________________________________________________*/
 void free_structure(Structure* s) {
     if (!s) return;
+
+    if (s->atom_name) {
+        for (int i = 0; i < s->natom; ++i)
+            std::free(s->atom_name[i]);
+    }
+
+    if (s->res_name) {
+        for (int i = 0; i < s->natom; ++i)
+            std::free(s->res_name[i]);
+    }
+
+    if (s->chain_name) {
+        for (int i = 0; i < s->natom; ++i)
+            std::free(s->chain_name[i]);
+    }
+
     std::free(s->xyz);
+    std::free(s->atom_name);
+    std::free(s->atom_number);
+    std::free(s->res_name);
+    std::free(s->res_number);
+    std::free(s->chain_name);
     std::free(s);
 }
 
-
 /*============================================================================*/
-
 

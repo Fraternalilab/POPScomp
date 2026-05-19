@@ -43,6 +43,7 @@ int main(int argc, char *argv[])
     Arg arg; /** data structure for command line arguments */
     Argpdb argpdb; /** data structure for PDB command line arguments */
 	Str pdb; /** data structure for input PDB molecule */
+	Structure *s = NULL; /* structure pointer returned from MMCIF reader */
 	Traj traj; /** data structure for trajectory */
 	MolSasa molSasa; /* data structure for molecular SASA values,
 					invoking structures for residuic and atomic SASA values */
@@ -96,7 +97,7 @@ int main(int argc, char *argv[])
 	if (! arg.silent) fprintf(stdout, "Input structure\n");
 	strcpy(pdb.pdbID, "");
 	if (arg.mmcif) {
-		read_cif(arg.mmcifInFileName);
+		s = read_cif(arg.mmcifInFileName);
 	} else if (arg.pdbml) {
 		read_structure_xml(&arg, &argpdb, &pdb);
 	} else if (arg.pdb) {
@@ -104,6 +105,10 @@ int main(int argc, char *argv[])
 	} else {
 		exit(EXIT_FAILURE);
 	}
+
+	printf("%s %d  %s %d  %s %d", s->atom_name[1], s->atom_number[1],
+								   s->res_name[1], s->res_number[1],
+								   s->chain_name[1], s->chain_number);
 
     /*____________________________________________________________________________*/
     /** read input trajectory */
