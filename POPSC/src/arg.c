@@ -102,7 +102,7 @@ static void set_defaults(Arg *arg, Argpdb *argpdb)
 	arg->atomOut = 0; /* output of atom areas */
 	arg->residueOut = 0; /* output of residue areas */
 	arg->chainOut = 0; /* output of chain areas */
-    arg->neighbourOutFileName = "neli.out";
+    arg->neighbourOutFileName = "neighbours.out";
 	arg->neighbourOut = 0; /* output of neighbour list */
     arg->parameterOutFileName = "para.out";
 	arg->parameterOut = 0; /* output of atom parameters (for benchmarking) */
