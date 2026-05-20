@@ -12,7 +12,7 @@ http://popscomp.org
 #_______________________________________________________________________________
 
 - 3.4
-Fri 20 Feb 11:18:33 GMT 2026
+Wed 20 May 18:33:11 BST 2026
 	Added mmcif capability using the 'gemmi' cif reader.
 
 - 3.3
