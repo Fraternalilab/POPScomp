@@ -120,7 +120,9 @@ int map_structure_mmcif(Arg *arg, Argpdb *argpdb, Str *str, Structure *s) {
 	/* number of chains */
 	str->nChain = s->chain_number;
 
-	printf("nAtom %d , nResidue %d , nChain %d", str->nAtom, str->nResidue, str->nChain);
+	/* for debigging only
+	printf("nAtom %d , nResidue %d , nChain %d\n", str->nAtom, str->nResidue, str->nChain);
+	*/
 
 	/*____________________________________________________________________________*/
 	/* allocate memory for structure */
