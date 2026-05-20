@@ -73,8 +73,8 @@ Structure* read_cif(const char* filename) {
             for (const gemmi::Atom& atom : res.atoms) {
 
 				// skip hydrogen (or deuterium) atoms
-				if (atom.element.is_hydrogen())
-				    continue;
+				//if (atom.element.is_hydrogen())
+				//    continue;
 
 				// coordinates
                 s->xyz[3*i + 0] = atom.pos.x;
@@ -95,7 +95,13 @@ Structure* read_cif(const char* filename) {
                 s->chain_name[i] = copy_string(chain.name);
 
 				// element
-                s->element[i] = copy_string(atom.element.name());
+				std::string elem = atom.element.name();
+
+				if (elem.empty() || elem == "X") {
+   					elem = atom.name;
+				}
+
+				s->element[i] = copy_string(elem.c_str());
 
 				// 'A' for ATOM, 'H' for HETATM
 				s->record_type[i] = res.het_flag;
@@ -106,6 +112,11 @@ Structure* read_cif(const char* filename) {
                     free_structure(s);
                     return nullptr;
                 }
+				if (!s->atom_name[i] || !s->res_name[i] ||
+ 					!s->chain_name[i] || !s->element[i]) {
+					free_structure(s);
+				    return nullptr;
+				}
 
                 ++ i;
             }

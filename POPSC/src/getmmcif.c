@@ -128,10 +128,10 @@ int map_structure_mmcif(Arg *arg, Argpdb *argpdb, Str *str, Structure *s) {
 	str->atomMap = safe_malloc(str->nAtom * sizeof(int));
 
 	/* array of residue-centric atom indices */
-	str->resAtom = safe_malloc(str->nResidue * sizeof(int));
+	str->resAtom = safe_malloc((str->nResidue + 1) * sizeof(int));
 
 	/* allocate memory for sequence residues */
-	str->sequence.res = safe_malloc(str->nResidue * sizeof(char));
+	str->sequence.res = safe_malloc((str->nResidue + 1) * sizeof(char));
 
 	/* compile allowed HETATM element patterns */
 	regexPattern = safe_malloc(nHetAtom * sizeof(regex_t));
@@ -145,7 +145,7 @@ int map_structure_mmcif(Arg *arg, Argpdb *argpdb, Str *str, Structure *s) {
 		the C++ reader and the 'getpdb'-type assignment
 		that is also used in the PDB and XML reading functions. */
 
-	for (x = 0; x < s->natom; ++x) {
+	for (x = 0; x < s->natom; ++ x) {
 
 		ca_p = 0;
 
@@ -155,6 +155,14 @@ int map_structure_mmcif(Arg *arg, Argpdb *argpdb, Str *str, Structure *s) {
 				++str->nAllAtom;
 				continue;
 			}
+		}
+
+		if (!argpdb->hydrogens) {
+		    if (s->element[x] != NULL &&
+      		  (s->element[x][0] == 'H' || s->element[x][0] == 'D')) {
+      		  ++str->nAllAtom;
+       		 continue;
+    		}
 		}
 
 		/* atoms */
