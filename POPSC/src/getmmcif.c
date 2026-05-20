@@ -90,8 +90,8 @@ __inline__ static int process_het(Str *str, char *line, regex_t *regexPattern, c
 /* map MMCIF structure */
 int map_structure_mmcif(Arg *arg, Argpdb *argpdb, Str *str, Structure *s) {
 
-	int i = 0;
-	int x = 0;
+	int i = 0; /* counter for PDB entries (skipping some MMCIF entries) */
+	int x = -1; /* counter for MMCIF entries */
 	unsigned int k = 0;
 
 	char resbuf;
@@ -116,10 +116,11 @@ int map_structure_mmcif(Arg *arg, Argpdb *argpdb, Str *str, Structure *s) {
 
 	/* number of residues */
 	str->nResidue = s->nresidue; 
-	printf("nResidue %d", str->nResidue); 
 
 	/* number of chains */
 	str->nChain = s->chain_number;
+
+	printf("nAtom %d , nResidue %d , nChain %d", str->nAtom, str->nResidue, str->nChain);
 
 	/*____________________________________________________________________________*/
 	/* allocate memory for structure */
@@ -143,59 +144,47 @@ int map_structure_mmcif(Arg *arg, Argpdb *argpdb, Str *str, Structure *s) {
 		I wanted to have a clean separation between
 		the C++ reader and the 'getpdb'-type assignment
 		that is also used in the PDB and XML reading functions. */
-	while (x < str->nAtom) {
-		++x ;
+
+	for (x = 0; x < s->natom; ++x) {
+
+		ca_p = 0;
+
+		/* Skip hydrogens/deuteriums before copying into str->atom[i] */
+		if (!argpdb->hydrogens) {
+			if (s->element[x][0] == 'H' || s->element[x][0] == 'D') {
+				++str->nAllAtom;
+				continue;
+			}
+		}
 
 		/* atoms */
-		str->atom[i].atomNumber = s->atom_number[i];
-		strcpy(str->atom[i].atomName, s->atom_name[i]);
-		str->atom[i].alternativeLocation[0] = s->altloc[i];
+		str->atom[i].atomNumber = s->atom_number[x];
+		strcpy(str->atom[i].atomName, s->atom_name[x]);
+		str->atom[i].alternativeLocation[0] = s->altloc[x];
 		str->atom[i].alternativeLocation[1] = '\0';
 
 		/* residues */
-		str->atom[i].residueNumber = s->res_number[i];
-		strcpy(str->atom[i].residueName, s->res_name[i]);
-		str->atom[i].icode[0] = s->ins_code[i];
+		str->atom[i].residueNumber = s->res_number[x];
+		strcpy(str->atom[i].residueName, s->res_name[x]);
+		str->atom[i].icode[0] = s->ins_code[x];
 		str->atom[i].icode[1] = '\0';
 
 		/* chains */
-		strcpy(str->atom[i].chainIdentifier, s->chain_name[i]);
+		strcpy(str->atom[i].chainIdentifier, s->chain_name[x]);
 
 		/* coordinates */
-		str->atom[i].pos.x = s->xyz[3*i + 0];
-		str->atom[i].pos.y = s->xyz[3*i + 1];
-		str->atom[i].pos.z = s->xyz[3*i + 2];
+		str->atom[i].pos.x = s->xyz[3*x + 0];
+		str->atom[i].pos.y = s->xyz[3*x + 1];
+		str->atom[i].pos.z = s->xyz[3*x + 2];
 
-		/* record type (atom or heteroatom) */
-		if (s->record_type[i] == 'A') {
-		    /* ATOM */
+		/* record type */
+		if (s->record_type[x] == 'A') {
 			str->atom[i].het = 0;
-		} else if (s->record_type[i] == 'H') {
- 			/* HETATM */
+		} else if (s->record_type[x] == 'H') {
 			str->atom[i].het = 1;
-		}
-
-		/*____________________________________________________________________________*/
-		/* check conditions to record this entry */
-		/* if no hydrogens set, skip hydrogen lines, including deuterium */
-		if (! argpdb->hydrogens) {
-			strip_char(str->atom[i].atomName, &(str->atom[i].atomName[0]));
-			/* skip patterns 'H...' and '?H..', where '?' is a digit */
-			if ((str->atom[i].atomName[0] == 'H') || \
-				((str->atom[i].atomName[0] >= 48) &&
-				 (str->atom[i].atomName[0] <= 57) &&
-				 (str->atom[i].atomName[1] == 'H'))) {
-				++ str->nAllAtom;
-				continue;
-			}
-			/* same for D (deuterium)*/
-			if ((str->atom[i].atomName[0] == 'D') || \
-				((str->atom[i].atomName[0] >= 48) &&
-				 (str->atom[i].atomName[0] <= 57) &&
-				 (str->atom[i].atomName[1] == 'D'))) {
-				++ str->nAllAtom;
-				continue;
-			}
+		} else {
+			++str->nAllAtom;
+			continue;
 		}
 
 		/* aa code */
@@ -203,48 +192,58 @@ int map_structure_mmcif(Arg *arg, Argpdb *argpdb, Str *str, Structure *s) {
 			assert((resbuf = aacode(str->atom[i].residueName)) != ' ');
 		}
 
-		/* process HETATM entries */
+		/* Skip HETATM entries */
 		if (str->atom[i].het == 1) {
+			++str->nAllAtom;
 			continue;
 		}
 
-		/* detect CA and N3 atoms of standard residues for residue allocation */
-		/* Gemmi preserves the original PDB-style atom formatting, including spaces. */
-		/* This is intentional PDB formatting:
-			- one-letter elements are right-aligned;
-			- two-letter elements are left-aligned.
-			Examples: " N  ", " CA ", " C  ", " O  ", " FE ", " MG " */
+		/* detect CA/N3 atoms */
 		if ((strncmp(str->atom[i].atomName, " CA ", 4) == 0) ||
-		(strncmp(str->atom[i].atomName, " N3 ", 4) == 0)) {
+			(strncmp(str->atom[i].atomName, " N3 ", 4) == 0)) {
+
 			str->resAtom[k] = i;
-			str->sequence.res[k ++] = aacode(str->atom[i].residueName);
-			++ ca_p;
+			str->sequence.res[k++] = aacode(str->atom[i].residueName);
+			ca_p = 1;
 		}
 
-		/* standardise non-standard atom names */
 		standardise_name(str->atom[i].residueName, str->atom[i].atomName);
 
 		/* in coarse mode record only CA and P entries */
-		if (!ca_p && argpdb->coarse)
+		if (!ca_p && argpdb->coarse) {
+			++str->nAllAtom;
 			continue;
-
-		/*____________________________________________________________________________*/
-		/* count number of allResidues (including HETATM residues) */
-        if (i == 0 ||
-			str->atom[i].residueNumber != str->atom[i - 1].residueNumber ||
-			strcmp(str->atom[i].icode, str->atom[i - 1].icode) != 0) {
-			++ str->nAllResidue;
 		}
 
-		/*____________________________________________________________________________*/
-		/* increment atom counter */
-		++ i;
-		/* records original atom order (count) */
-		str->atomMap[i] = str->nAllAtom;
-		/* increment to next all-atom entry */
-		++ str->nAllAtom;
+		/* count residues among copied heavy ATOM entries */
+		if (i == 0 ||
+			str->atom[i].residueNumber != str->atom[i - 1].residueNumber ||
+			strcmp(str->atom[i].icode, str->atom[i - 1].icode) != 0 ||
+			strcmp(str->atom[i].chainIdentifier, str->atom[i - 1].chainIdentifier) != 0) {
 
+			++str->nAllResidue;
+		}
+
+		printf("x %d : i %d : %d %s %s %s %d  %5.3f %5.3f %5.3f\n",
+			   x, i,
+			   str->atom[i].atomNumber,
+			   str->atom[i].atomName,
+			   str->atom[i].residueName,
+			   str->atom[i].chainIdentifier,
+			   str->atom[i].residueNumber,
+			   str->atom[i].pos.x,
+			   str->atom[i].pos.y,
+			   str->atom[i].pos.z);
+
+		/* map copied atom index i to original mmCIF atom index/count */
+		str->atomMap[i] = str->nAllAtom;
+
+		++i;
+		++str->nAllAtom;
 	}
+
+	str->nAtom = i;
+	str->nResidue = k;
 	str->sequence.res[k] = '\0';
 
 	/*____________________________________________________________________________*/
@@ -256,4 +255,5 @@ int map_structure_mmcif(Arg *arg, Argpdb *argpdb, Str *str, Structure *s) {
 
     return 0;
 }
+
 
