@@ -13,6 +13,7 @@ extern "C" {
 
 typedef struct {
     int natom;
+	int nresidue;
 
     double* xyz;
 

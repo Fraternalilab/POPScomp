@@ -90,10 +90,9 @@ __inline__ static int process_het(Str *str, char *line, regex_t *regexPattern, c
 /* map MMCIF structure */
 int map_structure_mmcif(Arg *arg, Argpdb *argpdb, Str *str, Structure *s) {
 
-	int i;
+	int i = 0;
+	int x = 0;
 	unsigned int k = 0;
-	int min_res = INT_MAX;
-	int max_res = INT_MIN;
 
 	char resbuf;
 	int ca_p = 0;
@@ -116,13 +115,8 @@ int map_structure_mmcif(Arg *arg, Argpdb *argpdb, Str *str, Structure *s) {
 	str->nAtom = s->natom;
 
 	/* number of residues */
-	min_res = INT_MAX;
-	max_res = INT_MIN;
-	for (i = 0; i < str->nAtom; ++ i) {
-		min_res = s->res_number[i] < min_res ? s->res_number[i] : min_res;
-		max_res = s->res_number[i] > max_res ? s->res_number[i] : max_res;
-	}
-	str->nResidue = max_res - min_res + 1;
+	str->nResidue = s->nresidue; 
+	printf("nResidue %d", str->nResidue); 
 
 	/* number of chains */
 	str->nChain = s->chain_number;
@@ -149,7 +143,9 @@ int map_structure_mmcif(Arg *arg, Argpdb *argpdb, Str *str, Structure *s) {
 		I wanted to have a clean separation between
 		the C++ reader and the 'getpdb'-type assignment
 		that is also used in the PDB and XML reading functions. */
-	for (i = 0; i < str->nAtom; ++ i) {
+	while (x < str->nAtom) {
+		++x ;
+
 		/* atoms */
 		str->atom[i].atomNumber = s->atom_number[i];
 		strcpy(str->atom[i].atomName, s->atom_name[i]);
@@ -241,6 +237,8 @@ int map_structure_mmcif(Arg *arg, Argpdb *argpdb, Str *str, Structure *s) {
 		}
 
 		/*____________________________________________________________________________*/
+		/* increment atom counter */
+		++ i;
 		/* records original atom order (count) */
 		str->atomMap[i] = str->nAllAtom;
 		/* increment to next all-atom entry */

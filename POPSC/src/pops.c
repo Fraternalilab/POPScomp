@@ -97,7 +97,10 @@ int main(int argc, char *argv[])
 	if (! arg.silent) fprintf(stdout, "Input structure\n");
 	strcpy(pdb.pdbID, "");
 	if (arg.mmcif) {
+		/* 'gemmi' library function to read PDB entries */
 		s = read_cif(arg.mmcifInFileName);
+		/* map function to copy PDB entries to C structure */
+		map_structure_mmcif(&arg, &argpdb, &pdb, s);
 	} else if (arg.pdbml) {
 		read_structure_xml(&arg, &argpdb, &pdb);
 	} else if (arg.pdb) {
@@ -105,10 +108,6 @@ int main(int argc, char *argv[])
 	} else {
 		exit(EXIT_FAILURE);
 	}
-
-	printf("%s %d  %s %d  %s %d", s->atom_name[1], s->atom_number[1],
-								   s->res_name[1], s->res_number[1],
-								   s->chain_name[1], s->chain_number);
 
     /*____________________________________________________________________________*/
     /** read input trajectory */

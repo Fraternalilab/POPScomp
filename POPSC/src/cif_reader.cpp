@@ -67,26 +67,40 @@ Structure* read_cif(const char* filename) {
     s->chain_number = 0;
 
     for (const gemmi::Chain& chain : model.chains) {
-        for (const gemmi::Residue& res : chain.residues) {
+		s->nresidue += chain.residues.size();
+        
+		for (const gemmi::Residue& res : chain.residues) {
             for (const gemmi::Atom& atom : res.atoms) {
+
+				// skip hydrogen (or deuterium) atoms
+				if (atom.element.is_hydrogen())
+				    continue;
+
+				// coordinates
                 s->xyz[3*i + 0] = atom.pos.x;
                 s->xyz[3*i + 1] = atom.pos.y;
                 s->xyz[3*i + 2] = atom.pos.z;
 
+				// atom names
                 s->atom_name[i] = copy_string(atom.name);
                 s->atom_number[i] = atom.serial;
 				s->altloc[i] = atom.altloc;
 
+				// residue names
                 s->res_name[i] = copy_string(res.name);
 				s->res_number[i] = res.seqid.num.has_value() ? res.seqid.num.value : 0;
 				s->ins_code[i] = res.seqid.icode;
 
+				// chain names
                 s->chain_name[i] = copy_string(chain.name);
 
+				// element
                 s->element[i] = copy_string(atom.element.name());
 
-				s->record_type[i] = res.het_flag;   // 'A' for ATOM, 'H' for HETATM
+				// 'A' for ATOM, 'H' for HETATM
+				s->record_type[i] = res.het_flag;
 
+				// check for non-null entries
                 if (!s->atom_name[i] || !s->res_name[i] || !s->chain_name[i] ||
 					!s->atom_number[i] || !s->res_number[i]) {
                     free_structure(s);
