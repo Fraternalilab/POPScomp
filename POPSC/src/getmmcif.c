@@ -232,6 +232,7 @@ int map_structure_mmcif(Arg *arg, Argpdb *argpdb, Str *str, Structure *s) {
 			++str->nAllResidue;
 		}
 
+		/* for debugging only
 		printf("x %d : i %d : %d %s %s %s %d  %5.3f %5.3f %5.3f\n",
 			   x, i,
 			   str->atom[i].atomNumber,
@@ -242,6 +243,7 @@ int map_structure_mmcif(Arg *arg, Argpdb *argpdb, Str *str, Structure *s) {
 			   str->atom[i].pos.x,
 			   str->atom[i].pos.y,
 			   str->atom[i].pos.z);
+		*/
 
 		/* map copied atom index i to original mmCIF atom index/count */
 		str->atomMap[i] = str->nAllAtom;

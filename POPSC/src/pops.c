@@ -214,7 +214,6 @@ int main(int argc, char *argv[])
     /*____________________________________________________________________________*/
 	/** free memory */
 	/* structure */
-	free(pdb.sequence.name);
 	free(pdb.atom);
 	free(pdb.resAtom);
 	free(pdb.atomMap);
