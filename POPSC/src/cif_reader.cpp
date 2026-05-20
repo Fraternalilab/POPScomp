@@ -48,11 +48,15 @@ Structure* read_cif(const char* filename) {
     s->xyz = (double*) std::malloc(sizeof(double) * 3 * n);
     s->atom_name = (char**) std::calloc(n, sizeof(char*));
 	s->atom_number = (int*) std::malloc(sizeof(int) * n);
+	s->altloc = (char*) std::malloc(sizeof(char) * n);
     s->res_name = (char**) std::calloc(n, sizeof(char*));
 	s->res_number = (int*) std::malloc(sizeof(int) * n);
+	s->ins_code = (char*) std::malloc(sizeof(char) * n);
     s->chain_name = (char**) std::calloc(n, sizeof(char*));
-
-    if (!s->xyz || !s->atom_name || !s->atom_number ||
+    s->element = (char**) std::calloc(n, sizeof(char*));
+	s->record_type = (char*) std::malloc(sizeof(char) * n);
+    
+	if (!s->xyz || !s->atom_name || !s->atom_number ||
 				   !s->res_name || !s->res_number ||
         		   !s->chain_name) {
         free_structure(s);
@@ -71,12 +75,17 @@ Structure* read_cif(const char* filename) {
 
                 s->atom_name[i] = copy_string(atom.name);
                 s->atom_number[i] = atom.serial;
+				s->altloc[i] = atom.altloc;
 
                 s->res_name[i] = copy_string(res.name);
 				s->res_number[i] = res.seqid.num.has_value() ? res.seqid.num.value : 0;
 				s->ins_code[i] = res.seqid.icode;
 
                 s->chain_name[i] = copy_string(chain.name);
+
+                s->element[i] = copy_string(atom.element.name());
+
+				s->record_type[i] = res.het_flag;   // 'A' for ATOM, 'H' for HETATM
 
                 if (!s->atom_name[i] || !s->res_name[i] || !s->chain_name[i] ||
 					!s->atom_number[i] || !s->res_number[i]) {
@@ -112,12 +121,21 @@ void free_structure(Structure* s) {
             std::free(s->chain_name[i]);
     }
 
+    if (s->element) {
+        for (int i = 0; i < s->natom; ++i)
+            std::free(s->element[i]);
+    }
+
     std::free(s->xyz);
     std::free(s->atom_name);
     std::free(s->atom_number);
+    std::free(s->altloc);
     std::free(s->res_name);
     std::free(s->res_number);
+    std::free(s->ins_code);
     std::free(s->chain_name);
+    std::free(s->element);
+    std::free(s->record_type);
     std::free(s);
 }
 

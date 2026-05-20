@@ -12,6 +12,7 @@ Read the COPYING file for license information.
 
 #include "arg.h"
 #include "argpdb.h"
+#include "getpdb.h"
 #include "pdb_structure.h" 
 #include "safe.h"
 

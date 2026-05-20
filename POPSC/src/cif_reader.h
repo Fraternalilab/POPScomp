@@ -1,6 +1,6 @@
 /*==============================================================================
 cif_reader.h : wrapper header to use C++ functions from 'gemmi' 
-The 'gemmi' library provides functions for the now default mmcif format.
+The 'gemmi' library provides functions for the now default MMCIF format.
 Copyright (C) 2026 Jens Kleinjung
 Read the COPYING file for license information.
 ==============================================================================*/
@@ -18,6 +18,7 @@ typedef struct {
 
     char** atom_name;
     int* atom_number;
+    char* altloc;
 
     char** res_name;
     int* res_number;
@@ -25,6 +26,10 @@ typedef struct {
 
     char** chain_name;
     int chain_number;
+
+	char** element;
+
+	char* record_type;
 } Structure;
 
 /*___________________________________________________________________________*/

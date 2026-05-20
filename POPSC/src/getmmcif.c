@@ -8,12 +8,100 @@ Read the COPYING file for license information.
 #include "getmmcif.h"
 
 /*____________________________________________________________________________*/
+/* match PDB residue name against constant residue name array */
+__inline__ static char scan_array(char *code3, char *residue_array[], int shift)
+{
+	unsigned int i;
+	char residue = ' ';
+
+	for (i = 0; i < 26; ++ i)
+		if (strncmp(code3, residue_array[i], 3) == 0) {
+			residue = i + shift; /* shift=65 for UPPER, shift=97 for lower */
+			break;
+		}
+
+	return residue;
+}
+
+/*____________________________________________________________________________*/
+/** amino acid 3-letter to 1-letter code conversion */
+__inline__ static char aacode(char *code3)
+{
+	char residue = ' '; /* 1-letter residue name */
+
+	/* three-letter code of amino acid residues, exception HET (X) */
+	char *aa3[] = {"ALA","---","CYS","ASP","GLU","PHE","GLY","HIS","ILE","---","LYS","LEU","MET","ASN","---","PRO","GLN","ARG","SER","THR","UNL","VAL","TRP","HET","TYR","UNK"};
+	/* nucleotide residues */
+	char *nuc[] = {"  A"," DA","  C"," DC","---","---","  G"," DG","  I"," DI","---","---","---","  N"," DN","---","---","---"," DT","  T","  U"," DU","---","---","---","---"};
+
+	/* match against amino acid residues */
+	residue = scan_array(code3, aa3, 65);
+
+	/* match against nucleotide residues */
+	if (residue == ' ')
+		residue = scan_array(code3, nuc, 97);
+
+	/* residue not found */
+	if (residue == ' ') {
+		Warning("Non-standard residue.");
+		residue = 'X';
+	}
+	
+	return residue;
+}
+
+/*____________________________________________________________________________*/
+/** standardise non-standard atom names */
+__inline__ static int standardise_name(char *residueName, char *atomName)
+{
+	/* GRO 'ILE CD' to PDB 'ILE CD1' */
+	if ((strcmp(residueName, "ILE") == 0) && (strcmp(atomName, " CD ") == 0))
+		strcpy(atomName, " CD1");
+
+	return 0;
+}
+
+/*____________________________________________________________________________*/
+/** process HET residues */
+__inline__ static int process_het(Str *str, char *line, regex_t *regexPattern, char (*hetAtomNewname)[32], int nHetAtom)
+{
+	int hetAtomNr = -1;
+
+	/* atom name: assign only allowed atom elements, otherwise atom is skipped */
+	if ((hetAtomNr = match_patterns(regexPattern, nHetAtom, &(str->atom[str->nAtom].atomName[0]))) >= 0) {
+		/* store original atom name in 'Het' and overwrite with new name
+			that is a generic name for the SASA parameters */
+		sprintf(str->atom[str->nAtom].atomNameHet, "%s", &(str->atom[str->nAtom].atomName[0]));
+		sprintf(str->atom[str->nAtom].atomName, "%s", &(hetAtomNewname[hetAtomNr][0]));
+
+		sprintf(str->atom[str->nAtom].residueNameHet, "%s", &(str->atom[str->nAtom].residueName[0]));
+		sprintf(str->atom[str->nAtom].residueName, "%s", "HET");
+		/* set heteroatom flag */
+		str->atom[str->nAtom].het = 1;
+	} else {
+		WarningSpec("Skipping HETATM", str->atom[str->nAtom].atomName);
+		return 1;
+	}
+
+	return 0;
+}
+
+/*____________________________________________________________________________*/
 /* map MMCIF structure */
 int map_structure_mmcif(Arg *arg, Argpdb *argpdb, Str *str, Structure *s) {
 
 	int i;
+	unsigned int k = 0;
 	int min_res = INT_MAX;
 	int max_res = INT_MIN;
+
+	char resbuf;
+	int ca_p = 0;
+	/* for HETATM entries */
+	regex_t *regexPattern = 0; /* regular atom patterns */
+	/* allowed HETATM atom types (standard N,CA,C,O) and elements (any N,C,O,P,S) */
+	const int nHetAtom = 9;
+	char hetAtomPattern[9][32] = {{" N  "},{" CA "},{" C  "},{" O  "},{".{1}C[[:print:]]{1,3}"},{".{1}N[[:print:]]{1,3}"},{".{1}O[[:print:]]{1,3}"},{".{1}P[[:print:]]{1,3}"},{".{1}S[[:print:]]{1,3}"}};
 
 	/*____________________________________________________________________________*/
 	/* initialise/allocate memory for set of (64) selected (CA) atom entries */
@@ -26,7 +114,6 @@ int map_structure_mmcif(Arg *arg, Argpdb *argpdb, Str *str, Structure *s) {
 	/*____________________________________________________________________________*/
 	/* number of atoms */
 	str->nAtom = s->natom;
-	str->nAllAtom = str->nAtom;
 
 	/* number of residues */
 	min_res = INT_MAX;
@@ -36,7 +123,6 @@ int map_structure_mmcif(Arg *arg, Argpdb *argpdb, Str *str, Structure *s) {
 		max_res = s->res_number[i] > max_res ? s->res_number[i] : max_res;
 	}
 	str->nResidue = max_res - min_res + 1;
-	str->nAllResidue = str->nResidue;
 
 	/* number of chains */
 	str->nChain = s->chain_number;
@@ -52,16 +138,23 @@ int map_structure_mmcif(Arg *arg, Argpdb *argpdb, Str *str, Structure *s) {
 	/* allocate memory for sequence residues */
 	str->sequence.res = safe_malloc(str->nResidue * sizeof(char));
 
-	/*____________________________________________________________________________*/
-	/* map entries from MMCIF structure 's' to PDB structure 'str' */
-	/* that could be done directly, but I wanted to have a clean separation
-		between the C++ reader and the 'getpdb'-type assignment that is used
-		in the PDB and XML reading functions */
+	/* compile allowed HETATM element patterns */
+	regexPattern = safe_malloc(nHetAtom * sizeof(regex_t));
+	compile_patterns(regexPattern, &(hetAtomPattern[0]), nHetAtom);
 
+	/*____________________________________________________________________________*/
+	/* Map entries from MMCIF structure 's' to PDB structure 'str'. */
+	/* That could be mapped directly in the MMCIF reader,
+		but for consistency and potential debugging purpose,
+		I wanted to have a clean separation between
+		the C++ reader and the 'getpdb'-type assignment
+		that is also used in the PDB and XML reading functions. */
 	for (i = 0; i < str->nAtom; ++ i) {
 		/* atoms */
 		str->atom[i].atomNumber = s->atom_number[i];
 		strcpy(str->atom[i].atomName, s->atom_name[i]);
+		str->atom[i].alternativeLocation[0] = s->altloc[i];
+		str->atom[i].alternativeLocation[1] = '\0';
 
 		/* residues */
 		str->atom[i].residueNumber = s->res_number[i];
@@ -76,11 +169,92 @@ int map_structure_mmcif(Arg *arg, Argpdb *argpdb, Str *str, Structure *s) {
 		str->atom[i].pos.x = s->xyz[3*i + 0];
 		str->atom[i].pos.y = s->xyz[3*i + 1];
 		str->atom[i].pos.z = s->xyz[3*i + 2];
-	}
 
+		/* record type (atom or heteroatom) */
+		if (s->record_type[i] == 'A') {
+		    /* ATOM */
+			str->atom[i].het = 0;
+		} else if (s->record_type[i] == 'H') {
+ 			/* HETATM */
+			str->atom[i].het = 1;
+		}
+
+		/*____________________________________________________________________________*/
+		/* check conditions to record this entry */
+		/* if no hydrogens set, skip hydrogen lines, including deuterium */
+		if (! argpdb->hydrogens) {
+			strip_char(str->atom[i].atomName, &(str->atom[i].atomName[0]));
+			/* skip patterns 'H...' and '?H..', where '?' is a digit */
+			if ((str->atom[i].atomName[0] == 'H') || \
+				((str->atom[i].atomName[0] >= 48) &&
+				 (str->atom[i].atomName[0] <= 57) &&
+				 (str->atom[i].atomName[1] == 'H'))) {
+				++ str->nAllAtom;
+				continue;
+			}
+			/* same for D (deuterium)*/
+			if ((str->atom[i].atomName[0] == 'D') || \
+				((str->atom[i].atomName[0] >= 48) &&
+				 (str->atom[i].atomName[0] <= 57) &&
+				 (str->atom[i].atomName[1] == 'D'))) {
+				++ str->nAllAtom;
+				continue;
+			}
+		}
+
+		/* aa code */
+		if (str->atom[i].het == 0) {
+			assert((resbuf = aacode(str->atom[i].residueName)) != ' ');
+		}
+
+		/* process HETATM entries */
+		if (str->atom[i].het == 1) {
+			continue;
+		}
+
+		/* detect CA and N3 atoms of standard residues for residue allocation */
+		/* Gemmi preserves the original PDB-style atom formatting, including spaces. */
+		/* This is intentional PDB formatting:
+			- one-letter elements are right-aligned;
+			- two-letter elements are left-aligned.
+			Examples: " N  ", " CA ", " C  ", " O  ", " FE ", " MG " */
+		if ((strncmp(str->atom[i].atomName, " CA ", 4) == 0) ||
+		(strncmp(str->atom[i].atomName, " N3 ", 4) == 0)) {
+			str->resAtom[k] = i;
+			str->sequence.res[k ++] = aacode(str->atom[i].residueName);
+			++ ca_p;
+		}
+
+		/* standardise non-standard atom names */
+		standardise_name(str->atom[i].residueName, str->atom[i].atomName);
+
+		/* in coarse mode record only CA and P entries */
+		if (!ca_p && argpdb->coarse)
+			continue;
+
+		/*____________________________________________________________________________*/
+		/* count number of allResidues (including HETATM residues) */
+        if (i == 0 ||
+			str->atom[i].residueNumber != str->atom[i - 1].residueNumber ||
+			strcmp(str->atom[i].icode, str->atom[i - 1].icode) != 0) {
+			++ str->nAllResidue;
+		}
+
+		/*____________________________________________________________________________*/
+		/* records original atom order (count) */
+		str->atomMap[i] = str->nAllAtom;
+		/* increment to next all-atom entry */
+		++ str->nAllAtom;
+
+	}
+	str->sequence.res[k] = '\0';
 
 	/*____________________________________________________________________________*/
+	/* free the compiled regular expressions */
+	free_patterns(regexPattern, nHetAtom);
+	free(regexPattern);
     free_structure(s);
+
 
     return 0;
 }
