@@ -306,7 +306,7 @@ void print_neighbour_parameter(FILE *parameterOutFile, Str *pdb, Type *type, \
 }
 
 /*____________________________________________________________________________*/
-/** print interface residue pairs */
+/** print interface (residue pairs) */
 /* nearest neighbour atom pairs on different chains */
 void print_interface(FILE *interfaceOutFile, Arg *arg, Str *pdb, Type *type, Topol *topol)
 {
@@ -442,13 +442,25 @@ void print_sasa(Arg *arg, Argpdb *argpdb, Str *pdb, Type *type, Topol *topol, \
 
 	/* neighbour list */
 	if (arg->neighbourOut) {
-		if (frame < 0)
-			arg->neighbourOutFile = safe_open(arg->neighbourOutFileName, "w");
-		else
-			arg->neighbourOutFile = safe_open(arg->neighbourOutFileName, "a");
-
-		print_neighbour_list(arg->neighbourOutFile, arg, pdb, topol);
-		fclose(arg->neighbourOutFile);
+		if (arg->rout) {
+			sprintf(rpopsOutFileName, "%s/%s.%s",
+				arg->outDirName, arg->routPrefix, "neighbours.out");
+			if (frame < 0) {
+				rpopsOutFile = safe_open(rpopsOutFileName, "w");
+			} else {
+				rpopsOutFile = safe_open(rpopsOutFileName, "a");
+			}		
+			print_neighbour_list(arg->neighbourOutFile, arg, pdb, topol);
+			fclose(rpopsOutFile);
+		} else {
+			if (frame < 0) {
+				arg->neighbourOutFile = safe_open(arg->neighbourOutFileName, "w");
+			} else {
+				arg->neighbourOutFile = safe_open(arg->neighbourOutFileName, "a");
+			}
+			print_neighbour_list(arg->neighbourOutFile, arg, pdb, topol);
+			fclose(arg->neighbourOutFile);
+		}
 	}
 
 	/* neighbour parameters (for benchmarking) */
@@ -464,13 +476,25 @@ void print_sasa(Arg *arg, Argpdb *argpdb, Str *pdb, Type *type, Topol *topol, \
 
 	/* interface residue pairs */
 	if (arg->interfaceOut) {
-		if (frame < 0)
-			arg->interfaceOutFile = safe_open(arg->interfaceOutFileName, "w");
-		else
-			arg->interfaceOutFile = safe_open(arg->interfaceOutFileName, "a");
-
-		print_interface(arg->interfaceOutFile, arg, pdb, type, topol);
-		fclose(arg->interfaceOutFile);
+		if (arg->rout) {
+			sprintf(rpopsOutFileName, "%s/%s.%s",
+				arg->outDirName, arg->routPrefix, "interface.out");
+			if (frame < 0) {
+				rpopsOutFile = safe_open(rpopsOutFileName, "w");
+			} else {
+				rpopsOutFile = safe_open(rpopsOutFileName, "a");
+			}		
+			print_interface(arg->interfaceOutFile, arg, pdb, type, topol);
+			fclose(rpopsOutFile);
+		} else {
+			if (frame < 0) {
+				arg->interfaceOutFile = safe_open(arg->interfaceOutFileName, "w");
+			} else {
+				arg->interfaceOutFile = safe_open(arg->interfaceOutFileName, "a");
+			}
+			print_interface(arg->interfaceOutFile, arg, pdb, type, topol);
+			fclose(arg->interfaceOutFile);
+		}
 	}
 }
 

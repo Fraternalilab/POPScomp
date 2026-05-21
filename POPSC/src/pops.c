@@ -96,16 +96,21 @@ int main(int argc, char *argv[])
     /** read input structure: mmcif, xml or pdb format */
 	if (! arg.silent) fprintf(stdout, "Input structure\n");
 	strcpy(pdb.pdbID, "");
+
 	if (arg.mmcif) {
+		printf("Reading MMCIF file\n");
 		/* 'gemmi' library function to read PDB entries */
 		s = read_cif(arg.mmcifInFileName);
 		/* map function to copy PDB entries to C structure */
 		map_structure_mmcif(&arg, &argpdb, &pdb, s);
 	} else if (arg.pdbml) {
+		printf("Reading PDBML file\n");
 		read_structure_xml(&arg, &argpdb, &pdb);
 	} else if (arg.pdb) {
+		printf("Reading PDB file\n");
 		read_structure(&arg, &argpdb, &pdb);
 	} else {
+		printf("Failed to read an input structure!\n");
 		exit(EXIT_FAILURE);
 	}
 

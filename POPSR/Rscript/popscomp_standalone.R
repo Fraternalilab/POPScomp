@@ -7,14 +7,19 @@
 # Returns a list of POPS output files for single-chain and pair-chain structures
 #   plus a list of buried SASA values.
 #
-# (C) 2019-2020 Jens Kleinjung and Franca Fraternali
+# (C) 2019-2026 Jens Kleinjung and Franca Fraternali
 #===============================================================================
 
-library("bio3d");
-## for atom selection mechanisms see:
+library("bio3d")
+## For atom selection mechanisms see:
 ## http://thegrantlab.org/bio3d/tutorials/structure-analysis
+## The 'pdbsplit' function works only on PDB files (not MMCIF),
+##   which is why the chain splitting is performed here via 'gemmi'
+##   on the command line. 'pops' is capable of reading MMCIF files
+##   via the in-built 'gemmi' library, but the design choice is to have
+##   the POPScomp functionality fully residing in this 'popscomp.R' script. 
 
-library(optparse)
+library("optparse")
 
 #_______________________________________________________________________________
 ## POPScomp function implemented in R
@@ -26,32 +31,54 @@ library(optparse)
 ## PAIR: POPS on paired chains
 ## DIFF: difference between sum of isolated chain SASA and paired chain SASA
 
+## The '--contact' option creates a list of paired residues at
+##   the chain interface, based on relative per-residue surface burial (0.25)
+##   and a distance-weighted soft contact score. The reciprocally highest
+##   scoring pairs are listed.
+
 option_list = list(
   make_option(c("-p", "--pdb"), type = "character", default = NULL,
-              help = "local PDB file (uploading)", metavar = "character"),
+              help = "local PDB file (upload)", metavar = "character"),
   make_option(c("-i", "--id"), type = "character", default = NULL,
-              help = "PDB identifier (downloading)", metavar = "character")
-);
+              help = "PDB identifier (download)", metavar = "character"),
+  make_option(c("-m", "--mmcif"), type = "character", default = NULL,
+              help = "local MMCIF file (upload)", metavar = "character"),
+  make_option(c("-o", "--outdir"), type = "character", default = NULL,
+              help = "output directory", metavar = "character"),
+  make_option(c("-c", "--contact"), type = "character", default = NULL,
+              help = "contact interface", metavar = "character")
+)
 
-opt_parser = OptionParser(option_list = option_list);
-opt = parse_args(opt_parser);
+opt_parser = OptionParser(option_list = option_list)
+opt = parse_args(opt_parser)
 
 if(! is.null(opt$pdb)) {
-  ## upload local PDB structure
+  ## upload local PDB structure in '.pdb' format
   inputPDB = opt$pdb
 } else if (! is.null(opt$id)) {
   ## download PDB structure based on PDB identifier
   get.pdb(opt$id, path = ".")
   inputPDB = paste(opt$id, "pdb", sep = ".")
+} else if (! is.null(opt$mmcif)) {
+  ## convert from '.mmcif' format to '.pdb' format
+  pdbConversionName = sub("\\.cif$", ".pdb", opt$mmcif)
+  command0 = paste("gemmi convert", opt$mmcif, pdbConversionName)
+  system_status0 = system(command0)
+  inputPDB = pdbConversionName
 } else {
   stop("No valid input. Get help with 'Rscript popscomp_standalone.R --help'.")
 }
 
-outDir = "."
+if (is.null(opt$outdir)) {
+	outDir = "."
+} else {
+	outDir = opt$outdir
+}
 
 #________________________________________________________________________________
 ## ISO: split input PDB into chains
-chain.files = pdbsplit(paste(outDir, inputPDB, sep = "/"),  path = outDir, multi = FALSE);
+## 'pdbsplit' is a function from the 'bio3d' library
+chain.files = pdbsplit(pdb.files = paste(outDir, inputPDB, sep = "/"),  path = outDir, multi = FALSE)
 
 ## if input PDB is not a complex, return without any computations
 ##   bacause this routine "popscompR" is intended for processing protein complexes
@@ -59,78 +86,79 @@ if (length(chain.files) < 2) {
   stop("Single-chain structure: POPScomp not applicable")
 }
 
-chain.files.short = sub('\\.pdb$', '', basename(as.character(chain.files)));
+chain.files.short = sub('\\.pdb$', '', basename(as.character(chain.files)))
 
 #________________________________________________________________________________
 ## ISO: run POPS over all single (= isolated) chains via system (= shell) call
 message("Isolated chains")
 exit_codes = sapply(1:length(chain.files), function(x) {
- 	command = paste0("pops --outDirName ", outDir,
+ 	command1 = paste0("pops --outDirName ", outDir,
           " --rout --routPrefix ", paste0(chain.files.short[x], ".iso"),
 					" --atomOut --residueOut --chainOut --neighbourOut --interfaceOut",
 					" --pdb ", chain.files[x], " 1> ", outDir, "/", chain.files.short[x], ".o",
-					" 2> ", outDir, "/", chain.files.short[x], ".e");
-	system_status = system(command, wait = TRUE);
-	message("  chain ", x, ": ", chain.files[x], " ; exit code: ", system_status);
-});
+					" 2> ", outDir, "/", chain.files.short[x], ".e")
+	print(command1)
+	system_status1 = system(command1, wait = TRUE)
+	message("  chain ", x, ": ", chain.files[x], "  exit code: ", system_status1)
+})
 
 ## Concatenate output files of single (ISO = isolated) chains.
 ## Atom
 ## first just the header line
 ## then concatenate output file, without file name header (-q) and table header (-n+2)
-command1.2 = paste0("tail -q -n+2 ", outDir, "/*.iso.rpopsAtom >> ", outDir, "/isoSASA.rpopsAtom");
-system_status1.2 = system(command1.2, wait = TRUE);
+command2 = paste0("tail -q -n+2 ", outDir, "/*.iso.rpopsAtom >> ", outDir, "/isoSASA.rpopsAtom")
+system_status2 = system(command2, wait = TRUE)
 ## Residue
-command2.2 = paste0("tail -q -n+2 ", outDir, "/*.iso.rpopsResidue >> ", outDir, "/isoSASA.rpopsResidue");
-system_status2.2 = system(command2.2, wait = TRUE);
+command3 = paste0("tail -q -n+2 ", outDir, "/*.iso.rpopsResidue >> ", outDir, "/isoSASA.rpopsResidue")
+system_status3 = system(command3, wait = TRUE)
 ## Chain
-command3.2 = paste0("tail -q -n+2 ", outDir, "/*.iso.rpopsChain >> ", outDir, "/isoSASA.rpopsChain");
-system_status3.2 = system(command3.2, wait = TRUE);
+command4 = paste0("tail -q -n+2 ", outDir, "/*.iso.rpopsChain >> ", outDir, "/isoSASA.rpopsChain")
+system_status4 = system(command4, wait = TRUE)
 
 #________________________________________________________________________________
 ## PAIR: create PDB files for all pairwise chain combinations
 message("Paired chains")
-pair.cmbn = combn(length(chain.files), 2);
-chainpair.files = vector();
+pair.cmbn = combn(length(chain.files), 2)
+chainpair.files = vector()
 chainpair.files = sapply(1:dim(pair.cmbn)[2], function(x) {
  	## name of paired chain PDB file to create
  	chainpair.files[[x]] = paste0(outDir, "/",
             	              chain.files.short[pair.cmbn[1, x]], "-",
-                	          chain.files.short[pair.cmbn[2, x]], ".pdb");
+                	          chain.files.short[pair.cmbn[2, x]], ".pdb")
  	## concatenate single chain PDB files to paired chain PDB files
-	 command = paste("cat", chain.files[pair.cmbn[1, x]],
+	 command5 = paste("cat", chain.files[pair.cmbn[1, x]],
     	                     chain.files[pair.cmbn[2, x]], ">",
-        	                 chainpair.files[[x]]);
- 	system_status = system(command, wait = TRUE);
- 	paste("  chain pair:", x, "; exit code:", system_status);
- 	return(chainpair.files[[x]]);
-});
+        	                 chainpair.files[[x]])
+ 	system_status5 = system(command5, wait = TRUE)
+ 	paste("  chain pair:", x, " exit code:", system_status5)
+ 	return(chainpair.files[[x]])
+})
 
-chainpair.files.short = sub('\\.pdb$', '', basename(as.character(chainpair.files)));
+chainpair.files.short = sub('\\.pdb$', '', basename(as.character(chainpair.files)))
 
 #________________________________________________________________________________
 ## PAIR: run POPS over all pairwise chain combinations via system (= shell) call
 exit_codes = sapply(1:length(chainpair.files), function(x) {
-	command = paste0("pops --outDirName ", outDir,
+	command6 = paste0("pops --outDirName ", outDir,
 					" --rout --routPrefix ", paste0(chainpair.files.short[x], ".pair"),
 					" --atomOut --residueOut --chainOut",
 					" --pdb ", chainpair.files[x], " 1> ", outDir, "/POPScomp_chainpair", x, ".o",
-                    " 2> ", outDir, "/POPScomp_chainpair", x, ".e");
-	system_status = system(command, wait = TRUE);
-	message("  chain ", x, ": ", chainpair.files[x], " ; exit code: ", system_status);
-});
+                    " 2> ", outDir, "/POPScomp_chainpair", x, ".e")
+	system_status6 = system(command6, wait = TRUE)
+	message("  chain ", x, ": ", chainpair.files[x], "  exit code: ", system_status6)
+})
 
 #________________________________________________________________________________
 ## read SASA files
 message("Processing SASA files")
 ## the data structure will be a list (levels = 'rpopsLevel') of lists (structures)
-rpopsLevel = c("rpopsAtom", "rpopsResidue", "rpopsChain", "rpopsMolecule");
+rpopsLevel = c("rpopsAtom", "rpopsResidue", "rpopsChain", "rpopsMolecule")
 
 message("SASA files of isolated chains")
 ## ISO: initialise list of lists with predefined number of output files
-iso.sasa.level.files = vector(mode = "list", length = length(rpopsLevel));
-iso.veclist = function(x) { vector(mode = "list", length = length(chain.files)) };
-iso.sasa.level.files = lapply(iso.sasa.level.files, iso.veclist);
+iso.sasa.level.files = vector(mode = "list", length = length(rpopsLevel))
+iso.veclist = function(x) { vector(mode = "list", length = length(chain.files)) }
+iso.sasa.level.files = lapply(iso.sasa.level.files, iso.veclist)
 
 ## read ISO SASA files
 for (j in 1:length(rpopsLevel)) {
@@ -138,17 +166,17 @@ for (j in 1:length(rpopsLevel)) {
 		## read isolated chain output
 		iso.sasa.level.files[[j]][[i]] = read.table(paste0(outDir, "/", chain.files.short[i],
         	                                ".iso.", rpopsLevel[j]),
-            	                            header = TRUE, stringsAsFactors = FALSE);
-	};
-	names(iso.sasa.level.files[[j]]) = chain.files.short;
-};
-names(iso.sasa.level.files) = rpopsLevel;
+            	                            header = TRUE, stringsAsFactors = FALSE)
+	}
+	names(iso.sasa.level.files[[j]]) = chain.files.short
+}
+names(iso.sasa.level.files) = rpopsLevel
 
 ## PAIR: initialise list of lists with predefined number of output files
 message("SASA files of paired chains")
-pair.sasa.level.files = vector(mode = "list", length = length(rpopsLevel));
-pair.veclist = function(x) { vector(mode = "list", length = dim(pair.cmbn)[2]) };
-pair.sasa.level.files = lapply(pair.sasa.level.files, pair.veclist);
+pair.sasa.level.files = vector(mode = "list", length = length(rpopsLevel))
+pair.veclist = function(x) { vector(mode = "list", length = dim(pair.cmbn)[2]) }
+pair.sasa.level.files = lapply(pair.sasa.level.files, pair.veclist)
 
 ## read PAIR SASA files
 for (j in 1:length(rpopsLevel)) {
@@ -156,11 +184,11 @@ for (j in 1:length(rpopsLevel)) {
 		## read paired chain output
 		pair.sasa.level.files[[j]][[i]] = read.table(paste0(outDir, "/", chainpair.files.short[i],
         	                                ".pair.", rpopsLevel[j]),
-            	                            header = TRUE, stringsAsFactors = FALSE);
+            	                            header = TRUE, stringsAsFactors = FALSE)
 	}
-	names(pair.sasa.level.files[[j]]) = chainpair.files.short;
+	names(pair.sasa.level.files[[j]]) = chainpair.files.short
 }
-names(pair.sasa.level.files) = rpopsLevel;
+names(pair.sasa.level.files) = rpopsLevel
 
 #________________________________________________________________________________
 ## DIFF: compute SASA differences (POPScomp values)
@@ -169,9 +197,9 @@ names(pair.sasa.level.files) = rpopsLevel;
 ##   PAIR and ISO files is reconstructed here.
 ## initialise list of lists with predefined number of SASA difference tables
 message("Compuing SASA differences")
-diff.sasa.level = vector(mode = "list", length = length(rpopsLevel));
-diff.veclist = function(x) { vector(mode = "list", length = dim(pair.cmbn)[2]) };
-diff.sasa.level = lapply(diff.sasa.level, diff.veclist);
+diff.sasa.level = vector(mode = "list", length = length(rpopsLevel))
+diff.veclist = function(x) { vector(mode = "list", length = dim(pair.cmbn)[2]) }
+diff.sasa.level = lapply(diff.sasa.level, diff.veclist)
 
 ## compute SASA differences
 for (j in 1:length(rpopsLevel)) {
@@ -180,43 +208,43 @@ for (j in 1:length(rpopsLevel)) {
      	if (j %in% 1:3) {
         	## rbind ISO chain SASAs
         	iso.rbind.tmp = rbind(iso.sasa.level.files[[j]][[pair.cmbn[1, i]]],
-            	                  iso.sasa.level.files[[j]][[pair.cmbn[2, i]]]);
+            	                  iso.sasa.level.files[[j]][[pair.cmbn[2, i]]])
         	## assert consistency between 'rbind' ISO files and PAIR file
-        	stopifnot(dim(iso.rbind.tmp) == dim(pair.sasa.level.files[[j]][[i]]));
-        	#print(paste(j, i, dim(iso.rbind.tmp), dim(pair.sasa.level.files[[j]][[i]])));
+        	stopifnot(dim(iso.rbind.tmp) == dim(pair.sasa.level.files[[j]][[i]]))
+        	#print(paste(j, i, dim(iso.rbind.tmp), dim(pair.sasa.level.files[[j]][[i]])))
         	## SASA DIFF values, applies to all levels
-        	D_SASA.A.2 = round(iso.rbind.tmp[ , "SASA.A.2"] - pair.sasa.level.files[[j]][[i]][ , "SASA.A.2"], 2);
+        	D_SASA.A.2 = round(iso.rbind.tmp[ , "SASA.A.2"] - pair.sasa.level.files[[j]][[i]][ , "SASA.A.2"], 2)
 			  ## more level-specific delta values
 			if (j == 1) {
-				diff.tmp.df = cbind(iso.rbind.tmp, D_SASA.A.2);
+				diff.tmp.df = cbind(iso.rbind.tmp, D_SASA.A.2)
 				diff.sasa.level[[j]][[i]] = diff.tmp.df[diff.tmp.df[ , "D_SASA.A.2"] > 0,
-				c("ResidNe", "Chain", "ResidNr", "iCode", "D_SASA.A.2")];
+				c("ResidNe", "Chain", "ResidNr", "iCode", "D_SASA.A.2")]
 			} else if (j == 2) {
-				D_Phob.A.2 = round(iso.rbind.tmp[ , "Phob.A.2"] - pair.sasa.level.files[[j]][[i]][ , "Phob.A.2"], digits = 2);
-				D_Phil.A.2 = round(iso.rbind.tmp[ , "Phil.A.2"] - pair.sasa.level.files[[j]][[i]][ , "Phil.A.2"], digits = 2);
-				diff.tmp.df = cbind(iso.rbind.tmp, D_Phob.A.2, D_Phil.A.2, D_SASA.A.2);
+				D_Phob.A.2 = round(iso.rbind.tmp[ , "Phob.A.2"] - pair.sasa.level.files[[j]][[i]][ , "Phob.A.2"], digits = 2)
+				D_Phil.A.2 = round(iso.rbind.tmp[ , "Phil.A.2"] - pair.sasa.level.files[[j]][[i]][ , "Phil.A.2"], digits = 2)
+				diff.tmp.df = cbind(iso.rbind.tmp, D_Phob.A.2, D_Phil.A.2, D_SASA.A.2)
 				diff.sasa.level[[j]][[i]] = diff.tmp.df[diff.tmp.df[ , "D_SASA.A.2"] > 0,
-				c("ResidNe", "Chain", "ResidNr", "iCode", "D_Phob.A.2", "D_Phil.A.2", "D_SASA.A.2")];
+				c("ResidNe", "Chain", "ResidNr", "iCode", "D_Phob.A.2", "D_Phil.A.2", "D_SASA.A.2")]
 			} else if (j == 3) {
-				D_Phob.A.2 = round(iso.rbind.tmp[ , "Phob.A.2"] - pair.sasa.level.files[[j]][[i]][ , "Phob.A.2"], digits = 2);
-				Phil.A.2 = round(iso.rbind.tmp[ , "Phil.A.2"] - pair.sasa.level.files[[j]][[i]][ , "Phil.A.2"], digits = 2);
-				diff.tmp.df = cbind(iso.rbind.tmp, D_Phob.A.2, D_Phil.A.2, D_SASA.A.2);
+				D_Phob.A.2 = round(iso.rbind.tmp[ , "Phob.A.2"] - pair.sasa.level.files[[j]][[i]][ , "Phob.A.2"], digits = 2)
+				Phil.A.2 = round(iso.rbind.tmp[ , "Phil.A.2"] - pair.sasa.level.files[[j]][[i]][ , "Phil.A.2"], digits = 2)
+				diff.tmp.df = cbind(iso.rbind.tmp, D_Phob.A.2, D_Phil.A.2, D_SASA.A.2)
 				diff.sasa.level[[j]][[i]] = diff.tmp.df[diff.tmp.df[ , "D_SASA.A.2"] > 0,
-				c("Chain", "Id", "AtomRange", "ResidRange", "D_Phob.A.2", "D_Phil.A.2", "D_SASA.A.2")];
+				c("Chain", "Id", "AtomRange", "ResidRange", "D_Phob.A.2", "D_Phil.A.2", "D_SASA.A.2")]
     	}
 		}
 		if (j == 4) {
         	diff.tmp.df = round(iso.sasa.level.files[[j]][[pair.cmbn[1, i]]] +
             	                iso.sasa.level.files[[j]][[pair.cmbn[2, i]]] -
                 	            pair.sasa.level.files[[j]][[i]],
-                    	        digits = 2);
-        	colnames(diff.tmp.df) = c("D_Phob.A.2", "D_Phil.A.2", "D_SASA.A.2");
-        	diff.sasa.level[[j]][[i]] = diff.tmp.df;
+                    	        digits = 2)
+        	colnames(diff.tmp.df) = c("D_Phob.A.2", "D_Phil.A.2", "D_SASA.A.2")
+        	diff.sasa.level[[j]][[i]] = diff.tmp.df
 	  	}
-	};
-	names(diff.sasa.level[[j]]) = chainpair.files.short;
-};
-names(diff.sasa.level) = rpopsLevel;
+	}
+	names(diff.sasa.level[[j]]) = chainpair.files.short
+}
+names(diff.sasa.level) = rpopsLevel
 
 #________________________________________________________________________________
 ## write DIFF SASA result files
@@ -225,7 +253,7 @@ names(diff.sasa.level) = rpopsLevel;
 ## that completes the set of three types of output files
 message("Writing SASA difference output")
 for (j in 1:length(rpopsLevel)) {
-	write.table(do.call(rbind, diff.sasa.level[[j]]), paste0(outDir, "/", "deltaSASA.", rpopsLevel[j]));
+	write.table(do.call(rbind, diff.sasa.level[[j]]), paste0(outDir, "/", "deltaSASA.", rpopsLevel[j]))
 }
 
 #===============================================================================

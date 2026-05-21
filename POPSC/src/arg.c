@@ -191,12 +191,16 @@ int parse_args(int argc, char **argv, Arg *arg, Argpdb *argpdb)
 	int c;
 	const char usage[] = "\npops [--pdb ... | --pdbml ...] [OPTIONS ...]\n\
 	 INPUT OPTIONS\n\
-	   Input syntax is either '--pdb <name>.pdb[.gz]' or '--pdbml <name>.xml[.gz]'.\n\
-	   --mmcif <PDB input>\t\t(type: char  , default: void)\n\
+	   Specify one format option: '--pdb', '--pdbml', '--mmcif'.\n\
+       Input structures can be read compressed ('.gz');\n\
+         specify '--pdb --zipped', the other formats detect compression.\n\
+       \n\
+	   --mmcif <MMCIF input>\t\t(type: char  , default: void)\n\
 	   --pdb <PDB input>\t\t(type: char  , default: void)\n\
 	   --pdbml <PDBML input>\t(type: char  , default: void)\n\
 	   --traj <trajectory input>\t(type: char  , default: void)\n\
 	   --zipped\t\t\t(type: no_arg, default: off)\n\
+       \n\
 	 MODE OPTIONS\n\
 	   --coarse\t\t\t(type: no_arg, default: off)\n\
 	   --hydrogens\t\t\t(type: no_arg, default: off)\n\
@@ -204,6 +208,7 @@ int parse_args(int argc, char **argv, Arg *arg, Argpdb *argpdb)
 	   --partOcc\t\t\t(type: no_arg, default: off)\n\
 	   --rProbe <probe radius [A]>\t(type: float , default: 1.4)\n\
 	   --silent\t\t\t(type: no_arg, default: off)\n\
+       \n\
 	 OUTPUT OPTIONS\n\
 	   --outDirName <output dir>\t(type: char  , default: NULL)\n\
 	   --popsOut <POPS output>\t(type: char  , default: pops.out)\n\
@@ -227,6 +232,7 @@ int parse_args(int argc, char **argv, Arg *arg, Argpdb *argpdb)
 	   --rout\t\t\t(type: no_arg, default: off)\n\
 	   --routPrefix <prefix>\t(type: char   , default: NULL)\n\
 	   --jsonOut\t\t\t(type: no_arg, default: off)\n\
+       \n\
 	 INFO OPTIONS\n\
 	   --cite\t\t\t(type: no_arg, default: off)\n\
 	   --version\t\t\t(type: no_arg, default: off)\n\
@@ -288,6 +294,7 @@ int parse_args(int argc, char **argv, Arg *arg, Argpdb *argpdb)
             case 1:
                 arg->pdbInFileName = optarg;
 				arg->pdbIn = basename(optarg);
+				arg->pdb = 1;
                 break;
             case 2:
                 arg->trajInFileName = optarg;
