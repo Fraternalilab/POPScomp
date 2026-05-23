@@ -445,10 +445,11 @@ top_srcdir = @top_srcdir@
 noinst_DATA = \
 	1f3r.pdb \
 	1f3r.pdb.gz \
+	1F3R.cif \
+	1F3R.cif.gz \
 	5lff.xml \
 	5lff.xml.gz \
-    1aki.pdb\
-	1aki.sdtraj.gro \
+	5LFF.cif.gz \
 	host_file
 
 noinst_SCRIPTS = \
@@ -463,8 +464,9 @@ noinst_SCRIPTS = \
 	test2c.sh \
 	test2d.sh \
 	test2e.sh \
-	test3a.sh \
-	test3b.sh
+	test4a.sh \
+	test4b.sh \
+	test5a.sh
 
 EXTRA_DIST = $(noinst_DATA) $(noinst_SCRIPTS)
 TESTS = $(noinst_SCRIPTS)
@@ -726,16 +728,23 @@ test2e.sh.log: test2e.sh
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test3a.sh.log: test3a.sh
-	@p='test3a.sh'; \
-	b='test3a.sh'; \
+test4a.sh.log: test4a.sh
+	@p='test4a.sh'; \
+	b='test4a.sh'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test3b.sh.log: test3b.sh
-	@p='test3b.sh'; \
-	b='test3b.sh'; \
+test4b.sh.log: test4b.sh
+	@p='test4b.sh'; \
+	b='test4b.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test5a.sh.log: test5a.sh
+	@p='test5a.sh'; \
+	b='test5a.sh'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

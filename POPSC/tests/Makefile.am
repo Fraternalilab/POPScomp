@@ -5,10 +5,11 @@
 noinst_DATA = \
 	1f3r.pdb \
 	1f3r.pdb.gz \
+	1F3R.cif \
+	1F3R.cif.gz \
 	5lff.xml \
 	5lff.xml.gz \
-    1aki.pdb\
-	1aki.sdtraj.gro \
+	5LFF.cif.gz \
 	host_file
 
 noinst_SCRIPTS = \
@@ -23,8 +24,9 @@ noinst_SCRIPTS = \
 	test2c.sh \
 	test2d.sh \
 	test2e.sh \
-	test3a.sh \
-	test3b.sh
+	test4a.sh \
+	test4b.sh \
+	test5a.sh
 
 EXTRA_DIST = $(noinst_DATA) $(noinst_SCRIPTS)
 
