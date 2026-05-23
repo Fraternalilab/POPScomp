@@ -1,37 +1,48 @@
 name: C CI
 
-on: [push]
+on:
+  push:
+  pull_request:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
           submodules: recursive
 
-      - name: Ensure submodules are present
+      - name: Verify submodules
         run: |
-          git submodule sync --recursive
-          git submodule update --init --recursive
-          echo "Submodule status:"
           git submodule status --recursive
-          echo "Checking Gemmi headers:"
-          ls -l POPSC/gemmi/include/gemmi/cif.hpp
+          test -f POPSC/gemmi/include/gemmi/cif.hpp
 
-      - name: Install build deps
+      - name: Install build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y autoconf automake libtool pkg-config \
-            g++ make \
-            libxml2-dev zlib1g-dev
+          sudo apt-get install -y \
+            autoconf \
+            automake \
+            libtool \
+            pkg-config \
+            g++ \
+            make \
+            libxml2-dev \
+            zlib1g-dev
 
       - name: Compile POPSC
         run: |
           cd POPSC
           ./bootstrap
           ./configure
-          make -j$(nproc) V=1
+          make -j"$(nproc)" V=1
+
+      - name: Run tests
+        run: |
+          cd POPSC
+          make check
