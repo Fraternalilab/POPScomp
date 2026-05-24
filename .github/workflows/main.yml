@@ -18,6 +18,11 @@ jobs:
         with:
           r-version: '4.3'
 
+      - name: Install Gemmi
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install gemmi
+
       - name: Install dependencies
         run: |
           Rscript -e 'install.packages("knitr", dependencies = TRUE)'
