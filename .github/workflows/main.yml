@@ -1,18 +1,32 @@
 name: R CI
 
-on: [push]
+on:
+  push:
 
 jobs:
   R-CMD-CHECK:
 
     runs-on: ubuntu-latest
 
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+
       - uses: r-lib/actions/setup-r@v2
         with:
-            r-version: '4.3'
+          r-version: '4.3'
+
+      - name: Install Gemmi
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install gemmi
+
       - name: Install dependencies
-        run: Rscript -e 'install.packages(c("knitr"), dependencies = TRUE)'
-      - name: compile POPSR
-        run: R CMD build POPSR
+        run: |
+          Rscript -e 'install.packages("knitr", dependencies = TRUE)'
+
+      - name: Build POPSR
+        run: |
+          R CMD build POPSR

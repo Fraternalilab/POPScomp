@@ -6,7 +6,7 @@
 #   and those are coded in .../POPScomp/R/popscomp.R.
 # For single-chain proteins, "popscomp.R" returns without additional computations.
 #
-# (C) 2019 -2023 Jens Kleinjung and Franca Fraternali
+# (C) 2019 -2026 Jens Kleinjung and Franca Fraternali
 #===============================================================================
 
 library(shiny)
@@ -416,8 +416,11 @@ server <- function(input, output) {
     ## download (PDB database) or upload (local file system) the PDB structure
     if (input$pdbentry != "") {
       ## get.pdb downloads the PDB structure from the database
-      get.pdb(input$pdbentry, path = outDir, format = "cif")
-      inputPDB = paste(input$pdbentry, "cif", sep = ".")
+      get.pdb(input$pdbentry, format = "cif", path = outDir)
+      pdbConversionName = sub("\\.cif$", ".pdb", opt$mmcif)
+      command0 = paste("gemmi convert", opt$mmcif, pdbConversionName)
+      system_status0 = system(command0)
+      inputPDB = pdbConversionName
     } else {
       ## move uploaded PDB file from its temporary directory to output directory
       system(paste("mv ", input$PDBfile[[4]], " ", outDir, "/",

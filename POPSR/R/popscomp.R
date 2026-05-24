@@ -7,7 +7,7 @@
 # Returns a list of POPS output files for single-chain and pair-chain structures
 #   plus a list of buried SASA values.
 #
-# (C) 2019-2023 Jens Kleinjung and Franca Fraternali
+# (C) 2019-2026 Jens Kleinjung and Franca Fraternali
 #===============================================================================
 
 library("bio3d");

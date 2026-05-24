@@ -13,11 +13,13 @@
 library("bio3d")
 ## For atom selection mechanisms see:
 ## http://thegrantlab.org/bio3d/tutorials/structure-analysis
-## The 'pdbsplit' function works only on PDB files (not MMCIF),
-##   which is why the chain splitting is performed here via 'gemmi'
-##   on the command line. 'pops' is capable of reading MMCIF files
-##   via the in-built 'gemmi' library, but the design choice is to have
-##   the POPScomp functionality fully residing in this 'popscomp.R' script. 
+## The 'pdbsplit' function used below to split the structure into chains
+##   works only on PDB files (not MMCIF).
+##   For MMCIF files, chain splitting is performed here via 'gemmi'
+##   on the command line.
+## Note that 'pops' (POPSC) is also capable of reading MMCIF files
+##   via the in-built 'gemmi' library, but chain splitting is implemented
+##   only in this 'popscomp' (POPSR) part of the program suite.
 
 library("optparse")
 
@@ -57,8 +59,11 @@ if(! is.null(opt$pdb)) {
   inputPDB = opt$pdb
 } else if (! is.null(opt$id)) {
   ## download PDB structure based on PDB identifier
-  get.pdb(opt$id, path = ".")
-  inputPDB = paste(opt$id, "pdb", sep = ".")
+  get.pdb(opt$id, format = "cif", path = ".")
+  pdbConversionName = sub("\\.cif$", ".pdb", opt$mmcif)
+  command0 = paste("gemmi convert", opt$mmcif, pdbConversionName)
+  system_status0 = system(command0)
+  inputPDB = pdbConversionName
 } else if (! is.null(opt$mmcif)) {
   ## convert from '.mmcif' format to '.pdb' format
   pdbConversionName = sub("\\.cif$", ".pdb", opt$mmcif)
