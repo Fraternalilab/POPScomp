@@ -33,11 +33,6 @@ library("optparse")
 ## PAIR: POPS on paired chains
 ## DIFF: difference between sum of isolated chain SASA and paired chain SASA
 
-## The '--contact' option creates a list of paired residues at
-##   the chain interface, based on relative per-residue surface burial (0.25)
-##   and a distance-weighted soft contact score. The reciprocally highest
-##   scoring pairs are listed.
-
 option_list = list(
   make_option(c("-p", "--pdb"), type = "character", default = NULL,
               help = "local PDB file (upload)", metavar = "character"),
@@ -47,8 +42,6 @@ option_list = list(
               help = "local MMCIF file (upload)", metavar = "character"),
   make_option(c("-w", "--workdir"), type = "character", default = NULL,
               help = "working directory", metavar = "character"),
-  make_option(c("-c", "--contact"), type = "character", default = NULL,
-              help = "contact interface", metavar = "character")
 )
 
 opt_parser = OptionParser(option_list = option_list)
@@ -102,7 +95,7 @@ message("Isolated chains")
 exit_codes = sapply(1:length(chain.files), function(x) {
  	command1 = paste0("pops --outDirName ", ".",
          	" --rout --routPrefix ", paste0(chain.files.short[x], ".iso"),
-		 	" --atomOut --residueOut --chainOut --neighbourOut --interfaceOut"
+		 	" --atomOut --residueOut --chainOut --neighbourOut --interfaceOut",
 			" --pdb ", chain.files[x], " 1> ", chain.files.short[x], ".o",
 			" 2> ", chain.files.short[x], ".e")
 	print(command1)

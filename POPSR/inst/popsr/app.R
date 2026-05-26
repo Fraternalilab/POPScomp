@@ -409,7 +409,7 @@ server <- function(input, output) {
     ## to proceed, we require one PDB identifier or uploaded PDB file
     validate(need(((input$pdbentry != "") || (! is.null(input$PDBfile))),
           message = "No PDB source input!"))
-    ## to proceed, we need one unspecified PDB identifier
+    ## to proceed, we refuse 2 specified PDB inputs
     validate(need(((input$pdbentry == "") || (is.null(input$PDBfile))),
           message = "Two PDB sources input!"))
 
@@ -419,7 +419,7 @@ server <- function(input, output) {
       get.pdb(input$pdbentry, format = "cif", path = outDir)
       mmcifDownloadName = paste0(input$pdbentry, ".cif")
       pdbConversionName = paste0(input$pdbentry, ".pdb")
-      command0 = paste("gemmi convert -rename-chain", mmcifDownloadName, pdbConversionName)
+      command0 = paste0("gemmi convert ", outDir, "/", mmcifDownloadName, " ", outDir, "/", pdbConversionName)
       system_status0 = system(command0)
       inputPDB = pdbConversionName
     } else {
