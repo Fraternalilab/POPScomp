@@ -33,11 +33,6 @@ library("optparse")
 ## PAIR: POPS on paired chains
 ## DIFF: difference between sum of isolated chain SASA and paired chain SASA
 
-## The '--contact' option creates a list of paired residues at
-##   the chain interface, based on relative per-residue surface burial (0.25)
-##   and a distance-weighted soft contact score. The reciprocally highest
-##   scoring pairs are listed.
-
 option_list = list(
   make_option(c("-p", "--pdb"), type = "character", default = NULL,
               help = "local PDB file (upload)", metavar = "character"),
@@ -46,9 +41,7 @@ option_list = list(
   make_option(c("-m", "--mmcif"), type = "character", default = NULL,
               help = "local MMCIF file (upload)", metavar = "character"),
   make_option(c("-w", "--workdir"), type = "character", default = NULL,
-              help = "working directory", metavar = "character"),
-  make_option(c("-c", "--contact"), type = "character", default = NULL,
-              help = "contact interface", metavar = "character")
+              help = "working directory", metavar = "character")
 )
 
 opt_parser = OptionParser(option_list = option_list)
@@ -111,17 +104,9 @@ exit_codes = sapply(1:length(chain.files), function(x) {
 })
 
 ## Concatenate output files of single (ISO = isolated) chains.
-## Atom
-## first just the header line
-## then concatenate output file, without file name header (-q) and table header (-n+2)
-command2 = paste0("tail -q -n+2 ", "*.iso.rpopsAtom >> ", "isoSASA.rpopsAtom")
-system_status2 = system(command2, wait = TRUE)
 ## Residue
 command3 = paste0("tail -q -n+2 ", "*.iso.rpopsResidue >> ", "isoSASA.rpopsResidue")
 system_status3 = system(command3, wait = TRUE)
-## Chain
-command4 = paste0("tail -q -n+2 ", "*.iso.rpopsChain >> ", "isoSASA.rpopsChain")
-system_status4 = system(command4, wait = TRUE)
 
 #________________________________________________________________________________
 ## PAIR: create PDB files for all pairwise chain combinations
@@ -185,7 +170,7 @@ pair.sasa.level.files = lapply(pair.sasa.level.files, pair.veclist)
 ## read PAIR SASA files
 for (i in 1:dim(pair.cmbn)[2]) {
 	## read paired chain output
-	pair.sasa.level.files[[j]][[i]] = read.table(paste0(chainpair.files.short[i],
+	pair.sasa.level.files[[1]][[i]] = read.table(paste0(chainpair.files.short[i],
       	                                ".pair.", rpopsLevel[1]),
           	                            header = TRUE, stringsAsFactors = FALSE)
 }
@@ -221,13 +206,8 @@ sel.lix = (pair.sasa.level.files[[1]][[1]][ , "Q.SASA."][is.lix] <= 0.25) & (Zro
 final.ix = (which(is.lix))[sel.lix]
 
 #________________________________________________________________________________
-## write DIFF SASA result files
-## ID SASA files have been created in the App
-## PAIR SASA files have been created here earlier
-## that completes the set of three types of output files
-#message("Writing SASA difference output")
-for (j in 1:length(rpopsLevel)) {
-	write.table(do.call(rbind, diff.sasa.level[[j]]), paste0("deltaSASA.", rpopsLevel[j]))
-}
+## write results
+write.table(pair.sasa.level.files[[1]][[1]][final.ix, ], file = "Qinterface.dat")
+
 
 #===============================================================================
