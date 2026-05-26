@@ -417,8 +417,9 @@ server <- function(input, output) {
     if (input$pdbentry != "") {
       ## get.pdb downloads the PDB structure from the database
       get.pdb(input$pdbentry, format = "cif", path = outDir)
-      pdbConversionName = sub("\\.cif$", ".pdb", opt$mmcif)
-      command0 = paste("gemmi convert", opt$mmcif, pdbConversionName)
+      mmcifDownloadName = paste0(input$pdbentry, ".cif")
+      pdbConversionName = paste0(input$pdbentry, ".pdb")
+      command0 = paste("gemmi convert -rename-chain", mmcifDownloadName, pdbConversionName)
       system_status0 = system(command0)
       inputPDB = pdbConversionName
     } else {
