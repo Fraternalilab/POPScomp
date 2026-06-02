@@ -36,7 +36,7 @@ RUN ./bootstrap && \
 
 # R packages
 RUN R -e "install.packages(c('shiny', 'bio3d', 'data.table', 'DT', 'rgl', 'remotes', \
-                             'digest', 'ggplot2', 'optparse'), \
+                             'digest', 'ggplot2', 'optparse', 'markdown'), \
                              repos='https://cloud.r-project.org')"
 
 RUN R -e "remotes::install_github('AnalytixWare/ShinySky')"

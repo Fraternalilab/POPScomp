@@ -56,6 +56,16 @@ void init_topology(Str *pdb, Topol *topol)
 	topol->interfaceNn = safe_malloc(pdb->nAtom * sizeof(int));
 	topol->interfaceNnDist = safe_malloc(pdb->nAtom * sizeof(float));
 
+	/* Calpha distance matrix */
+	/* determine number of Calpha atoms */
+	topol->nCA = 0;
+	for (i = 0; i < pdb->nAtom; ++ i) {
+		if (strncmp(pdb->atom[i].atomName, " CA ", 4) == 0) {
+			++ topol->nCA;	
+		}
+	}
+	topol->distMatCA = alloc_mat2D_float(topol->distMatCA, topol->nCA, topol->nCA);
+
 	for (i = 0; i < pdb->nAtom; ++ i) {
 		topol->bondState[i][0] = 0; /* no bonded pairs recorded */
 		topol->neighbourState[i][0] = 0; /* no non-bonded pairs recorded */
@@ -86,9 +96,10 @@ void free_topology(Str *pdb, Topol *topol)
 
 	free_mat2D_int(topol->bondState, dimMat2D); /* bond status of atom pairs */
 	free_mat2D_int(topol->neighbourState, dimMat2D); /* neighbour status of atom pairs */
-	free_mat2D_float(topol->neighbourPar,dimMat2D); /* POPS parameters of neighbours */
+	free_mat2D_float(topol->neighbourPar, dimMat2D); /* POPS parameters of neighbours */
 	free(topol->interfaceNn);
 	free(topol->interfaceNnDist);
+	free_mat2D_float(topol->distMatCA, topol->nCA);
 }
 
 /*___________________________________________________________________________*/
@@ -629,4 +640,31 @@ int get_topology(Str *pdb, Type *type, Topol *topol, ConstantSasa *constant_sasa
 
 	return 0;
 }
+
+/*____________________________________________________________________________*/
+/** Calpha distances */
+int calpha_distances(Str *pdb, Topol *topol) {
+	unsigned int i, j;
+	int n_cai = 0;
+	int n_caj = 0;
+	for (i = 0; i < pdb->nAtom; ++ i) {
+		if (strncmp(pdb->atom[i].atomName, " CA ", 4) == 0) {
+			for (j = i+1; j < pdb->nAtom; ++ j) {
+				if (strncmp(pdb->atom[j].atomName, " CA ", 4) == 0) {
+					topol->distMatCA[n_cai][n_caj] = 
+					topol->distMatCA[n_caj][n_cai] =
+						atom_distance(pdb, n_cai, n_caj);
+					++ n_caj;
+				}
+			}
+			++ n_cai;
+			n_caj = 0;
+		}		
+	}
+
+	return(0);
+}
+
+/*____________________________________________________________________________*/
+/*____________________________________________________________________________*/
 

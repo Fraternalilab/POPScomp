@@ -15,6 +15,7 @@ library(DT)
 library(digest)
 library(shinysky)
 library(POPSR)
+library(markdown)
 
 #_______________________________________________________________________________
 ## load 'Readme' text
@@ -784,7 +785,13 @@ server <- function(input, output) {
   )
 
   ## Readme panel text output (loaded as variable 'readme' at top of App)
-  output$readme = renderText(readme)
+  #output$readme = renderText(readme)
+  #output$readme = renderUI({
+  #  HTML(markdown::markdownToHTML(
+  #    text = readme,
+  #    fragment.only = TRUE
+  #  ))
+  #})
 }
 
 #_______________________________________________________________________________

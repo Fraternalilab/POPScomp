@@ -113,9 +113,9 @@ am_pops_OBJECTS = arg.$(OBJEXT) atomgroup.$(OBJEXT) cJSON.$(OBJEXT) \
 	getpdb.$(OBJEXT) getpdbml.$(OBJEXT) gettraj.$(OBJEXT) \
 	json.$(OBJEXT) matrix.$(OBJEXT) modstring.$(OBJEXT) \
 	pattern.$(OBJEXT) pops.$(OBJEXT) putsasa.$(OBJEXT) \
-	putbsasa.$(OBJEXT) putsigma.$(OBJEXT) safe.$(OBJEXT) \
-	sasa.$(OBJEXT) sigma.$(OBJEXT) topol.$(OBJEXT) type.$(OBJEXT) \
-	vector.$(OBJEXT) cif_reader.$(OBJEXT) \
+	putbsasa.$(OBJEXT) putsigma.$(OBJEXT) putCAdistMat.$(OBJEXT) \
+	safe.$(OBJEXT) sasa.$(OBJEXT) sigma.$(OBJEXT) topol.$(OBJEXT) \
+	type.$(OBJEXT) vector.$(OBJEXT) cif_reader.$(OBJEXT) \
 	../gemmi/src/mmcif.$(OBJEXT) ../gemmi/src/symmetry.$(OBJEXT) \
 	../gemmi/src/polyheur.$(OBJEXT) ../gemmi/src/resinfo.$(OBJEXT)
 pops_OBJECTS = $(am_pops_OBJECTS)
@@ -147,10 +147,10 @@ am__depfiles_remade = ../gemmi/src/$(DEPDIR)/mmcif.Po \
 	./$(DEPDIR)/gettraj.Po ./$(DEPDIR)/json.Po \
 	./$(DEPDIR)/matrix.Po ./$(DEPDIR)/modstring.Po \
 	./$(DEPDIR)/pattern.Po ./$(DEPDIR)/pops.Po \
-	./$(DEPDIR)/putbsasa.Po ./$(DEPDIR)/putsasa.Po \
-	./$(DEPDIR)/putsigma.Po ./$(DEPDIR)/safe.Po \
-	./$(DEPDIR)/sasa.Po ./$(DEPDIR)/sigma.Po ./$(DEPDIR)/topol.Po \
-	./$(DEPDIR)/type.Po ./$(DEPDIR)/vector.Po
+	./$(DEPDIR)/putCAdistMat.Po ./$(DEPDIR)/putbsasa.Po \
+	./$(DEPDIR)/putsasa.Po ./$(DEPDIR)/putsigma.Po \
+	./$(DEPDIR)/safe.Po ./$(DEPDIR)/sasa.Po ./$(DEPDIR)/sigma.Po \
+	./$(DEPDIR)/topol.Po ./$(DEPDIR)/type.Po ./$(DEPDIR)/vector.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -325,10 +325,11 @@ pops_SOURCES = arg.c arg.h argpdb.h atomgroup.c atomgroup.h \
 	getpdbml.h gettraj.c gettraj.h json.c json.h matrix.c matrix.h \
 	modstring.c modstring.h pattern.c pattern.h pdb_structure.h \
 	pops.c pops.h putsasa.c putsasa.h putbsasa.c putbsasa.h \
-	putsigma.c putsigma.h safe.c safe.h sasa.c sasa.h sasa_const.h \
-	sasa_data.h seq.h sigma.c sigma.h sigma_const.h sigma_data.h \
-	topol.c topol.h type.c type.h vector.c vector.h cif_reader.cpp \
-	cif_reader.h ../gemmi/src/mmcif.cpp ../gemmi/src/symmetry.cpp \
+	putsigma.c putsigma.h putCAdistMat.c putCAdistMat.h safe.c \
+	safe.h sasa.c sasa.h sasa_const.h sasa_data.h seq.h sigma.c \
+	sigma.h sigma_const.h sigma_data.h topol.c topol.h type.c \
+	type.h vector.c vector.h cif_reader.cpp cif_reader.h \
+	../gemmi/src/mmcif.cpp ../gemmi/src/symmetry.cpp \
 	../gemmi/src/polyheur.cpp ../gemmi/src/resinfo.cpp
 
 # Force link with the C++ linker if any C++ objects are present
@@ -473,6 +474,7 @@ include ./$(DEPDIR)/matrix.Po # am--include-marker
 include ./$(DEPDIR)/modstring.Po # am--include-marker
 include ./$(DEPDIR)/pattern.Po # am--include-marker
 include ./$(DEPDIR)/pops.Po # am--include-marker
+include ./$(DEPDIR)/putCAdistMat.Po # am--include-marker
 include ./$(DEPDIR)/putbsasa.Po # am--include-marker
 include ./$(DEPDIR)/putsasa.Po # am--include-marker
 include ./$(DEPDIR)/putsigma.Po # am--include-marker
@@ -670,6 +672,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/modstring.Po
 	-rm -f ./$(DEPDIR)/pattern.Po
 	-rm -f ./$(DEPDIR)/pops.Po
+	-rm -f ./$(DEPDIR)/putCAdistMat.Po
 	-rm -f ./$(DEPDIR)/putbsasa.Po
 	-rm -f ./$(DEPDIR)/putsasa.Po
 	-rm -f ./$(DEPDIR)/putsigma.Po
@@ -743,6 +746,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/modstring.Po
 	-rm -f ./$(DEPDIR)/pattern.Po
 	-rm -f ./$(DEPDIR)/pops.Po
+	-rm -f ./$(DEPDIR)/putCAdistMat.Po
 	-rm -f ./$(DEPDIR)/putbsasa.Po
 	-rm -f ./$(DEPDIR)/putsasa.Po
 	-rm -f ./$(DEPDIR)/putsigma.Po

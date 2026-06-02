@@ -23,6 +23,7 @@ json.c json.h \
 matrix.c matrix.h modstring.c modstring.h \
 pattern.c pattern.h pdb_structure.h pops.c pops.h \
 putsasa.c putsasa.h putbsasa.c putbsasa.h putsigma.c putsigma.h \
+putCAdistMat.c putCAdistMat.h \
 safe.c safe.h sasa.c sasa.h sasa_const.h sasa_data.h seq.h \
 sigma.c sigma.h sigma_const.h sigma_data.h \
 topol.c topol.h type.c type.h vector.c vector.h \
