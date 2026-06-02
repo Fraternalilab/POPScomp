@@ -63,7 +63,7 @@ int nonbonded_overlaps(Str *pdb, Type *type, Topol *topol, ConstantSasa *constan
 void init_topology(Str *pdb, Topol *topol);
 void free_topology(Str *pdb, Topol *topol);
 int get_topology(Str *pdb, Type *type, Topol *topol, ConstantSasa *constant_sasa, Argpdb *argpdb, Arg *arg); /* call topology routines */
-int calpha_distances(Str *pdb, Topol *topol);
+int calpha_distances(Arg *arg, Str *pdb, Topol *topol);
 
 #endif
 

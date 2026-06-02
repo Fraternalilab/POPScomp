@@ -1,5 +1,5 @@
 /*===============================================================================
-putCAdistMat.h : routines for printing Calpha distance matrix
+putdistMatCA.h : routines for printing Calpha distance matrix
 Copyright (C) 2026 Jens Kleinjung
 Read the COPYING file for license information.
 ================================================================================*/
@@ -15,6 +15,6 @@ Read the COPYING file for license information.
 
 /*____________________________________________________________________________*/
 /* print Calpha distance matrix */
-void print_CAdistMat(Arg *arg, Topol *topol);
+void print_distMatCA(Arg *arg, Topol *topol);
 
 #endif

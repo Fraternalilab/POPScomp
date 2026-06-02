@@ -113,7 +113,7 @@ am_pops_OBJECTS = arg.$(OBJEXT) atomgroup.$(OBJEXT) cJSON.$(OBJEXT) \
 	getpdb.$(OBJEXT) getpdbml.$(OBJEXT) gettraj.$(OBJEXT) \
 	json.$(OBJEXT) matrix.$(OBJEXT) modstring.$(OBJEXT) \
 	pattern.$(OBJEXT) pops.$(OBJEXT) putsasa.$(OBJEXT) \
-	putbsasa.$(OBJEXT) putsigma.$(OBJEXT) putCAdistMat.$(OBJEXT) \
+	putbsasa.$(OBJEXT) putsigma.$(OBJEXT) putDistMatCA.$(OBJEXT) \
 	safe.$(OBJEXT) sasa.$(OBJEXT) sigma.$(OBJEXT) topol.$(OBJEXT) \
 	type.$(OBJEXT) vector.$(OBJEXT) cif_reader.$(OBJEXT) \
 	../gemmi/src/mmcif.$(OBJEXT) ../gemmi/src/symmetry.$(OBJEXT) \
@@ -147,7 +147,7 @@ am__depfiles_remade = ../gemmi/src/$(DEPDIR)/mmcif.Po \
 	./$(DEPDIR)/gettraj.Po ./$(DEPDIR)/json.Po \
 	./$(DEPDIR)/matrix.Po ./$(DEPDIR)/modstring.Po \
 	./$(DEPDIR)/pattern.Po ./$(DEPDIR)/pops.Po \
-	./$(DEPDIR)/putCAdistMat.Po ./$(DEPDIR)/putbsasa.Po \
+	./$(DEPDIR)/putDistMatCA.Po ./$(DEPDIR)/putbsasa.Po \
 	./$(DEPDIR)/putsasa.Po ./$(DEPDIR)/putsigma.Po \
 	./$(DEPDIR)/safe.Po ./$(DEPDIR)/sasa.Po ./$(DEPDIR)/sigma.Po \
 	./$(DEPDIR)/topol.Po ./$(DEPDIR)/type.Po ./$(DEPDIR)/vector.Po
@@ -325,7 +325,7 @@ pops_SOURCES = arg.c arg.h argpdb.h atomgroup.c atomgroup.h \
 	getpdbml.h gettraj.c gettraj.h json.c json.h matrix.c matrix.h \
 	modstring.c modstring.h pattern.c pattern.h pdb_structure.h \
 	pops.c pops.h putsasa.c putsasa.h putbsasa.c putbsasa.h \
-	putsigma.c putsigma.h putCAdistMat.c putCAdistMat.h safe.c \
+	putsigma.c putsigma.h putDistMatCA.c putDistMatCA.h safe.c \
 	safe.h sasa.c sasa.h sasa_const.h sasa_data.h seq.h sigma.c \
 	sigma.h sigma_const.h sigma_data.h topol.c topol.h type.c \
 	type.h vector.c vector.h cif_reader.cpp cif_reader.h \
@@ -474,7 +474,7 @@ include ./$(DEPDIR)/matrix.Po # am--include-marker
 include ./$(DEPDIR)/modstring.Po # am--include-marker
 include ./$(DEPDIR)/pattern.Po # am--include-marker
 include ./$(DEPDIR)/pops.Po # am--include-marker
-include ./$(DEPDIR)/putCAdistMat.Po # am--include-marker
+include ./$(DEPDIR)/putDistMatCA.Po # am--include-marker
 include ./$(DEPDIR)/putbsasa.Po # am--include-marker
 include ./$(DEPDIR)/putsasa.Po # am--include-marker
 include ./$(DEPDIR)/putsigma.Po # am--include-marker
@@ -672,7 +672,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/modstring.Po
 	-rm -f ./$(DEPDIR)/pattern.Po
 	-rm -f ./$(DEPDIR)/pops.Po
-	-rm -f ./$(DEPDIR)/putCAdistMat.Po
+	-rm -f ./$(DEPDIR)/putDistMatCA.Po
 	-rm -f ./$(DEPDIR)/putbsasa.Po
 	-rm -f ./$(DEPDIR)/putsasa.Po
 	-rm -f ./$(DEPDIR)/putsigma.Po
@@ -746,7 +746,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/modstring.Po
 	-rm -f ./$(DEPDIR)/pattern.Po
 	-rm -f ./$(DEPDIR)/pops.Po
-	-rm -f ./$(DEPDIR)/putCAdistMat.Po
+	-rm -f ./$(DEPDIR)/putDistMatCA.Po
 	-rm -f ./$(DEPDIR)/putbsasa.Po
 	-rm -f ./$(DEPDIR)/putsasa.Po
 	-rm -f ./$(DEPDIR)/putsigma.Po

@@ -37,6 +37,7 @@ POPS : Parameter OPtimised Surfaces at atomic resolution.
 #include "putsasa.h"
 #include "putbsasa.h"
 #include "putsigma.h"
+#include "putDistMatCA.h"
 #include "safe.h"
 #include "sasa.h"
 #include "sasa_const.h"

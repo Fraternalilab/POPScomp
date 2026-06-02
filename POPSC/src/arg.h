@@ -52,8 +52,8 @@ typedef struct
     char *sigmatrajOutFileName;
     FILE *interfaceOutFile;
     char *interfaceOutFileName;
-    FILE *CAdistMatOutFile;
-    char *CAdistMatOutFileName;
+    FILE *distMatCAOutFile;
+    char *distMatCAOutFileName;
 	int interfaceOut;
 	int compositionOut;
 	int topologyOut;

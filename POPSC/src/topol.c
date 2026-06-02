@@ -65,6 +65,7 @@ void init_topology(Str *pdb, Topol *topol)
 		}
 	}
 	topol->distMatCA = alloc_mat2D_float(topol->distMatCA, topol->nCA, topol->nCA);
+	init_mat2D_float(topol->distMatCA, topol->nCA, topol->nCA, 0.);
 
 	for (i = 0; i < pdb->nAtom; ++ i) {
 		topol->bondState[i][0] = 0; /* no bonded pairs recorded */
@@ -643,22 +644,27 @@ int get_topology(Str *pdb, Type *type, Topol *topol, ConstantSasa *constant_sasa
 
 /*____________________________________________________________________________*/
 /** Calpha distances */
-int calpha_distances(Str *pdb, Topol *topol) {
+int calpha_distances(Arg *arg, Str *pdb, Topol *topol) {
 	unsigned int i, j;
-	int n_cai = 0;
-	int n_caj = 0;
-	for (i = 0; i < pdb->nAtom; ++ i) {
+	int n_cai, n_caj;
+
+	for (i = 0, n_cai = 0; i < pdb->nAtom; ++ i) {
 		if (strncmp(pdb->atom[i].atomName, " CA ", 4) == 0) {
-			for (j = i+1; j < pdb->nAtom; ++ j) {
+			
+			for (j = i+1, n_caj = n_cai + 1; j < pdb->nAtom; ++ j) {
 				if (strncmp(pdb->atom[j].atomName, " CA ", 4) == 0) {
+
 					topol->distMatCA[n_cai][n_caj] = 
 					topol->distMatCA[n_caj][n_cai] =
-						atom_distance(pdb, n_cai, n_caj);
+						atom_distance(pdb, i, j);
+
+					/*printf("Distance between CA_i %d (%d) and CA_j %d (%d): %f\n",
+							n_cai, i, n_caj, j, topol->distMatCA[n_cai][n_caj]);*/
+
 					++ n_caj;
 				}
 			}
 			++ n_cai;
-			n_caj = 0;
 		}		
 	}
 

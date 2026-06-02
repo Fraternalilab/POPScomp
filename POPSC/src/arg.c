@@ -96,7 +96,7 @@ static void set_defaults(Arg *arg, Argpdb *argpdb)
     arg->sigmaOutFileName = "sigma.out";
     arg->sigmatrajOutFileName = "sigmatraj";
     arg->interfaceOutFileName = "interface.out";
-    arg->CAdistMatOutFileName = "CAdistMat.dat";
+    arg->distMatCAOutFileName = "distMatCA.dat";
 	arg->interfaceOut = 0; /* output of interface residue pairs */
 	arg->typeOut = 0; /* output of atom/residue types */
 	arg->topologyOut = 0; /* output of molecule topology */
