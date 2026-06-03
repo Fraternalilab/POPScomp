@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
     /*____________________________________________________________________________*/
     /** compute molecular topology */
 	if (! arg.silent) fprintf(stdout, "Topology\n");
-	init_topology(&pdb, &topol);
+	init_topology(&arg, &pdb, &topol);
     get_topology(&pdb, &type, &topol, constant_sasa, &argpdb, &arg);
 
     /*____________________________________________________________________________*/
@@ -204,7 +204,7 @@ int main(int argc, char *argv[])
 			assert(traj.frame[i].nAtom == pdb.nAllAtom);
 			copy_coordinates(&pdb, &traj, i);
 			/* topology */
-			init_topology(&pdb, &topol);
+			init_topology(&arg, &pdb, &topol);
 			get_topology(&pdb, &type, &topol, constant_sasa, &argpdb, &arg);
 			/* SASA */
 			init_sasa(&pdb, &type, &molSasa, constant_sasa, &arg);
@@ -228,7 +228,7 @@ int main(int argc, char *argv[])
 	free(pdb.resAtom);
 	free(pdb.atomMap);
 	free(pdb.sequence.res);
-	free(pdb.sequence.name);
+	/*free(pdb.sequence.name);*/
 
 	/* trajectory */
 	if (arg.trajInFileName) {

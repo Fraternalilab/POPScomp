@@ -27,6 +27,7 @@ Read the COPYING file for license information.
 
 /*____________________________________________________________________________*/
 /* prototypes */
+void remove_spaces(char *s);
 int read_pdb(FILE *pdbfile, gzFile *pdbgzInFile, Arg *arg, Argpdb *argpdb, Str *str);
 void read_structure(Arg *arg, Argpdb *argpdb, Str *pdb);
 

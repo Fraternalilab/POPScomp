@@ -48,7 +48,8 @@ typedef struct
 	float **neighbourPar; /* records the POPS parameters 'p_ij * b_ij' of neighbours */
 	int *interfaceNn; /* nearest neighbour on separate chain */
 	float *interfaceNnDist; /* distance to nearest neighbour on separate chain */
-	int nCA; /* number of Calpha atoms */
+	int nCA1; /* number of Calpha atoms in chain or domain 1 */
+	int nCA2; /* number of Calpha atoms in chain or domain 2 */
 	float **distMatCA; /* Calpha distance matrix */
 } Topol;
 
@@ -60,7 +61,7 @@ int get_bonds(Str *pdb, Type *type, Topol *topol, ConstantSasa *constant_sasa, A
 int get_angles(Str *pdb, Topol *topol); /* calculate angles (from bonds) */
 int get_torsions(Str *pdb, Type *type, Topol *topol, ConstantSasa *constant_sasa); /* calculate torsions (from angles) */
 int nonbonded_overlaps(Str *pdb, Type *type, Topol *topol, ConstantSasa *constant_sasa, Arg *arg); /* calculate overlapping atoms */
-void init_topology(Str *pdb, Topol *topol);
+void init_topology(Arg *arg, Str *pdb, Topol *topol);
 void free_topology(Str *pdb, Topol *topol);
 int get_topology(Str *pdb, Type *type, Topol *topol, ConstantSasa *constant_sasa, Argpdb *argpdb, Arg *arg); /* call topology routines */
 int calpha_distances(Arg *arg, Str *pdb, Topol *topol);

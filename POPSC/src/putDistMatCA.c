@@ -12,17 +12,8 @@ Read the COPYING file for license information.
 /** print Calpha distance matrix */
 void print_distMatCA(Arg *arg, Topol *topol)
 {
-	unsigned int i, j;
-
 	arg->distMatCAOutFile = safe_open(arg->distMatCAOutFileName, "w");
-
-	for (i = 0; i < topol->nCA; ++ i) { 
-		for (j = 0; j < topol->nCA; ++ j) { 
-			print_mat2D_float(arg->distMatCAOutFileName,
-								topol->distMatCA, i, j);
-		}
-	}
-
+	print_mat2D_float(arg->distMatCAOutFileName, topol->distMatCA, topol->nCA1, topol->nCA2);
 	fclose(arg->distMatCAOutFile);
 }
 

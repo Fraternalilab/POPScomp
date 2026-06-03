@@ -1,10 +1,26 @@
 /*==============================================================================
 getpdb.c : routines for reading PDB structures
-Copyright (C) 2004 Jens Kleinjung
+Copyright (C) 2004-2026 Jens Kleinjung
 Read the COPYING file for license information.
 ==============================================================================*/
 
 #include "getpdb.h"
+
+/*____________________________________________________________________________*/
+/* remove spaces from atom and residue names */
+void remove_spaces(char *s)
+{
+    char *src = s;
+    char *dst = s;
+
+    while (*src) {
+        if (*src != ' ')
+            *dst++ = *src;
+        src++;
+    }
+
+    *dst = '\0';
+}
 
 /*____________________________________________________________________________*/
 /* match PDB residue name against constant residue name array */
@@ -54,8 +70,8 @@ __inline__ static char aacode(char *code3)
 __inline__ static int standardise_name(char *residueName, char *atomName)
 {
 	/* GRO 'ILE CD' to PDB 'ILE CD1' */
-	if ((strcmp(residueName, "ILE") == 0) && (strcmp(atomName, " CD ") == 0))
-		strcpy(atomName, " CD1");
+	if ((strcmp(residueName, "ILE") == 0) && (strcmp(atomName, "CD") == 0))
+		strcpy(atomName, "CD1");
 
 	return 0;
 }
@@ -155,8 +171,7 @@ int read_pdb(FILE *pdbInFile, gzFile *pdbgzInFile, Arg *arg, Argpdb *argpdb, Str
 	regex_t *regexPattern = 0; /* regular atom patterns */
 	/* allowed HETATM atom types (standard N,CA,C,O) and elements (any N,C,O,P,S) */
 	const int nHetAtom = 9;
-	char hetAtomPattern[9][32] = {{" N  "},{" CA "},{" C  "},{" O  "},{".{1}C[[:print:]]{1,3}"},{".{1}N[[:print:]]{1,3}"},{".{1}O[[:print:]]{1,3}"},{".{1}P[[:print:]]{1,3}"},{".{1}S[[:print:]]{1,3}"}};
-	/*char hetAtomNewname[9][32] = {{" N  "},{" CA "},{" C  "},{" O  "},{" C_ "},{" N_ "},{" O_ "},{" P_ "},{" S_ "}};*/
+	char hetAtomPattern[9][32] = {{"N"},{"CA"},{"C"},{"O"},{".{1}C[[:print:]]{1,3}"},{".{1}N[[:print:]]{1,3}"},{".{1}O[[:print:]]{1,3}"},{".{1}P[[:print:]]{1,3}"},{".{1}S[[:print:]]{1,3}"}};
 
 	/*____________________________________________________________________________*/
 	/* initialise/allocate memory for set of (64) selected (CA) atom entries */
@@ -262,12 +277,14 @@ int read_pdb(FILE *pdbInFile, gzFile *pdbgzInFile, Arg *arg, Argpdb *argpdb, Str
 			str->atom[str->nAtom].recordName[j++] = line[i++];
 		}
 		str->atom[str->nAtom].recordName[j] = '\0';
+		
 
 		/* atom name */
 		for (i = 12, j = 0; i < 16; ) {
 			str->atom[str->nAtom].atomName[j++] = line[i++];
 		}
 		str->atom[str->nAtom].atomName[j] = '\0';
+		remove_spaces(str->atom[str->nAtom].atomName);
 
 		/* alternative location */
 		str->atom[str->nAtom].alternativeLocation[0] = line[16];
@@ -278,10 +295,12 @@ int read_pdb(FILE *pdbInFile, gzFile *pdbgzInFile, Arg *arg, Argpdb *argpdb, Str
 			str->atom[str->nAtom].residueName[j++] = line[i++];
 		}
 		str->atom[str->nAtom].residueName[j] = '\0';
+		remove_spaces(str->atom[str->nAtom].residueName);
 
 		/* chain identifier */
 		str->atom[str->nAtom].chainIdentifier[0] = line[21];
 		str->atom[str->nAtom].chainIdentifier[1] = '\0';
+		remove_spaces(str->atom[str->nAtom].chainIdentifier);
 
 		/* residue number */
 		str->atom[str->nAtom].residueNumber = atoi(&line[22]);
@@ -318,6 +337,7 @@ int read_pdb(FILE *pdbInFile, gzFile *pdbgzInFile, Arg *arg, Argpdb *argpdb, Str
 			str->atom[str->nAtom].element[j++] = line[i++];
 		}
 		str->atom[str->nAtom].element[j] = '\0';
+		remove_spaces(str->atom[str->nAtom].element);
 
 		/* charge */
 		/*for (i = 78, j = 0; i < 80; )

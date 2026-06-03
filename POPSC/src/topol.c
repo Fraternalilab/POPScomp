@@ -42,9 +42,11 @@ __inline__ static void print_torsion(Str *pdb, int t1, int t2, int t3, int t4)
 
 /*___________________________________________________________________________*/
 /** init topology */
-void init_topology(Str *pdb, Topol *topol)
+void init_topology(Arg *arg, Str *pdb, Topol *topol)
 {
 	unsigned int i;
+	int *nCA = NULL;
+	char *chain1 = NULL;
 	/* assuming an upper limit of 63 bonded interactions per atom */
 	topol->bondState = alloc_mat2D_int(topol->bondState, pdb->nAtom, 64);
 	/* assuming an upper limit of 255 non-bonded interactions per atom */
@@ -56,16 +58,23 @@ void init_topology(Str *pdb, Topol *topol)
 	topol->interfaceNn = safe_malloc(pdb->nAtom * sizeof(int));
 	topol->interfaceNnDist = safe_malloc(pdb->nAtom * sizeof(float));
 
-	/* Calpha distance matrix */
-	/* determine number of Calpha atoms */
-	topol->nCA = 0;
-	for (i = 0; i < pdb->nAtom; ++ i) {
-		if (strncmp(pdb->atom[i].atomName, " CA ", 4) == 0) {
-			++ topol->nCA;	
+	/* between-chain or between domain Calpha distance matrix */
+	/* determine number of Calpha atoms per chain or domain */
+	nCA = &(topol->nCA1);
+	for (i = 0, topol->nCA1 = 0, topol->nCA2 = 0; i < pdb->nAtom; ++ i) {
+		if (strcmp(pdb->atom[i].atomName, "CA") == 0) {
+			if ((*nCA) == 0) {
+				chain1 = &(pdb->atom[i].chainIdentifier[0]);
+			}
+			if ((*nCA) > 0 && strcmp(pdb->atom[i].chainIdentifier, chain1) != 0) {
+				nCA = &(topol->nCA2);
+			}			
+			++ (*nCA);
 		}
 	}
-	topol->distMatCA = alloc_mat2D_float(topol->distMatCA, topol->nCA, topol->nCA);
-	init_mat2D_float(topol->distMatCA, topol->nCA, topol->nCA, 0.);
+	printf("CA distance matrix has dimensions %d x %d \n", topol->nCA1, topol->nCA2);
+	topol->distMatCA = alloc_mat2D_float(topol->distMatCA, topol->nCA1, topol->nCA2);
+	init_mat2D_float(topol->distMatCA, topol->nCA1, topol->nCA2, 0.);
 
 	for (i = 0; i < pdb->nAtom; ++ i) {
 		topol->bondState[i][0] = 0; /* no bonded pairs recorded */
@@ -100,7 +109,7 @@ void free_topology(Str *pdb, Topol *topol)
 	free_mat2D_float(topol->neighbourPar, dimMat2D); /* POPS parameters of neighbours */
 	free(topol->interfaceNn);
 	free(topol->interfaceNnDist);
-	free_mat2D_float(topol->distMatCA, topol->nCA);
+	free_mat2D_float(topol->distMatCA, topol->nCA1);
 }
 
 /*___________________________________________________________________________*/
@@ -643,30 +652,49 @@ int get_topology(Str *pdb, Type *type, Topol *topol, ConstantSasa *constant_sasa
 }
 
 /*____________________________________________________________________________*/
-/** Calpha distances */
+/** Calpha distances between different chains */
 int calpha_distances(Arg *arg, Str *pdb, Topol *topol) {
 	unsigned int i, j;
 	int n_cai, n_caj;
+	char chain1 = '\0';
 
-	for (i = 0, n_cai = 0; i < pdb->nAtom; ++ i) {
-		if (strncmp(pdb->atom[i].atomName, " CA ", 4) == 0) {
-			
-			for (j = i+1, n_caj = n_cai + 1; j < pdb->nAtom; ++ j) {
-				if (strncmp(pdb->atom[j].atomName, " CA ", 4) == 0) {
+	n_cai = 0;
 
-					topol->distMatCA[n_cai][n_caj] = 
-					topol->distMatCA[n_caj][n_cai] =
-						atom_distance(pdb, i, j);
-
-					/*printf("Distance between CA_i %d (%d) and CA_j %d (%d): %f\n",
-							n_cai, i, n_caj, j, topol->distMatCA[n_cai][n_caj]);*/
-
-					++ n_caj;
-				}
-			}
-			++ n_cai;
-		}		
+	/* find first CA chain */
+	for (i = 0; i < pdb->nAtom; ++i) {
+    	if (strcmp(pdb->atom[i].atomName, "CA") == 0) {
+       		chain1 = pdb->atom[i].chainIdentifier[0];
+       		break;
+    	}
 	}
+
+	for (i = 0; i < pdb->nAtom; ++i) {
+    	if (strcmp(pdb->atom[i].atomName, "CA") != 0)
+        	continue;
+
+    	/* only rows from chain 1 */
+    	if (pdb->atom[i].chainIdentifier[0] != chain1)
+        	continue;
+
+    	n_caj = 0;
+
+    	for (j = 0; j < pdb->nAtom; ++j) {
+			if (strcmp(pdb->atom[j].atomName, "CA") != 0)
+            	continue;
+
+        	/* only columns from other chain(s) */
+        	if (pdb->atom[j].chainIdentifier[0] == chain1)
+            	continue;
+
+        	topol->distMatCA[n_cai][n_caj] = atom_distance(pdb, i, j);
+        	++n_caj;
+    	}
+
+    	++n_cai;
+	}
+
+	assert(n_cai == topol->nCA1);
+	assert(n_caj == topol->nCA2);
 
 	return(0);
 }

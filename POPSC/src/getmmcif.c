@@ -32,7 +32,7 @@ __inline__ static char aacode(char *code3)
 	/* three-letter code of amino acid residues, exception HET (X) */
 	char *aa3[] = {"ALA","---","CYS","ASP","GLU","PHE","GLY","HIS","ILE","---","LYS","LEU","MET","ASN","---","PRO","GLN","ARG","SER","THR","UNL","VAL","TRP","HET","TYR","UNK"};
 	/* nucleotide residues */
-	char *nuc[] = {"  A"," DA","  C"," DC","---","---","  G"," DG","  I"," DI","---","---","---","  N"," DN","---","---","---"," DT","  T","  U"," DU","---","---","---","---"};
+	char *nuc[] = {"A","DA","C","DC","---","---","G","DG","I"," DI","---","---","---","N","DN","---","---","---","DT","T","U","DU","---","---","---","---"};
 
 	/* match against amino acid residues */
 	residue = scan_array(code3, aa3, 65);
@@ -100,7 +100,8 @@ int map_structure_mmcif(Arg *arg, Argpdb *argpdb, Str *str, Structure *s) {
 	regex_t *regexPattern = 0; /* regular atom patterns */
 	/* allowed HETATM atom types (standard N,CA,C,O) and elements (any N,C,O,P,S) */
 	const int nHetAtom = 9;
-	char hetAtomPattern[9][32] = {{" N  "},{" CA "},{" C  "},{" O  "},{".{1}C[[:print:]]{1,3}"},{".{1}N[[:print:]]{1,3}"},{".{1}O[[:print:]]{1,3}"},{".{1}P[[:print:]]{1,3}"},{".{1}S[[:print:]]{1,3}"}};
+
+	char hetAtomPattern[9][32] = {{"N"},{"CA"},{"C"},{"O"},{".{1}C[[:print:]]{1,3}"},{".{1}N[[:print:]]{1,3}"},{".{1}O[[:print:]]{1,3}"},{".{1}P[[:print:]]{1,3}"},{".{1}S[[:print:]]{1,3}"}};
 
 	/*____________________________________________________________________________*/
 	/* initialise/allocate memory for set of (64) selected (CA) atom entries */
@@ -209,8 +210,8 @@ int map_structure_mmcif(Arg *arg, Argpdb *argpdb, Str *str, Structure *s) {
 		}
 
 		/* detect CA/N3 atoms */
-		if ((strncmp(str->atom[i].atomName, " CA ", 4) == 0) ||
-			(strncmp(str->atom[i].atomName, " N3 ", 4) == 0)) {
+		if ((strncmp(str->atom[i].atomName, "CA", 4) == 0) ||
+			(strncmp(str->atom[i].atomName, "N3", 4) == 0)) {
 
 			str->resAtom[k] = i;
 			str->sequence.res[k++] = aacode(str->atom[i].residueName);
