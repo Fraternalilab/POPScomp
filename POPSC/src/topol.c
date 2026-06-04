@@ -653,10 +653,18 @@ int get_topology(Str *pdb, Type *type, Topol *topol, ConstantSasa *constant_sasa
 
 /*____________________________________________________________________________*/
 /** Calpha distances between different chains */
-int calpha_distances(Arg *arg, Str *pdb, Topol *topol) {
-	unsigned int i, j;
+/** The raw distances are converted in residue-size-weighted soft distances */
+int calpha_distances(Arg *arg, Str *pdb, Topol *topol, ConstantSasa *res_sasa) {
+	unsigned int i, j, k;
 	int n_cai, n_caj;
 	char chain1 = '\0';
+	float distance = 0.;
+	float soft_distance = 0.;
+	int found_CA1 = 0;
+	int found_CA2 = 0;
+	float r_CA1 = 0.;
+	float r_CA2 = 0.;
+	float soft_distance_norm = 0.;
 
 	n_cai = 0;
 
@@ -686,7 +694,32 @@ int calpha_distances(Arg *arg, Str *pdb, Topol *topol) {
         	if (pdb->atom[j].chainIdentifier[0] == chain1)
             	continue;
 
-        	topol->distMatCA[n_cai][n_caj] = atom_distance(pdb, i, j);
+			distance = atom_distance(pdb, i, j);
+			soft_distance = 1 / (1 + exp((distance - 8) / 0.5));
+			
+			/* get residue radius (coarse grained) */
+			found_CA1 = found_CA2 = 0;
+			r_CA1 = r_CA2 = 0.;
+			for (k = 0; k < res_sasa->nResidueType; ++ k) {
+ 				if (strcmp(pdb->atom[i].residueName, res_sasa->atomDataSasa[k][0].residueName) == 0) {
+        			/* found residue of atom i at index k */
+					r_CA1 = res_sasa->atomDataSasa[k][0].radius;
+					++ found_CA1;
+        		}
+ 				if (strcmp(pdb->atom[j].residueName, res_sasa->atomDataSasa[k][0].residueName) == 0) {
+        			/* found residue of atom j at index k */
+					r_CA2 = res_sasa->atomDataSasa[k][0].radius;
+					++ found_CA2;
+        		}
+			
+				if (found_CA1 && found_CA2) {
+					break;
+    			}
+			}
+
+			soft_distance_norm = soft_distance *  (sqrt(r_CA1 * r_CA2) / 4.);
+        	topol->distMatCA[n_cai][n_caj] = soft_distance_norm;
+
         	++n_caj;
     	}
 

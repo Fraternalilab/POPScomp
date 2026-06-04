@@ -181,7 +181,7 @@ int main(int argc, char *argv[])
     /*____________________________________________________________________________*/
 	/** compute and print Calpha distance matrix between 2 chains*/
 	if (pdb.nChain == 2) {
-		calpha_distances(&arg, &pdb, &topol);
+		calpha_distances(&arg, &pdb, &topol, res_sasa);
 		print_distMatCA(&arg, &topol);
 	}
 
