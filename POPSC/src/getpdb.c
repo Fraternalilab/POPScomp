@@ -500,8 +500,7 @@ void read_structure(Arg *arg, Argpdb *argpdb, Str *pdb)
 	}
 
     /* check for empty pdb structure and exit */
-    if (pdb->nAtom == 0)
-    {
+    if (pdb->nAtom == 0) {
         ErrorSpecNoexit("Could not find atoms in input file. Please check input parameters:\nformat (--pdb or --pdbml), compression (--zipped or not) and file name",
 			arg->pdbInFileName);
         free(pdb->atom);

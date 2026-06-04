@@ -48,7 +48,7 @@ void make_resSasaJson(Arg *arg, Str *pdb, ResSasa *resSasa, cJSON *json)
 
 	/* indices to iterate through arrays defined below */
 	unsigned int c = 0; /* chain index */
-	char isChainLabel[2] = "@"; /* dummy chain name, never in structure */
+	char isChainLabel[128] = "@"; /* dummy chain name, never in structure */
 	unsigned int r = 0; /* residue index */
 
 	/* header: attached to 'json' */
@@ -60,8 +60,15 @@ void make_resSasaJson(Arg *arg, Str *pdb, ResSasa *resSasa, cJSON *json)
 	cJSON_AddStringToObject(json, "pdb_id", pdb->pdbID);
 
 	/* add Chain array */
+
+	if (pdb->nResidue == 0 || pdb->resAtom == NULL || pdb->atom == NULL) {
+    	fprintf(stderr, "No residues/atoms available for JSON output\n");
+    	return;
+	}
+
 	cJSON *chains = cJSON_AddArrayToObject(json, "chains");
-	strcpy(isChainLabel, pdb->atom[pdb->resAtom[0]].chainIdentifier);
+	snprintf(isChainLabel, sizeof isChainLabel, "%s",
+    	     pdb->atom[pdb->resAtom[0]].chainIdentifier);
 
 	/* iterate over all Chains */
 	for (c = 0; c < pdb->nChain; ++ c) {
@@ -128,7 +135,8 @@ void make_resSasaJson(Arg *arg, Str *pdb, ResSasa *resSasa, cJSON *json)
 				   into enclosing loop for creating a new Chain,
 				   including its cognate Residue array */
 				r ++; 
-				strcpy(isChainLabel, pdb->atom[pdb->resAtom[r]].chainIdentifier);
+				snprintf(isChainLabel, sizeof isChainLabel, "%s",
+        			pdb->atom[pdb->resAtom[r]].chainIdentifier);
 				break;
 			}
 		}

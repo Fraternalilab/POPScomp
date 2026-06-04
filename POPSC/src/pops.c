@@ -179,9 +179,11 @@ int main(int argc, char *argv[])
 		print_sfe(&arg, &argpdb, &pdb, &type, &topol, &molSFE, constant_sigma, -1);
 
     /*____________________________________________________________________________*/
-	/** print Calpha distance matrix */
-	calpha_distances(&arg, &pdb, &topol);
-	print_distMatCA(&arg, &topol);
+	/** compute and print Calpha distance matrix between 2 chains*/
+	if (pdb.nChain == 2) {
+		calpha_distances(&arg, &pdb, &topol);
+		print_distMatCA(&arg, &topol);
+	}
 
     /*____________________________________________________________________________*/
 	/** free memory */
@@ -228,7 +230,9 @@ int main(int argc, char *argv[])
 	free(pdb.resAtom);
 	free(pdb.atomMap);
 	free(pdb.sequence.res);
-	/*free(pdb.sequence.name);*/
+	if (arg.pdb) {
+		free(pdb.sequence.name);
+	}
 
 	/* trajectory */
 	if (arg.trajInFileName) {
