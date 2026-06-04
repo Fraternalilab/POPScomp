@@ -109,13 +109,15 @@ static void print_atom_sasa(FILE *sasaOutFile, Arg *arg, Str *pdb, MolSasa *molS
 		}
 
 		/* use original residue number of heteroresidues */
+		/*
 		if (pdb->atom[i].het) {
 			atomName = &(pdb->atom[i].atomNameHet[0]);
 			residueName = &(pdb->atom[i].residueNameHet[0]);
 		} else {
+		*/
 			atomName = &(pdb->atom[i].atomName[0]);
 			residueName = &(pdb->atom[i].residueName[0]);
-		}
+		/*}*/
 
 		/* for compatibility with POPSR Shiny, replace emtpy chain identifier */
 		/*   with '-' character */
@@ -450,7 +452,7 @@ void print_sasa(Arg *arg, Argpdb *argpdb, Str *pdb, Type *type, Topol *topol, \
 			} else {
 				rpopsOutFile = safe_open(rpopsOutFileName, "a");
 			}		
-			print_neighbour_list(arg->neighbourOutFile, arg, pdb, topol);
+			print_neighbour_list(rpopsOutFile, arg, pdb, topol);
 			fclose(rpopsOutFile);
 		} else {
 			if (frame < 0) {

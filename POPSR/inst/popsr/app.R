@@ -184,8 +184,7 @@ ui <- fluidPage(
 			  ),
               p("'Isolated Chains': SASA values of isolated chains. These values form the basis of the DeltaSASA data."),
               p("Only structures containing multiple chains will yield values for 'DeltaSASA' and 'Isolated Chains' tabs."),
-		      p("Results will be stored on the server until midnight GMT time and then automatically removed.
-		        Please use the 'Download ...' buttons under the tables to save your results in 'csv' format.
+		      p("Please use the 'Download ...' buttons under the tables to save your results in 'csv' format.
 		        The 'Download All Results' button on the side panel returns the zipped content of the entire output directory,
 		        i.e. all results produced for a given POPScomp job."
 		      ),
@@ -231,8 +230,8 @@ ui <- fluidPage(
 		      h3("Help"),
           p("In case the server does not work as expected or server-related issues
 		        need clarification, please email the maintainers:
-			      Jens Kleinjung (jens@jkleinj.eu) and
-            Franca Fraternali (franca.fraternali@kcl.ac.uk).
+			    Jens Kleinjung (jens@jkleinj.eu) and
+                Franca Fraternali (franca.fraternali@ucl.ac.uk).
             For software and output errors, feature suggestions and similar topics,
             please add an entry to the ",
             a("Issues tab on the POPScomp GitHub page", href="https://github.com/Fraternalilab/POPScomp/issues"), "."
@@ -240,7 +239,7 @@ ui <- fluidPage(
         ),
         tabPanel("About",
 			h3("Shiny App"),
-			p("This is version 3.4 of the POPScomp Shiny App."),
+			p("This is version 3.8 of the POPScomp Shiny App."),
 			p("For detailed information about the software visit Fraternali Lab's ",
 			  a("POPScomp GitHub repository", href="https://github.com/Fraternalilab/POPScomp"),
 			  "; the Wiki pages contain detailed installation and usage instructions."
@@ -291,8 +290,8 @@ ui <- fluidPage(
 			    GNU General Public License v3.0."
 			),
 			h4("Copyright Holders, Authors and Maintainers"),
-			p("2002-2023 Franca Fraternali (author, maintainer)"),
-			p("2008-2023 Jens Kleinjung (author, maintainer)"),
+			p("2002-2026 Franca Fraternali (author, maintainer)"),
+			p("2008-2026 Jens Kleinjung (author, maintainer)"),
 			h4("Contributors"),
 			p("2002 Kuang Lin and Valerie Hindie (translation to C)"),
 			p("2002 Luigi Cavallo (parametrisation)")
@@ -440,6 +439,7 @@ server <- function(input, output) {
                       "--rout --coarse --chainOut --residueOut --chainOut --neighbourOut",
                       "--rProbe", input$rprobe, "--pdb", inputPDB, "1> POPScomp.o 2> POPScomp.e");
     }
+    print(command)
     system_status = system(command, wait = TRUE)
 
     ## run POPScomp
