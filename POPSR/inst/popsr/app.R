@@ -439,7 +439,6 @@ server <- function(input, output) {
                       "--rout --coarse --chainOut --residueOut --chainOut --neighbourOut",
                       "--rProbe", input$rprobe, "--pdb", inputPDB, "1> POPScomp.o 2> POPScomp.e");
     }
-    print(command)
     system_status = system(command, wait = TRUE)
 
     ## run POPScomp
