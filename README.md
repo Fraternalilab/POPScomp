@@ -15,7 +15,7 @@ The name 'POPS' is derived from **P**arameter **OP**timised **S**urfaces, becaus
 was performed by regression against a large set of protein and RNA/DNA structures.
 Details of those routines are explained in the
 [published papers](https://github.com/Fraternalilab/POPScomp/#References).
-(Note: POPScomp embodies both methods, POPS and POPSCOMP).
+(Note: The POPScomp release in this repository combines both methods originally published as POPS and POPSCOMP).
 
 
 ## popscomp.org : an easy-to-rember URL
