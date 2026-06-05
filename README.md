@@ -39,8 +39,6 @@ SASA values and related information will be shown as tables for different resolu
 Download individual results *via* the buttons underneath the tables or bundled *via* the
 'Download All Results' button.
 
-Here is a snapshot of the ![POPScomp Shiny Interface](https://github.com/Fraternalilab/POPScomp/blob/master/POPSR/inst/popsr/png/POPScomp_Shiny.png).
-
 
 ## Documentation
 The [Wiki](https://github.com/Fraternalilab/POPScomp/wiki) contains additional documentation about the POPS model and implementation.
@@ -55,10 +53,12 @@ A GNU Autotools package of the POPS C program that computes SASA for a given str
 #### POPSR
 An R package to
 - split complexes into single and pair components to compute buried SASA using POPSC and 
-- provide a *Shiny* App as interface to the POPSC program.
+- provide a *Shiny* App as interface to run POPScomp analyses and visualise the results.
+
+### popscomp.org : an easy-to-rember URL
+* [popscomp.org](http://popscomp.org) points to this GitHub repository. 
 
 ### Legacy POPScomp *Shiny* servers
-* popscomp.org:3838 : This server has been discontinued in November 2025. [popscomp.org](http://popscomp.org) points now to this GitHub repository. 
 * mathbio.crick.mrc.ac.uk/POPSCOMP : Only for a short while the POPS and POPSCOMP servers were supported by the Francis Crick Institute.
 * mathbio.nimr.mrc.ac.uk/POPSCOMP : This was the original address of the POPS and POPSCOMP servers in the Division of Mathematical Biology at the NIMR institute, which has been closed in 2015 and became a part of the Francis Crick Institute.
 
