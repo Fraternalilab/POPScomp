@@ -3,9 +3,9 @@
 [![release](https://img.shields.io/badge/release-v3.4-green?logo=docker)](https://hub.docker.com/repository/docker/jkleinj150999/popscomp/)
 [![wiki](https://img.shields.io/badge/wiki-orange)](https://github.com/Fraternalilab/POPScomp/wiki)
 [![License](https://img.shields.io/badge/license-GPL-blue.svg)](http://www.gnu.org/licenses/gpl-3.0.en.html)
-[![DOI](https://zenodo.org/badge/182454886.svg)](https://zenodo.org/badge/latestdoi/18245488?event=push6)
-[![C CI](https://github.com/Fraternalilab/POPScomp/workflows/C%20CI/badge.svg)](https://github.com/thereapr/reincarnated_mod/actions/workflows/ccpp.yml)
-[![R CI](https://github.com/Fraternalilab/POPScomp/workflows/R%20CI/badge.svg)](https://github.com/thereapr/reincarnated_mod/actions/workflows/main.yml)
+[![DOI](https://zenodo.org/badge/182454886.svg)](https://zenodo.org/badge/latestdoi/182454886)
+[![C CI](https://github.com/Fraternalilab/POPScomp/workflows/C%20CI/badge.svg)](https://github.com/Fraternalilab/POPScomp/blob/main/.github/workflows/ccpp.yml)
+[![R CI](https://github.com/Fraternalilab/POPScomp/workflows/R%20CI/badge.svg)](https://github.com/Fraternalilab/POPScomp/blob/main/.github/workflows/main.yml)
 
 
 The POPScomp program computes the Solvent Accessible Surface Area (SASA)
