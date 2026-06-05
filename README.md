@@ -39,7 +39,7 @@ git clone --recurse-submodules https://github.com/Fraternalilab/POPScomp.git
 ```
 
 ## Usage
-Enter a PDB identifier or upload a custom PDB file and press 'run POPScomp'.
+Enter a PDB identifier or upload a custom PDB|CIF file and press 'run POPScomp'.
 SASA values and related information will be shown as tables for different resolutions: Atom, Residue, Chain and Molecule.
 Download individual results *via* the buttons underneath the tables or bundled *via* the
 'Download All Results' button.
