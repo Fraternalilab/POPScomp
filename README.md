@@ -17,11 +17,16 @@ Details of those routines are explained in the
 [published papers](https://github.com/Fraternalilab/POPScomp/#References).
 (Note: POPScomp embodies both methods, POPS and POPSCOMP).
 
+
+## popscomp.org : an easy-to-rember URL
+* [popscomp.org](http://popscomp.org) points to this GitHub repository. 
+
+
 ## Installation
 There are 2 ways to (install and) use POPScomp,
 please refer to the [Wiki](https://github.com/Fraternalilab/POPScomp/wiki) for details:
 
-1. Download the [POPScomp *Docker* image](https://hub.docker.com/repository/docker/jkleinj150999/popscomp/)
+1. Download the latest [POPScomp *Docker* image](https://hub.docker.com/repository/docker/jkleinj150999/popscomp)
   and run the *Shiny* App on your local computer. The Docker image provides the program suite in fully functional form,
 *i.e.* a Shiny server with integrated POPSC/POPSR as computational backbone.
 Please refer to the [Wiki](https://github.com/Fraternalilab/POPScomp/wiki/Docker-Image)
@@ -55,10 +60,9 @@ An R package to
 - split complexes into single and pair components to compute buried SASA using POPSC and 
 - provide a *Shiny* App as interface to run POPScomp analyses and visualise the results.
 
-### popscomp.org : an easy-to-rember URL
-* [popscomp.org](http://popscomp.org) points to this GitHub repository. 
-
-### Legacy POPScomp *Shiny* servers
+### Legacy POPScomp servers referenced in our papers
+The code, servers and URL addresses in our papers have been comprehensively replaced by this GitHub repository.
+For clarity, these are the legacy servers:
 * mathbio.crick.mrc.ac.uk/POPSCOMP : Only for a short while the POPS and POPSCOMP servers were supported by the Francis Crick Institute.
 * mathbio.nimr.mrc.ac.uk/POPSCOMP : This was the original address of the POPS and POPSCOMP servers in the Division of Mathematical Biology at the NIMR institute, which has been closed in 2015 and became a part of the Francis Crick Institute.
 
