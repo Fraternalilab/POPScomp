@@ -325,11 +325,7 @@ ui <- fluidPage(
           p("The PDB file could not be read, most possibly because something went wrong during up/down-loading.
             If you used the 'Enter PDB entry' field, check your internet connection."
           )
-        ),
-			tabPanel("Readme",
-			    h3("Readme (C code)"),
-			    textOutput("readme")
-			  )
+        )
       )
     )
   )

@@ -717,7 +717,8 @@ int calpha_distances(Arg *arg, Str *pdb, Topol *topol, ConstantSasa *res_sasa) {
     			}
 			}
 
-			soft_distance_norm = soft_distance *  (sqrt(r_CA1 * r_CA2) / 4.);
+			/* the mean radius across 20 amino acids is 4.35 */
+			soft_distance_norm = soft_distance *  (sqrt(r_CA1 * r_CA2) / 4.35);
         	topol->distMatCA[n_cai][n_caj] = soft_distance_norm;
 
         	++n_caj;
