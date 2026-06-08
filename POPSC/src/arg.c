@@ -218,6 +218,7 @@ int parse_args(int argc, char **argv, Arg *arg, Argpdb *argpdb)
 	   --popsbtrajOut <POPSb output>(type: char  , default: popsbtraj.out)\n\
 	   --sigmaOut <SFE output>\t(type: char  , default: sigma.out)\n\
 	   --sigmatrajOut <SFE output>\t(type: char  , default: sigmatraj.out)\n\
+	   --distMatCAOut <distmat output>\t(type: char  , default: distMatCA.out)\n\
 	   --interfaceOut\t\t(type: no_arg, default: off)\n\
 	   --compositionOut\t\t(type: no_arg, default: off)\n\
 	   --typeOut\t\t\t(type: no_arg, default: off)\n\
@@ -283,6 +284,7 @@ int parse_args(int argc, char **argv, Arg *arg, Argpdb *argpdb)
         {"zipped", no_argument, 0, 31},
         {"outDirName", required_argument, 0, 32},
         {"mmcif", required_argument, 0, 33},
+        {"distMatCAOut", required_argument, 0, 34},
         {"cite", no_argument, 0, 40},
         {"version", no_argument, 0, 41},
         {"help", no_argument, 0, 42},
@@ -290,7 +292,7 @@ int parse_args(int argc, char **argv, Arg *arg, Argpdb *argpdb)
     };
 
     /** assign parameters to long options */
-    while ((c = getopt_long(argc, argv, "1:2:3 4 5:6:7:8:9:10:11:12 13 14 15 16 17 18 19 20 21 22 23 24 25 26:27 28 29 30:31 32:33:40 41", long_options, NULL)) != -1) {
+    while ((c = getopt_long(argc, argv, "1:2:3 4 5:6:7:8:9:10:11:12 13 14 15 16 17 18 19 20 21 22 23 24 25 26:27 28 29 30:31 32:33:34:40 41", long_options, NULL)) != -1) {
         switch(c) {
             case 1:
                 arg->pdbInFileName = optarg;
@@ -395,6 +397,9 @@ int parse_args(int argc, char **argv, Arg *arg, Argpdb *argpdb)
                 arg->mmcifInFileName = optarg;
 				arg->pdbIn = basename(optarg);
 				arg->mmcif = 1;
+				break;
+            case 34:
+                arg->distMatCAOutFileName = optarg;
 				break;
             case 40:
 				print_citation();

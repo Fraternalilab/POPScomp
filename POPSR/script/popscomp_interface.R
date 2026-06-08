@@ -6,6 +6,7 @@
 # i.e. processing of complex structures to compute SASA difference values.
 # Returns a list of POPS output files for single-chain and pair-chain structures
 #   plus a list of buried SASA values.
+# This version has ben used to compute interface residue burial and scores.
 #
 # (C) 2019-2026 Jens Kleinjung and Franca Fraternali
 #===============================================================================
@@ -67,8 +68,8 @@ if(! is.null(opt$pdb)) {
   inputPDB = pdbConversionName
 } else if (! is.null(opt$mmcif)) {
   ## convert from '.mmcif' format to '.pdb' format
-  pdbConversionName = sub("\\.cif$", ".pdb", opt$mmcif)
-  command0 = paste("gemmi convert", opt$mmcif, pdbConversionName)
+  pdbConversionName = sub("\\.cif.gz$", ".pdb", opt$mmcif)
+  command0 = paste("zcat", opt$mmcif, "|", "gemmi convert -", pdbConversionName)
   system_status0 = system(command0)
   inputPDB = pdbConversionName
 } else {
@@ -134,8 +135,10 @@ exit_codes = sapply(1:length(chainpair.files), function(x) {
 	command6 = paste0("pops",
 					" --rout --routPrefix ", paste0(chainpair.files.short[x], ".pair"),
 					" --residueOut",
+					paste0(" --distMatCAOut ", opt$mmcif, "_distMatCA.out"),
 					" --pdb ", chainpair.files[x], " 1> ", "POPScomp_chainpair", x, ".o",
                     " 2> ", "POPScomp_chainpair", x, ".e")
+	print(command6)
 	system_status6 = system(command6, wait = TRUE)
 	message("  chain ", x, ": ", chainpair.files[x], "  exit code: ", system_status6)
 })
@@ -207,7 +210,8 @@ final.ix = (which(is.lix))[sel.lix]
 
 #________________________________________________________________________________
 ## write results
-write.table(pair.sasa.level.files[[1]][[1]][final.ix, ], file = "Qinterface.dat")
+write.table(pair.sasa.level.files[[1]][[1]][final.ix, ],
+				file = paste0(pdbConversionName, "_Qinterface.dat"))
 
 
 #===============================================================================

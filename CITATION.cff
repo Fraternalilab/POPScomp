@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "References converted from the provided Markdown citation list."
+message: "References pertaining to POPS and POPSCOMP methods."
 references:
   - authors:
       - family-names: Kleinjung
@@ -19,6 +19,7 @@ references:
     title: "An efficient mean solvation force model for use in molecular dynamics simulations of proteins in aqueous solution"
     journal: "Journal of Molecular Biology"
     year: 1996
+	doi: "10.1006/jmbi.1996.0139"
 
   - authors:
       - family-names: Fraternali
@@ -51,3 +52,4 @@ references:
     journal: "Nucleic Acids Research"
     year: 2005
     doi: "10.1093/nar/gki369"
+
