@@ -6,7 +6,7 @@
 #   and those are coded in .../POPScomp/R/popscomp.R.
 # For single-chain proteins, "popscomp.R" returns without additional computations.
 #
-# (C) 2019 -2026 Jens Kleinjung and Franca Fraternali
+# (C) 2019-2026 Jens Kleinjung and Franca Fraternali
 #===============================================================================
 
 library(shiny)
@@ -231,7 +231,7 @@ ui <- fluidPage(
           p("In case the server does not work as expected or server-related issues
 		        need clarification, please email the maintainers:
 			    Jens Kleinjung (jens@jkleinj.eu) and
-                Franca Fraternali (franca.fraternali@ucl.ac.uk).
+                Franca Fraternali (f.fraternali@ucl.ac.uk).
             For software and output errors, feature suggestions and similar topics,
             please add an entry to the ",
             a("Issues tab on the POPScomp GitHub page", href="https://github.com/Fraternalilab/POPScomp/issues"), "."

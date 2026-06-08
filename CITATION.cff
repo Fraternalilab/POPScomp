@@ -1,33 +1,53 @@
-#### Implicit solvent
-Kleinjung, J. and Fraternali, F.<br>
-*Design and Application of Implicit Solvent Models in Biomolecular Simulations.*<br>
-**Current Opinion in Structural Biology** 25 (2014) 126-134.<br> 
-[![doi](https://img.shields.io/badge/doi-10.1016/j.sbi.2014.04.003-blue.svg?style=flat)](https://dx.doi.org/10.1016/j.sbi.2014.04.003)
-[![pubmed](https://img.shields.io/badge/pubmed-4045398-blue.svg?style=flat)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4045398/)
+cff-version: 1.2.0
+message: "References converted from the provided Markdown citation list."
+references:
+  - authors:
+      - family-names: Kleinjung
+        given-names: Jens
+      - family-names: Fraternali
+        given-names: Franca
+    title: "Design and Application of Implicit Solvent Models in Biomolecular Simulations"
+    journal: "Current Opinion in Structural Biology"
+    year: 2014
+    doi: "10.1016/j.sbi.2014.04.003"
 
-Fraternali, F. and van Gunsteren, W.F.<br>
-*An efficient mean solvation force model for use in molecular dynamics simulations of proteins in aqueous solution.*<br>
-**Journal of Molecular Biology** 256 (1996) 939-948.<br>
-[![doi](https://img.shields.io/badge/doi-10.1016%2Fj.jmb.2014.03.010-blue.svg?style=flat)](https://dx.doi.org/10.1016%2Fj.sbi.2014.04.003)
-[![pubmed](https://img.shields.io/badge/pubmed-24681267-blue.svg?style=flat)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4045398/)
+  - authors:
+      - family-names: Fraternali
+        given-names: Franca
+      - family-names: van Gunsteren
+        given-names: Wilfred F.
+    title: "An efficient mean solvation force model for use in molecular dynamics simulations of proteins in aqueous solution"
+    journal: "Journal of Molecular Biology"
+    year: 1996
 
-#### POPS method
-Fraternali, F. and Cavallo, L.<br>
-*Parameter optimized surfaces (POPS): analysis of key interactions and conformational changes in the ribosome.*<br>
-**Nucleic Acids Research** 30 (2002) 2950-2960.<br>
-[![doi](https://im)](https://dx.doi.org/10.1093%2Fnar%2Fgkf373)
-[![pubmed](https://img.shields.io/badge/pubmed-117037-blue.svg?style=flat)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC117037/)
+  - authors:
+      - family-names: Fraternali
+        given-names: Franca
+      - family-names: Cavallo
+        given-names: Luigi
+    title: "Parameter optimized surfaces (POPS): analysis of key interactions and conformational changes in the ribosome"
+    journal: "Nucleic Acids Research"
+    year: 2002
+    doi: "10.1093/nar/gkf373"
 
-#### POPS server
-Cavallo, L., Kleinjung, J. and Fraternali, F.<br>
-*POPS: A fast algorithm for solvent accessible surface areas at atomic and residue level.*<br>
-**Nucleic Acids Research** 31 (2003) 3364-3366.<br>
-[![doi](https://img.shields.io/badge/doi-0.1093%2Fnar%2Fgkg601-blue.svg?style=flat)](https://dx.doi.org/10.1093%2Fnar%2Fgkg601)
-[![pubmed](https://img.shields.io/badge/pubmed-169007-blue.svg?style=flat)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC169007/)
+  - authors:
+      - family-names: Cavallo
+        given-names: Luigi
+      - family-names: Kleinjung
+        given-names: Jens
+      - family-names: Fraternali
+        given-names: Franca
+    title: "POPS: A fast algorithm for solvent accessible surface areas at atomic and residue level"
+    journal: "Nucleic Acids Research"
+    year: 2003
+    doi: "10.1093/nar/gkg601"
 
-#### POPSCOMP method and server
-Kleinjung, J. and Fraternali, F.<br>
-*POPSCOMP: an automated interaction analysis of biomolecular complexes.*<br>
-**Nucleic Acids Research** 33 (2005) W342-W346.<br>
-[![doi](https://img.shields.io/badge/doi-10.1093%2Fnar%2Fgki369-blue.svg?style=flat)](https://dx.doi.org/10.1093%2Fnar%2Fgki369)
-[![pubmed](https://img.shields.io/badge/pubmed-1160130-blue.svg?style=flat)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1160130/)
+  - authors:
+      - family-names: Kleinjung
+        given-names: Jens
+      - family-names: Fraternali
+        given-names: Franca
+    title: "POPSCOMP: an automated interaction analysis of biomolecular complexes"
+    journal: "Nucleic Acids Research"
+    year: 2005
+    doi: "10.1093/nar/gki369"
