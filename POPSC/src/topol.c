@@ -44,7 +44,7 @@ __inline__ static void print_torsion(Str *pdb, int t1, int t2, int t3, int t4)
 /** init topology */
 void init_topology(Arg *arg, Str *pdb, Topol *topol)
 {
-	unsigned int i;
+	unsigned int i, j;
 	int *nCA = NULL;
 	char *chain1 = NULL;
 	/* assuming an upper limit of 63 bonded interactions per atom */
@@ -73,8 +73,18 @@ void init_topology(Arg *arg, Str *pdb, Topol *topol)
 		}
 	}
 	printf("CA distance matrix has dimensions %d x %d \n", topol->nCA1, topol->nCA2);
+	/* allocate Calpha distance matrix */
 	topol->distMatCA = alloc_mat2D_float(topol->distMatCA, topol->nCA1, topol->nCA2);
 	init_mat2D_float(topol->distMatCA, topol->nCA1, topol->nCA2, 0.);
+	/* array of residue numbers for each chain */
+	topol->resCA1 = safe_malloc(topol->nCA1 * sizeof(int));
+	for (i = 0; i < topol->nCA1; ++ i) {
+		topol->resCA1[i] = -999;
+	}
+	topol->resCA2 = safe_malloc(topol->nCA2 * sizeof(int));
+	for (j = 0; j < topol->nCA2; ++ j) {
+		topol->resCA2[j] = -999;
+	}
 
 	for (i = 0; i < pdb->nAtom; ++ i) {
 		topol->bondState[i][0] = 0; /* no bonded pairs recorded */
@@ -110,6 +120,8 @@ void free_topology(Str *pdb, Topol *topol)
 	free(topol->interfaceNn);
 	free(topol->interfaceNnDist);
 	free_mat2D_float(topol->distMatCA, topol->nCA1);
+	free(topol->resCA1);
+	free(topol->resCA2);
 }
 
 /*___________________________________________________________________________*/
@@ -701,11 +713,10 @@ int calpha_distances(Arg *arg, Str *pdb, Topol *topol, ConstantSasa *res_sasa) {
 			found_CA1 = found_CA2 = 0;
 			r_CA1 = r_CA2 = 0.;
 			for (k = 0; k < res_sasa->nResidueType; ++ k) {
- 				if (strcmp(pdb->atom[i].residueName, res_sasa->atomDataSasa[k][0].residueName) == 0) {
-        			/* found residue of atom i at index k */
-					r_CA1 = res_sasa->atomDataSasa[k][0].radius;
-					++ found_CA1;
-        		}
+        		/* found residue of atom i at index k */
+				r_CA1 = res_sasa->atomDataSasa[k][0].radius;
+				++ found_CA1;
+
  				if (strcmp(pdb->atom[j].residueName, res_sasa->atomDataSasa[k][0].residueName) == 0) {
         			/* found residue of atom j at index k */
 					r_CA2 = res_sasa->atomDataSasa[k][0].radius;
@@ -720,6 +731,9 @@ int calpha_distances(Arg *arg, Str *pdb, Topol *topol, ConstantSasa *res_sasa) {
 			/* the mean radius across 20 amino acids is 4.35 */
 			soft_distance_norm = soft_distance *  (sqrt(r_CA1 * r_CA2) / 4.35);
         	topol->distMatCA[n_cai][n_caj] = soft_distance_norm;
+			
+			topol->resCA1[n_cai] = pdb->atom[i].residueNumber;
+			topol->resCA2[n_caj] = pdb->atom[j].residueNumber;		
 
         	++n_caj;
     	}

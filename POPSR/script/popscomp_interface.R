@@ -135,7 +135,7 @@ exit_codes = sapply(1:length(chainpair.files), function(x) {
 	command6 = paste0("pops",
 					" --rout --routPrefix ", paste0(chainpair.files.short[x], ".pair"),
 					" --residueOut",
-					paste0(" --distMatCAOut ", opt$mmcif, "_distMatCA.out"),
+					paste0(" --distMatCAOut ", pdbConversionName, "_distMatCA.out"),
 					" --pdb ", chainpair.files[x], " 1> ", "POPScomp_chainpair", x, ".o",
                     " 2> ", "POPScomp_chainpair", x, ".e")
 	print(command6)
@@ -201,10 +201,10 @@ iso.rbind.tmp = rbind(iso.sasa.level.files[[1]][[1]],
 logratio_Q.SASA = round(log2(iso.rbind.tmp[ , "Q.SASA."] / pair.sasa.level.files[[1]][[1]][ , "Q.SASA."]), digits = 2)
 is.lix = logratio_Q.SASA > 0
 #Z_Q.SASA = logratio_Q.SASA / sd(logratio_Q.SASA)
-is.logratio_Q.SASA = logratio_Q.SASA[is.lix]
+#is.logratio_Q.SASA = logratio_Q.SASA[is.lix]
 Zrobust_Q.SASA = (logratio_Q.SASA[is.lix] - median(logratio_Q.SASA[is.lix])) / (1.4862 * mad(logratio_Q.SASA[is.lix]))
 
-## final residue selection is SASA <= 0.25 and Zrobust > 1
+## final residue selection is Q.SASA <= 0.25 and Zrobust > 1
 sel.lix = (pair.sasa.level.files[[1]][[1]][ , "Q.SASA."][is.lix] <= 0.25) & (Zrobust_Q.SASA > 1)
 final.ix = (which(is.lix))[sel.lix]
 

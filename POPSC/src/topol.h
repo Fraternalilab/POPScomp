@@ -51,6 +51,8 @@ typedef struct
 	int nCA1; /* number of Calpha atoms in chain or domain 1 */
 	int nCA2; /* number of Calpha atoms in chain or domain 2 */
 	float **distMatCA; /* Calpha distance matrix */
+	int *resCA1; /* array of residue numbers of chain or domain 1 */
+	int *resCA2; /* array of residue numbers of chain or domain 2 */
 } Topol;
 
 /*____________________________________________________________________________*/
