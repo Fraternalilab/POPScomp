@@ -228,7 +228,7 @@ ui <- fluidPage(
 			p("SASA.A.2 : total solvent accessible surace area in Angstrom^2 units"),
 
 		      h3("Help"),
-          p("In case the server does not work as expected or server-related issues
+          p("In case the program does not work as expected or server-related issues
 		        need clarification, please email the maintainers:
 			    Jens Kleinjung (jens@jkleinj.eu) and
                 Franca Fraternali (f.fraternali@ucl.ac.uk).
@@ -239,7 +239,7 @@ ui <- fluidPage(
         ),
         tabPanel("About",
 			h3("Shiny App"),
-			p("This is version 3.4 of the POPScomp Shiny App."),
+			p("This is version 3.4.1 of the POPScomp Shiny App."),
 			p("For detailed information about the software visit Fraternali Lab's ",
 			  a("POPScomp GitHub repository", href="https://github.com/Fraternalilab/POPScomp"),
 			  "; the Wiki pages contain detailed installation and usage instructions."
