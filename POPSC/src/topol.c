@@ -713,9 +713,11 @@ int calpha_distances(Arg *arg, Str *pdb, Topol *topol, ConstantSasa *res_sasa) {
 			found_CA1 = found_CA2 = 0;
 			r_CA1 = r_CA2 = 0.;
 			for (k = 0; k < res_sasa->nResidueType; ++ k) {
-        		/* found residue of atom i at index k */
-				r_CA1 = res_sasa->atomDataSasa[k][0].radius;
-				++ found_CA1;
+ 				if (strcmp(pdb->atom[i].residueName, res_sasa->atomDataSasa[k][0].residueName) == 0) {
+        			/* found residue of atom i at index k */
+					r_CA1 = res_sasa->atomDataSasa[k][0].radius;
+					++ found_CA1;
+				}
 
  				if (strcmp(pdb->atom[j].residueName, res_sasa->atomDataSasa[k][0].residueName) == 0) {
         			/* found residue of atom j at index k */

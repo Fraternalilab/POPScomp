@@ -160,7 +160,7 @@ am__define_uniq_tagged_files = \
 DIST_SUBDIRS = $(SUBDIRS)
 am__DIST_COMMON = $(srcdir)/Makefile.in AUTHORS COPYING ChangeLog \
 	INSTALL NEWS README TODO compile config.guess config.sub \
-	install-sh missing
+	depcomp install-sh missing
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -245,10 +245,10 @@ OPENMP_CFLAGS = -fopenmp
 PACKAGE = pops
 PACKAGE_BUGREPORT = jens@jkleinj.eu
 PACKAGE_NAME = pops
-PACKAGE_STRING = pops 3.4
+PACKAGE_STRING = pops 3.4.1
 PACKAGE_TARNAME = pops
 PACKAGE_URL = 
-PACKAGE_VERSION = 3.4
+PACKAGE_VERSION = 3.4.1
 PATH_SEPARATOR = :
 PKG_CONFIG = /usr/bin/pkg-config
 PKG_CONFIG_LIBDIR = 
@@ -256,7 +256,7 @@ PKG_CONFIG_PATH =
 SET_MAKE = 
 SHELL = /bin/bash
 STRIP = 
-VERSION = 3.4
+VERSION = 3.4.1
 XML_CFLAGS = -I/usr/include/libxml2 
 XML_LIBS = -lxml2 
 ZLIB_CFLAGS = 
