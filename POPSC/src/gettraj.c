@@ -15,7 +15,9 @@ static void compile_pattern_trajectory(regex_t *regex)
 	/* pattern for GROMOS trajectory coordinate line */
     strcpy (matchPattern, ".*[[:print:]]{10,15}.*[[:print:]]{10,15}.*[[:print:]]{10,15}");
 
-    assert(regcomp(regex, matchPattern, REG_EXTENDED) == 0);
+	/* regcomp outside assert(): it must also run when compiled with NDEBUG */
+    if (regcomp(regex, matchPattern, REG_EXTENDED) != 0)
+		Error("Failed to compile trajectory pattern");
 }
 
 /*____________________________________________________________________________*/
@@ -27,7 +29,8 @@ static void compile_pattern_positionred(regex_t *regex)
 	/* pattern for POSITIONRED */
     strcpy (matchPattern, "POSITIONRED");
 
-    assert(regcomp(regex, matchPattern, REG_EXTENDED) == 0);
+    if (regcomp(regex, matchPattern, REG_EXTENDED) != 0)
+		Error("Failed to compile POSITIONRED pattern");
 }
 
 /*____________________________________________________________________________*/
@@ -42,7 +45,7 @@ int read_gromos_traj(Traj *traj, Arg *arg, int protEnd)
 	unsigned int allocated_inc = 64;
 	unsigned int allocated_frame = allocated_inc;
 	unsigned int allocated_atom = protEnd;
-	char line[80];
+	char line[256];
     regex_t trajectory; /* regular expression of gromos coordinate line */
     regex_t positionred; /* regular expression of POSITIONRED */
 	int *pnAtom; /* pointer to atom number */
@@ -64,7 +67,7 @@ int read_gromos_traj(Traj *traj, Arg *arg, int protEnd)
 	compile_pattern_positionred(&positionred);
 
 	/* read coordinate file */
-	while(fgets(line, 80, arg->trajInFile) != 0) { /* read line */
+	while(fgets(line, sizeof(line), arg->trajInFile) != 0) { /* read line */
 		/* if this line (search pattern) matches the coordinate line format */
 		/*fprintf(stderr, "=> %d %d\n", traj->nFrame, *pnAtom);*/
 		if (match_pattern(&trajectory, line) == 0) {
@@ -88,7 +91,7 @@ int read_gromos_traj(Traj *traj, Arg *arg, int protEnd)
 				if (traj->frame[traj->nFrame].nAtom == allocated_atom) {
 					allocated_atom += allocated_inc;
 					traj->frame[traj->nFrame].trajatom = \
-						safe_realloc(traj->frame[traj->nFrame].trajatom, allocated_atom * sizeof(Atom));
+						safe_realloc(traj->frame[traj->nFrame].trajatom, allocated_atom * sizeof(Trajatom));
 				}
 
 				/*____________________________________________________________________________*/
@@ -96,14 +99,14 @@ int read_gromos_traj(Traj *traj, Arg *arg, int protEnd)
 				if (*pnAtom >= protEnd) {
 					/*while((fgets(line, 80, trajFile) != 0) && (match_pattern(&trajectory, line) != 0))
 						fprintf(stderr, "==>skipped %s", line);*/
-					while((fgets(line, 80, arg->trajInFile) != 0) && (match_pattern(&positionred, line) != 0))
+					while((fgets(line, sizeof(line), arg->trajInFile) != 0) && (match_pattern(&positionred, line) != 0))
 						;
 
 					/* assert that all frames have the same atom number */
 					if (traj->nFrame == 0)
 						nAtom_mem = *pnAtom;
-					else
-						assert(*pnAtom == nAtom_mem);
+					else if (*pnAtom != nAtom_mem)
+						Error("Trajectory frames have different atom numbers");
 
 					/* count frames in this trajectory */
 					++ traj->nFrame;

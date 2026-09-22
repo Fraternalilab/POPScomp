@@ -26,9 +26,9 @@ static void print_atom_bsasa(FILE *bsasaOutFile, Arg *arg, Str *pdb, MolSasa *mo
 				j,
 				"XXX",
 				pdb->atom[0].residueName,
-				" ",
+				"-",
 				pdb->atom[0].residueNumber,
-				" ",
+				"-",
 				0.,
 				0.,
 				0.,
@@ -42,7 +42,7 @@ static void print_atom_bsasa(FILE *bsasaOutFile, Arg *arg, Str *pdb, MolSasa *mo
 			pdb->atom[i].atomNumber,
 			pdb->atom[i].atomName,
 			pdb->atom[i].residueName,
-			pdb->atom[i].chainIdentifier,
+			chain_label(&(pdb->atom[i])),
 			pdb->atom[i].residueNumber,
 			pdb->atom[i].icode,
 			molSasa->atomSasa[i].phobicbSasa,
@@ -59,9 +59,9 @@ static void print_atom_bsasa(FILE *bsasaOutFile, Arg *arg, Str *pdb, MolSasa *mo
 					j,
 					"HXX",
 					pdb->atom[i].residueName,
-					" ",
+					"-",
 					pdb->atom[i].residueNumber,
-					" ",
+					"-",
 					0.,
 					0.,
 					0.,
@@ -86,7 +86,7 @@ static void print_residue_bsasa(FILE *bsasaOutFile, Arg *arg, Str *pdb, MolSasa 
     for (i = 0; i < pdb->nAllResidue; ++ i) { 
 		fprintf(bsasaOutFile, "%8s\t%3s\t%8d\t%1s\t%10.2f\t%10.8f\t%10.2f\t%10.8f\t%10.2f\n",
 			pdb->atom[molSasa->resSasa[i].atomRef].residueName,
-			pdb->atom[molSasa->resSasa[i].atomRef].chainIdentifier,
+			chain_label(&(pdb->atom[molSasa->resSasa[i].atomRef])),
 			pdb->atom[molSasa->resSasa[i].atomRef].residueNumber,
 			pdb->atom[molSasa->resSasa[i].atomRef].icode,
 			molSasa->resSasa[i].phobicbSasa,
@@ -105,13 +105,13 @@ static void print_chain_bsasa(FILE *bsasaOutFile, Arg *arg, Str *pdb, MolSasa *m
 
 	if (! arg->noHeaderOut) {
 		fprintf(bsasaOutFile, "\n=== CHAIN bSASAs ===\n(Atom Range excluding hydrogen atoms)\n");
-		fprintf(bsasaOutFile, "\nChain\tId\tAtomRange\tResidRange\tcPhob/A^2\tcPhil/A^2\t\tcTotal/A^2\n");
+		fprintf(bsasaOutFile, "\nChain\tId\tAtomRange\tResidRange\tcPhob/A^2\tcPhil/A^2\tcTotal/A^2\n");
 	}
 
     for (i = 0; i < pdb->nChain; ++ i)
-		fprintf(bsasaOutFile, "%3d\t%3s\t%6d->%-6d\t%5d->%-5d\t%10.2f\t%10.2f\%10.2f\n",
+		fprintf(bsasaOutFile, "%3d\t%3s\t%6d->%-6d\t%5d->%-5d\t%10.2f\t%10.2f\t%10.2f\n",
 			i,
-			pdb->atom[molSasa->chainSasa[i].first].chainIdentifier,
+			chain_label(&(pdb->atom[molSasa->chainSasa[i].first])),
 			pdb->atom[molSasa->chainSasa[i].first].atomNumber,
 			pdb->atom[molSasa->chainSasa[i].last].atomNumber,
 			pdb->atom[molSasa->chainSasa[i].first].residueNumber,
@@ -125,8 +125,10 @@ static void print_chain_bsasa(FILE *bsasaOutFile, Arg *arg, Str *pdb, MolSasa *m
 /** total (molecule) bSASA */
 void print_mol_bsasa(FILE *bsasaOutFile, Arg *arg, MolSasa *molSasa)
 {
-	if (! arg->noHeaderOut) fprintf(bsasaOutFile, "\n=== MOLECULE bSASAs ===\n");
-		fprintf(bsasaOutFile, "\ncPhob/A^2\tcPhil/A^2\t\tcTotal/A^2\n");
+	if (! arg->noHeaderOut) {
+		fprintf(bsasaOutFile, "\n=== MOLECULE bSASAs ===\n");
+		fprintf(bsasaOutFile, "\ncPhob/A^2\tcPhil/A^2\tcTotal/A^2\n");
+	}
     fprintf(bsasaOutFile, "%10.2f\t%10.2f\t%10.2f\n\n",
 			molSasa->phobicbSasa,
 			molSasa->philicbSasa,
@@ -138,17 +140,21 @@ void print_mol_bsasa(FILE *bsasaOutFile, Arg *arg, MolSasa *molSasa)
 void print_bsasa(Arg *arg, Argpdb *argpdb, Str *pdb, Type *type, Topol *topol, \
 				MolSasa *molSasa, ConstantSasa *constant_sasa, int frame)
 {
-	char bsasatrajOutFileName[256];
+	char bsasatrajOutFileName[1024];
+	int n;
 
 	/* for single (reference) molecule */
 	if (frame < 0) {
-		if (! arg->silent) {
+		/* 'silent' suppresses only the stdout notice, not the output file */
+		if (! arg->silent)
 			fprintf(stdout, "\tbSASA of reference molecule: %s\n", arg->bsasaOutFileName);
-			arg->bsasaOutFile = safe_open(arg->bsasaOutFileName, "w");
-		}
+		arg->bsasaOutFile = open_output(arg, arg->bsasaOutFileName, "w");
 	} else {
-			sprintf(&(bsasatrajOutFileName[0]), "%s.%d.%s", arg->bsasatrajOutFileName, frame, "out");
-			arg->bsasaOutFile = safe_open(bsasatrajOutFileName, "w");
+		n = snprintf(bsasatrajOutFileName, sizeof(bsasatrajOutFileName), "%s.%d.%s",
+			arg->bsasatrajOutFileName, frame, "out");
+		if (n < 0 || (size_t)n >= sizeof(bsasatrajOutFileName))
+			ErrorSpec("Output file name too long", arg->bsasatrajOutFileName);
+		arg->bsasaOutFile = open_output(arg, bsasatrajOutFileName, "w");
 	}
 
 	/* atom bSASA */

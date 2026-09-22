@@ -58,7 +58,7 @@ ConstantSasa constant_sasa_data[] = {
 			/* G */ 24,
 			/* I */ 23,
 			/* N */ 22, 
-			/* T */ 22, 
+			/* T */ 21, 
 			/* U */ 21,
 			/* DNA */
 			/*DA */ 22,
@@ -636,6 +636,7 @@ ConstantSasa constant_sasa_data[] = {
 			/*SOL*/ 1,
 			/* RNA */
 			/* A */ 1,
+			/* C */ 1,
 			/* G */ 1,
 			/* I */ 1,
 			/* N */ 1,

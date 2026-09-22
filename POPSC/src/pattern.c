@@ -10,17 +10,21 @@ Read the COPYING file for license information.
 /** compile single pattern */
 void compile_pattern(regex_t *regex, char *pattern)
 {
-    assert(regcomp(regex, pattern, REG_EXTENDED) == 0); 
+	/* regcomp outside assert(): it must also run when compiled with NDEBUG */
+    if (regcomp(regex, pattern, REG_EXTENDED) != 0) {
+		fprintf(stderr, "Error: Failed to compile pattern '%s'\n", pattern);
+		exit(1);
+	}
 }
 
 /*____________________________________________________________________________*/
 /** compile multiple patterns */
 void compile_patterns(regex_t *regex, char (*pattern)[32], int nPattern)
 {
-	unsigned int i;
+	int i;
 
 	for (i = 0; i < nPattern; ++ i)
-		assert(regcomp(&(regex[i]), &(pattern[i][0]), REG_EXTENDED) == 0); 
+		compile_pattern(&(regex[i]), &(pattern[i][0]));
 }
 
 /*____________________________________________________________________________*/
@@ -54,7 +58,7 @@ void free_pattern(regex_t *regex)
 /** free multiple patterns */
 void free_patterns(regex_t *regex, int nPattern)
 {
-	unsigned int i;
+	int i;
 
 	for (i = 0; i < nPattern; ++ i)
 		regfree(&(regex[i])); 

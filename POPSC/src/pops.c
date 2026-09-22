@@ -96,21 +96,33 @@ int main(int argc, char *argv[])
     /** read input structure: mmcif, xml or pdb format */
 	if (! arg.silent) fprintf(stdout, "Input structure\n");
 	strcpy(pdb.pdbID, "");
+	pdb.sequence.name = NULL;
 
 	if (arg.mmcif) {
-		printf("Reading MMCIF file\n");
+		if (! arg.silent) fprintf(stdout, "Reading MMCIF file\n");
 		/* 'gemmi' library function to read PDB entries */
-		s = read_cif(arg.mmcifInFileName);
+		if ((s = read_cif(arg.mmcifInFileName)) == NULL)
+			ErrorSpec("Could not read mmCIF file", arg.mmcifInFileName);
 		/* map function to copy PDB entries to C structure */
 		map_structure_mmcif(&arg, &argpdb, &pdb, s);
+		if (pdb.nAtom == 0)
+			ErrorSpec("Could not find atoms in input file", arg.mmcifInFileName);
+		if (! arg.silent) fprintf(stdout, "\tPDB file: %s\n"
+										"\tPDB file content:\n"
+										"\t\tall atoms = %d\n"
+										"\t\tprocessed atoms (C,N,O,S,P) = %d\n"
+										"\t\tresidues (CA||N3) = %d\n"
+										"\t\tchains = %d\n",
+							arg.mmcifInFileName, pdb.nAllAtom,
+							pdb.nAtom, pdb.nResidue, pdb.nChain);
 	} else if (arg.pdbml) {
-		printf("Reading PDBML file\n");
+		if (! arg.silent) fprintf(stdout, "Reading PDBML file\n");
 		read_structure_xml(&arg, &argpdb, &pdb);
 	} else if (arg.pdb) {
-		printf("Reading PDB file\n");
+		if (! arg.silent) fprintf(stdout, "Reading PDB file\n");
 		read_structure(&arg, &argpdb, &pdb);
 	} else {
-		printf("Failed to read an input structure!\n");
+		fprintf(stderr, "Error: Failed to read an input structure!\n");
 		exit(EXIT_FAILURE);
 	}
 
@@ -180,7 +192,7 @@ int main(int argc, char *argv[])
 
     /*____________________________________________________________________________*/
 	/** compute and print Calpha distance matrix between 2 chains*/
-	if (pdb.nChain == 2) {
+	if (pdb.nChain == 2 && topol.nCA1 > 0 && topol.nCA2 > 0) {
 		calpha_distances(&arg, &pdb, &topol, res_sasa);
 		print_distMatCA(&arg, &topol);
 	}
@@ -203,7 +215,8 @@ int main(int argc, char *argv[])
 				(((i+1) % 50) != 0) ? fprintf(stdout, ".") : fprintf(stdout, "%d\n\t", (i + 1));
 				fflush(stdout);
 			}
-			assert(traj.frame[i].nAtom == pdb.nAllAtom);
+			if (traj.frame[i].nAtom != pdb.nAllAtom)
+				Error("Trajectory frame and input structure have different atom numbers");
 			copy_coordinates(&pdb, &traj, i);
 			/* topology */
 			init_topology(&arg, &pdb, &topol);
@@ -212,10 +225,13 @@ int main(int argc, char *argv[])
 			init_sasa(&pdb, &type, &molSasa, constant_sasa, &arg);
 			compute_sasa(&pdb, &topol, &type, &molSasa, constant_sasa, res_sasa, &arg);
 			print_sasa(&arg, &argpdb, &pdb, &type, &topol, &molSasa, constant_sasa, i);
+			if (! arg.rout)
+				print_bsasa(&arg, &argpdb, &pdb, &type, &topol, &molSasa, constant_sasa, i);
 			/* SFE */
 			init_sfe(&pdb, &type, &molSFE, constant_sigma, &arg);
 			compute_sfe(&pdb, &type, &molSasa, &molSFE, constant_sigma, &arg);
-			/*print_sfe(&arg, &argpdb, &pdb, &type, &topol, &molSFE, constant_sigma, i);*/
+			if (! argpdb.coarse && ! arg.rout)
+				print_sfe(&arg, &argpdb, &pdb, &type, &topol, &molSFE, constant_sigma, i);
 			/* free memory */
 			free_topology(&pdb, &topol);
 			free_sasa(&molSasa);
@@ -230,9 +246,7 @@ int main(int argc, char *argv[])
 	free(pdb.resAtom);
 	free(pdb.atomMap);
 	free(pdb.sequence.res);
-	if (arg.pdb) {
-		free(pdb.sequence.name);
-	}
+	free(pdb.sequence.name);
 
 	/* trajectory */
 	if (arg.trajInFileName) {

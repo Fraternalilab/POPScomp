@@ -23,9 +23,12 @@ typedef struct atom
 	char atomName[8]; /* Atom name; 13 - 16 */
 	char atomName_raw[8]; /* Atom name; 13 - 14 */
 	char alternativeLocation[2]; /* Alternate location indicator; 17 */
-	char residueName[4]; /* Residue name; 18 - 20 */
-	char chainIdentifier[2]; /* Chain identifier; 22 */
+	char residueName[8]; /* Residue name; 18 - 20 (mmCIF: up to 5 characters) */
+	char chainIdentifier[8]; /* Chain identifier; 22 (mmCIF: up to 4 characters) */
 	int residueNumber; /* Residue sequence number; 23 - 26 */
+	int residueIndex; /* running residue index: new residue when chain, residue number or icode changes */
+	int chainIndex; /* running chain index: new chain when the chain identifier changes */
+	int recordIndex; /* index of this atom among all ATOM/HETATM records of the model (trajectory mapping) */
 	char icode[2]; /* Code for insertion of residues; 27 */
 	Vec pos; /* position vector (x, y, z) */
 	float occupancy; /* Occupancy; 55 - 60 */
@@ -74,7 +77,7 @@ typedef struct chain
 typedef struct str
 {
 	struct str *next, *prev;
-	char pdbID[16]; /* PDB identifier */
+	char pdbID[256]; /* PDB identifier (PDBML) or input file basename */
 	Atom *atom; /* array of atoms constituting structure */
 	int *resAtom; /* atom indices of CA and P atoms */
 	int *atomMap; /* map of the selected atom count to the original atom count */

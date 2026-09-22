@@ -41,12 +41,13 @@ __inline__ static double atom_sasa(MolSasa *molSasa, int k, double connectivityP
 }
 
 /*___________________________________________________________________________*/
-/** compute atomic bSASA */
-__inline__ static double atom_bsasa(MolSasa *molSasa, int k, double connectivityParameter, \
+/** compute the fraction of atomic SASA buried by one contact;
+	multiplied by the final atom SASA after all contacts (see 'compute_atom_bsasa'),
+	so that bSASA does not depend on the order in which contacts are processed */
+__inline__ static double atom_bsasa_fraction(MolSasa *molSasa, int k, double connectivityParameter, \
 	double bkl, double atomParameter_k)
 {
-	return (molSasa->atomSasa[k].sasa * \
-		(connectivityParameter * bkl * atomParameter_k / molSasa->atomSasa[k].surface));
+	return (connectivityParameter * bkl * atomParameter_k / molSasa->atomSasa[k].surface);
 }
 
 /*___________________________________________________________________________*/
@@ -63,7 +64,6 @@ int init_sasa(Str *pdb, Type *type, MolSasa *molSasa, ConstantSasa *constant_sas
 		/*___________________________________________________________________________*/
 		/* initialise atom SASAs */
 		/* start value of atom SASA is surface of isolated atom */
-		sphere_surface(constant_sasa->atomDataSasa[type->residueType[i]][type->atomType[i]].radius, arg->rProbe);
 		molSasa->atomSasa[i].surface = \
 			sphere_surface(constant_sasa->atomDataSasa[type->residueType[i]][type->atomType[i]].radius, arg->rProbe);
 		molSasa->atomSasa[i].sasa = molSasa->atomSasa[i].surface;
@@ -126,24 +126,22 @@ void free_sasa(MolSasa *molSasa)
 /** atom SASA modification from one contact */
 __inline__ static int mod_atom_sasa(Str *pdb, Topol *topol, Type *type, \
 	MolSasa *molSasa, ConstantSasa *constant_sasa, double connectivityParameter, \
-	int i, int j, float rSolvent)
+	int i, int j, Arg *arg)
 {
+	float rSolvent = arg->rProbe;
     double atomRadius_i, atomRadius_j;
 	double atomParameter_i, atomParameter_j;
     double ci1, cj1, cc2, ci3, cj3, bij, bji;
 	float atomDistance = 0.;
 	float cutoffRadius = 0.;
-	char syscmd[128];
-	int syscmdstat = 0;
+	char message[256];
 
 	/*___________________________________________________________________________*/
 	/* safety check */   
 	if (i == j) {
-		sprintf(syscmd, "touch %s.json", pdb->pdbID); 
-		syscmdstat = system(syscmd);
-		fprintf(stderr, "Problem at atoms %d %d ; system exit = %d\n",
-			pdb->atom[i].atomNumber, pdb->atom[i+1].atomNumber, syscmdstat);
-		exit(0);
+		snprintf(message, sizeof(message), "Problem at atom %d (contact with itself)",
+			pdb->atom[i].atomNumber);
+		exit_structure_error(arg, pdb, message);
 	}
 
 	/*___________________________________________________________________________*/
@@ -163,11 +161,9 @@ __inline__ static int mod_atom_sasa(Str *pdb, Topol *topol, Type *type, \
 
 	/* shortest atomic bond length is .74 A in hydrogen molecule H_2 */
 	if (atomDistance < .74) {
-		sprintf(syscmd, "touch %s.json", pdb->pdbID); 
-		syscmdstat = system(syscmd);
-		fprintf(stderr, "Too short atom distance %d %d = %f A ; system exit = %d\n",
-			pdb->atom[i].atomNumber, pdb->atom[j].atomNumber, atomDistance, syscmdstat);
-		exit(0);
+		snprintf(message, sizeof(message), "Too short atom distance %d %d = %f A",
+			pdb->atom[i].atomNumber, pdb->atom[j].atomNumber, atomDistance);
+		exit_structure_error(arg, pdb, message);
 	}
 
 	/*___________________________________________________________________________*/
@@ -192,38 +188,31 @@ __inline__ static int mod_atom_sasa(Str *pdb, Topol *topol, Type *type, \
 
 	/* count overlaps */
     	++ molSasa->atomSasa[i].nOverlap;
-
-	/* count overlaps */
-    	++ molSasa->atomSasa[i].nOverlap;
     	++ molSasa->atomSasa[j].nOverlap;
 
 	/* compute atom SASA for atoms i and j */
     	molSasa->atomSasa[i].sasa = atom_sasa(molSasa, i, connectivityParameter, bij, atomParameter_i);
     	molSasa->atomSasa[j].sasa = atom_sasa(molSasa, j, connectivityParameter, bji, atomParameter_j);
 
-	/* compute atom bSASA for atoms i and j */
-	/* select side-chain (including CA) atoms and
-		determine polarity of neghbour (overlap) atom */
-	if (pdb->atom[i].residueNumber != pdb->atom[j].residueNumber) {
-		if (((type->atomType[i] == 1) || (type->atomType[i] > 3)) && (constant_sasa->atomDataSasa[type->residueType[j]][type->atomType[j]].polarity == 0)) {
-			molSasa->atomSasa[i].phobicbSasa += atom_bsasa(molSasa, i, connectivityParameter, bij, atomParameter_i);
-		} else if (((type->atomType[i] == 1) || (type->atomType[i] > 3)) && (constant_sasa->atomDataSasa[type->residueType[j]][type->atomType[j]].polarity == 1)) {
-			molSasa->atomSasa[i].philicbSasa += atom_bsasa(molSasa, i, connectivityParameter, bij, atomParameter_i);
-		} else {
-			molSasa->atomSasa[i].philicbSasa += 0.;
+	/* compute buried fractions of atoms i and j (bSASA) */
+	/* select side-chain (including CA) atoms of different residues and
+		determine polarity of neighbour (overlap) atom; atom i and atom j are
+		treated identically, each with its own overlap term (bij, bji) */
+	if (pdb->atom[i].residueIndex != pdb->atom[j].residueIndex) {
+		if ((type->atomType[i] == 1) || (type->atomType[i] > 3)) {
+			if (constant_sasa->atomDataSasa[type->residueType[j]][type->atomType[j]].polarity == 0)
+				molSasa->atomSasa[i].phobicbSasa += atom_bsasa_fraction(molSasa, i, connectivityParameter, bij, atomParameter_i);
+			else
+				molSasa->atomSasa[i].philicbSasa += atom_bsasa_fraction(molSasa, i, connectivityParameter, bij, atomParameter_i);
 		}
 
-		if ((type->atomType[j] > 3) && (constant_sasa->atomDataSasa[type->residueType[i]][type->atomType[i]].polarity == 0)) {
-			molSasa->atomSasa[j].phobicbSasa += atom_bsasa(molSasa, j, connectivityParameter, bij, atomParameter_j);
-		} else if ((type->atomType[j] > 3) && (constant_sasa->atomDataSasa[type->residueType[i]][type->atomType[i]].polarity == 1)) {
-			molSasa->atomSasa[j].philicbSasa += atom_bsasa(molSasa, j, connectivityParameter, bij, atomParameter_j);
-		} else {
-			molSasa->atomSasa[i].philicbSasa += 0.;
+		if ((type->atomType[j] == 1) || (type->atomType[j] > 3)) {
+			if (constant_sasa->atomDataSasa[type->residueType[i]][type->atomType[i]].polarity == 0)
+				molSasa->atomSasa[j].phobicbSasa += atom_bsasa_fraction(molSasa, j, connectivityParameter, bji, atomParameter_j);
+			else
+				molSasa->atomSasa[j].philicbSasa += atom_bsasa_fraction(molSasa, j, connectivityParameter, bji, atomParameter_j);
 		}
 	}
-
-	molSasa->atomSasa[i].bSasa = molSasa->atomSasa[i].phobicbSasa + molSasa->atomSasa[i].philicbSasa;
-	molSasa->atomSasa[j].bSasa = molSasa->atomSasa[j].phobicbSasa + molSasa->atomSasa[j].philicbSasa;
 
 	/* record parameters: increment neighbour index */
 	++ topol->neighbourPar[i][0];
@@ -255,7 +244,7 @@ static int compute_atom_sasa(Str *pdb, Topol *topol, Type *type, MolSasa *molSas
 	for (i = 0; i < topol->nBond; ++ i) {
         mod_atom_sasa(pdb, topol, type, molSasa, constant_sasa,
 			constant_sasa->connect_12_parameter,
-			topol->ib[i], topol->jb[i], arg->rProbe);
+			topol->ib[i], topol->jb[i], arg);
 	}
 	/*}*/
 
@@ -268,7 +257,7 @@ static int compute_atom_sasa(Str *pdb, Topol *topol, Type *type, MolSasa *molSas
     for (i = 0; i < topol->nAngle; ++ i) {
         mod_atom_sasa(pdb, topol, type, molSasa, constant_sasa,
 			constant_sasa->connect_13_parameter,
-			topol->it[i], topol->kt[i], arg->rProbe);
+			topol->it[i], topol->kt[i], arg);
 	}
 	/*}*/
 
@@ -281,7 +270,7 @@ static int compute_atom_sasa(Str *pdb, Topol *topol, Type *type, MolSasa *molSas
     for (i = 0; i < topol->nTorsion; ++ i) {
 		mod_atom_sasa(pdb, topol, type, molSasa, constant_sasa,
 			constant_sasa->connect_14_parameter,
-			topol->ip[i], topol->lp[i], arg->rProbe);
+			topol->ip[i], topol->lp[i], arg);
 	}
 	/*}*/
 
@@ -294,9 +283,17 @@ static int compute_atom_sasa(Str *pdb, Topol *topol, Type *type, MolSasa *molSas
     for (i = 0; i < topol->nNonBonded; ++ i) {
         mod_atom_sasa(pdb, topol, type, molSasa, constant_sasa,
 			constant_sasa->connect_15_parameter,
-			topol->in[i], topol->jn[i], arg->rProbe);
+			topol->in[i], topol->jn[i], arg);
 	}
 	/*}*/
+
+	/*___________________________________________________________________________*/
+    /* bSASA: buried fractions accumulated over all contacts times final atom SASA */
+	for (i = 0; i < pdb->nAtom; ++ i) {
+		molSasa->atomSasa[i].phobicbSasa *= molSasa->atomSasa[i].sasa;
+		molSasa->atomSasa[i].philicbSasa *= molSasa->atomSasa[i].sasa;
+		molSasa->atomSasa[i].bSasa = molSasa->atomSasa[i].phobicbSasa + molSasa->atomSasa[i].philicbSasa;
+	}
 
 	return(0);
 }
@@ -322,20 +319,21 @@ static int compute_res_chain_mol_sasa(Str *pdb, Type *type, MolSasa *molSasa, \
 		/* first atom of each residue is reference for residue type */
 		if (i == 0) {
 			molSasa->resSasa[j].atomRef = i;
-			molSasa->resSasa[j].surface = res_sasa->atomDataSasa[type->residueType[i]][type->atomType[i]].surface;
 		}
 		/*___________________________________________________________________________*/
-		/* increment residue index */
-		if (i > 0 && (pdb->atom[i].residueNumber != pdb->atom[i - 1].residueNumber ||
-				      strcmp(pdb->atom[i].icode, pdb->atom[i - 1].icode) != 0)) {
+		/* increment residue index: the residue index of the atom (see 'index_structure') */
+		if (i > 0 && pdb->atom[i].residueIndex != pdb->atom[i - 1].residueIndex) {
 			++ j;
 			molSasa->resSasa[j].atomRef = i; /* assign atom reference */
-			/* set reference residue surface*/
-			molSasa->resSasa[j].surface = res_sasa->atomDataSasa[type->residueType[i]][type->atomType[i]].surface;
+		}
+		/* set reference residue surface: per residue type (element 0 of the coarse table);
+			taken from the first atom that is not a generic terminal atom ('ANY') */
+		if (molSasa->resSasa[j].surface == 0. && type->residueType[i] != ANY_RESIDUE_TYPE) {
+			molSasa->resSasa[j].surface = res_sasa->atomDataSasa[type->residueType[i]][0].surface;
 		}
 		/*___________________________________________________________________________*/
-		/* increment chain index */
-        	if (i > 0 && pdb->atom[i].chainIdentifier[0] != pdb->atom[i - 1].chainIdentifier[0]) {
+		/* increment chain index: the chain index of the atom */
+        if (i > 0 && pdb->atom[i].chainIndex != pdb->atom[i - 1].chainIndex) {
 			++ k;
 			molSasa->chainSasa[k-1].last = i-1;
 			molSasa->chainSasa[k].first = i;

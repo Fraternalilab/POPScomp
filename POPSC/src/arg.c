@@ -70,6 +70,24 @@ static void print_citation()
 }
 
 /*____________________________________________________________________________*/
+/** open an output file in the output directory; exit if the path does not fit */
+FILE *open_output(Arg *arg, const char *name, const char *mode)
+{
+	char path[4096];
+	int n;
+
+	if (arg->outDirName && strlen(arg->outDirName) > 0 && strcmp(arg->outDirName, ".") != 0)
+		n = snprintf(path, sizeof(path), "%s/%s", arg->outDirName, name);
+	else
+		n = snprintf(path, sizeof(path), "%s", name);
+
+	if (n < 0 || (size_t)n >= sizeof(path))
+		ErrorSpec("Output path too long", (char *)name);
+
+	return safe_open(path, mode);
+}
+
+/*____________________________________________________________________________*/
 /** set defaults */
 static void set_defaults(Arg *arg, Argpdb *argpdb)
 {
@@ -126,6 +144,20 @@ static void check_input(Arg *arg, Argpdb *argpdb)
 	    (strlen(arg->pdbInFileName) == 0) &&
 		(strlen(arg->pdbmlInFileName) == 0))
 		Error("Invalid PDB file name");
+	if (arg->mmcif + arg->pdb + arg->pdbml != 1)
+		Error("Specify exactly one input structure: --pdb, --pdbml or --mmcif");
+	if (! (arg->rProbe > 0.))
+		Error("Probe radius (--rProbe) must be a positive number");
+	if (strlen(arg->outDirName) == 0)
+		Error("Output directory name (--outDirName) is empty");
+	if (strlen(arg->routPrefix) == 0)
+		Error("R output prefix (--routPrefix) is empty");
+	if (argpdb->hydrogens)
+		Error("--hydrogens cannot be used: the POPS parameter tables contain no hydrogen atoms");
+	if (argpdb->multiModel)
+		Warning("--multiModel is not implemented: only the first model is read");
+	if (argpdb->partOcc)
+		Warning("--partOcc is not implemented: the first alternative location of each residue is read");
 	assert(arg->mmcif == 0 || arg->mmcif == 1);
 	assert(arg->pdb == 0 || arg->pdb == 1);
 	assert(arg->pdbml == 0 || arg->pdbml == 1);
@@ -169,7 +201,7 @@ static void print_args(Arg *arg, Argpdb *argpdb)
     time(&now);
 
     if (! arg->silent) fprintf(stdout, "date: %s", ctime(&now));
-    fprintf(stdout, "%s%s%s\n",
+    if (! arg->silent) fprintf(stdout, "%s%s%s\n",
 					arg->mmcifInFileName,
 					arg->pdbInFileName, arg->pdbmlInFileName);
     if (! arg->silent) fprintf(stdout, \
@@ -180,8 +212,8 @@ static void print_args(Arg *arg, Argpdb *argpdb)
                     "rProbe: %f\n"
 					"jsonOut: %d\n",
 					arg->zipped,
-					arg->trajInFileName, argpdb->coarse,
-					0, arg->rProbe, arg->jsonOut);
+					arg->trajInFileName ? arg->trajInFileName : "none", argpdb->coarse,
+					argpdb->multiModel, arg->rProbe, arg->jsonOut);
     fflush(stdout);
 }
 
@@ -190,6 +222,7 @@ static void print_args(Arg *arg, Argpdb *argpdb)
 int parse_args(int argc, char **argv, Arg *arg, Argpdb *argpdb)
 {
 	int c;
+	int option_index = 0; /* index of the matched long option */
 	const char usage[] = "\npops [--pdb ... | --pdbml ...] [OPTIONS ...]\n\
 	 INPUT OPTIONS\n\
 	   Specify one format option: '--pdb', '--pdbml', '--mmcif'.\n\
@@ -204,21 +237,21 @@ int parse_args(int argc, char **argv, Arg *arg, Argpdb *argpdb)
        \n\
 	 MODE OPTIONS\n\
 	   --coarse\t\t\t(type: no_arg, default: off)\n\
-	   --hydrogens\t\t\t(type: no_arg, default: off)\n\
-	   --multiModel\t\t\t(type: no_arg, default: off)\n\
-	   --partOcc\t\t\t(type: no_arg, default: off)\n\
+	   --hydrogens\t\t\t(type: no_arg, default: off, not available: no hydrogen parameters)\n\
+	   --multiModel\t\t\t(type: no_arg, default: off, not implemented)\n\
+	   --partOcc\t\t\t(type: no_arg, default: off, not implemented)\n\
 	   --rProbe <probe radius [A]>\t(type: float , default: 1.4)\n\
 	   --silent\t\t\t(type: no_arg, default: off)\n\
        \n\
 	 OUTPUT OPTIONS\n\
-	   --outDirName <output dir>\t(type: char  , default: NULL)\n\
+	   --outDirName <output dir>\t(type: char  , default: .)\n\
 	   --popsOut <POPS output>\t(type: char  , default: pops.out)\n\
-	   --popstrajOut <POPS output>\t(type: char  , default: popstraj.out)\n\
+	   --popstrajOut <POPS output>\t(type: char  , default: popstraj -> popstraj.<frame>.out)\n\
 	   --popsbOut <POPSb output>\t(type: char  , default: popsb.out)\n\
-	   --popsbtrajOut <POPSb output>(type: char  , default: popsbtraj.out)\n\
+	   --popsbtrajOut <POPSb output>(type: char  , default: popsbtraj -> popsbtraj.<frame>.out)\n\
 	   --sigmaOut <SFE output>\t(type: char  , default: sigma.out)\n\
-	   --sigmatrajOut <SFE output>\t(type: char  , default: sigmatraj.out)\n\
-	   --distMatCAOut <distmat output>\t(type: char  , default: distMatCA.out)\n\
+	   --sigmatrajOut <SFE output>\t(type: char  , default: sigmatraj -> sigmatraj.out)\n\
+	   --distMatCAOut <distmat output>\t(type: char  , default: distMatCA.dat)\n\
 	   --interfaceOut\t\t(type: no_arg, default: off)\n\
 	   --compositionOut\t\t(type: no_arg, default: off)\n\
 	   --typeOut\t\t\t(type: no_arg, default: off)\n\
@@ -232,7 +265,7 @@ int parse_args(int argc, char **argv, Arg *arg, Argpdb *argpdb)
 	   --noHeaderOut\t\t(type: no_arg, default: off)\n\
 	   --padding\t\t\t(type: no_arg, default: off)\n\
 	   --rout\t\t\t(type: no_arg, default: off)\n\
-	   --routPrefix <prefix>\t(type: char   , default: NULL)\n\
+	   --routPrefix <prefix>\t(type: char   , default: id)\n\
 	   --jsonOut\t\t\t(type: no_arg, default: off)\n\
        \n\
 	 INFO OPTIONS\n\
@@ -292,7 +325,15 @@ int parse_args(int argc, char **argv, Arg *arg, Argpdb *argpdb)
     };
 
     /** assign parameters to long options */
-    while ((c = getopt_long(argc, argv, "1:2:3 4 5:6:7:8:9:10:11:12 13 14 15 16 17 18 19 20 21 22 23 24 25 26:27 28 29 30:31 32:33:34:40 41", long_options, NULL)) != -1) {
+    /* only long options are defined */
+    while ((option_index = -1, c = getopt_long(argc, argv, "", long_options, &option_index)) != -1) {
+		/* an option argument that is itself an option means the argument was omitted,
+			e.g. '--sigmaOut --atomOut' would otherwise write SFE output to a file named '--atomOut' */
+		if (optarg && option_index >= 0 && strncmp(optarg, "--", 2) == 0) {
+			fprintf(stderr, "Error: option '--%s' requires an argument, got option '%s'\n",
+				long_options[option_index].name, optarg);
+			exit(1);
+		}
         switch(c) {
             case 1:
                 arg->pdbInFileName = optarg;
@@ -308,9 +349,13 @@ int parse_args(int argc, char **argv, Arg *arg, Argpdb *argpdb)
             case 4:
                 argpdb->multiModel = 1;
                 break;
-            case 5:
-                arg->rProbe = atof(optarg);
+            case 5: {
+                char *end = 0;
+                arg->rProbe = strtod(optarg, &end);
+                if (end == optarg || *end != '\0')
+                    ErrorSpec("Probe radius (--rProbe) is not a number", optarg);
                 break;
+            }
             case 6:
                 arg->sasaOutFileName = optarg;
                 break;
@@ -328,6 +373,7 @@ int parse_args(int argc, char **argv, Arg *arg, Argpdb *argpdb)
                 break;
             case 11:
                 arg->sigmatrajOutFileName = optarg;
+                break;
             case 12:
                 arg->interfaceOut = 1;
                 break;
@@ -408,10 +454,14 @@ int parse_args(int argc, char **argv, Arg *arg, Argpdb *argpdb)
 				print_version();
 				print_license();
                 exit(0);
-            default:
+            case 42:
                 fprintf(stdout, "%s", usage);
 				print_license();
                 exit(0);
+            default:
+                /* unknown option or missing option argument: getopt has printed the reason */
+                fprintf(stderr, "%s", usage);
+                exit(1);
         }
     }
 

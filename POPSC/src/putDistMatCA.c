@@ -14,7 +14,7 @@ void print_distMatCA(Arg *arg, Topol *topol)
 {
 	int i, j;
 
-	arg->distMatCAOutFile = safe_open(arg->distMatCAOutFileName, "w");
+	arg->distMatCAOutFile = open_output(arg, arg->distMatCAOutFileName, "w");
 
 	/* print residue numbers as column names */
 	for (j = 0; j < topol->nCA2; ++ j) {

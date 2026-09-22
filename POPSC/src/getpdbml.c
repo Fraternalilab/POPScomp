@@ -8,54 +8,16 @@ Read the COPYING file for license information.
 #include "getpdbml.h"
 #include "pdb_structure.h"
 
-/*____________________________________________________________________________*/
-/* match PDB residue name against constant residue name array */
-__inline__ static char scan_array(char *code3, char *residue_array[], int shift)
-{
-	unsigned int i;
-	char residue = ' ';
-
-	for (i = 0; i < 26; ++ i)
-		if (strncmp(code3, residue_array[i], 3) == 0) {
-			residue = i + shift; /* shift=65 for UPPER, shift=97 for lower */
-			break;
-		}
-
-	return residue;
-}
-
-/*____________________________________________________________________________*/
-/** amino acid 3-letter to 1-letter code conversion */
-__inline__ static char aacode(char *code3)
-{
-	char residue = ' '; /* 1-letter residue name */
-
-	/* three-letter code of amino acid residues, exception HET -> X */
-	char *aa3[] = {"ALA","---","CYS","ASP","GLU","PHE","GLY","HIS","ILE","---","LYS","LEU","MET","ASN","---","PRO","GLN","ARG","SER","THR","UNL","VAL","TRP","HET","TYR","UNK"};
-	/* nucleotide residues */
-	char *nuc[] = {"A","DA","C","DC","---","---","G","DG","I","DI","---","---","---","N"," DN","---","---","---","DT","T","U","DU","---","---","---","---"};
-
-	/* match against amino acid residues */
-	residue = scan_array(code3, aa3, 65);
-
-	/* match against nucleotide residues */
-	if (residue == ' ') {
-		residue = scan_array(code3, nuc, 97);
-	} else if (residue == ' ') {
-		Warning("Non-standard residue.");
-		residue = 'X';
-	}
-
-	return residue;
-}
+/* aacode() is shared with the PDB reader (getpdb.c) */
 
 /*____________________________________________________________________________*/
 /** standardise non-standard atom names */
 __inline__ static int standardise_name(char *residueName, char *atomName)
 {
 	/* GRO 'ILE CD' to PDB 'ILE CD1' */
-	if ((strcmp(residueName, "ILE") == 0) && (strcmp(atomName, " CD ") == 0))
-		strcpy(atomName, " CD1");
+	/* atom names are unpadded in PDBML */
+	if ((strcmp(residueName, "ILE") == 0) && (strcmp(atomName, "CD") == 0))
+		strcpy(atomName, "CD1");
 
 	return 0;
 }
@@ -86,38 +48,43 @@ __inline__ static int process_het(Str *str, char *line, regex_t *regexPattern, c
 }
 
 /*____________________________________________________________________________*/
+/* copy node content into a fixed-size field: leading/trailing blanks removed,
+	truncated to the field size; empty or missing content leaves the field unchanged */
+static void copy_content(char *dst, size_t size, const xmlChar *content)
+{
+	const char *c = (const char *)content;
+	size_t n;
+
+	if (c == NULL)
+		return;
+	while (*c == ' ' || *c == '\t' || *c == '\n' || *c == '\r')
+		++ c;
+	n = strcspn(c, " \t\n\r");
+	if (n == 0)
+		return;
+	if (n >= size)
+		n = size - 1;
+	memcpy(dst, c, n);
+	dst[n] = '\0';
+}
+
+/*____________________________________________________________________________*/
 /* initialise all entries of a given atom */
 __inline__ static void init_atom(Str *pdb)
 {
-	pdb->atom[pdb->nAtom].temperatureFactor = 0.;
-	pdb->atom[pdb->nAtom].pos.x = 0.;
-	pdb->atom[pdb->nAtom].pos.y = 0.;
-	pdb->atom[pdb->nAtom].pos.z = 0.;
-	strcpy(pdb->atom[pdb->nAtom].chainIdentifier, "");
-	pdb->atom[pdb->nAtom].atomNumber = 0;
+	memset(&(pdb->atom[pdb->nAtom]), 0, sizeof(Atom));
 	/* setting this to 'space' (ASCII 32) to check later whether
-	   it is still that or 'A' (ASCII 65) or other character */
+	   it is still that or another alternative location */
 	strcpy(pdb->atom[pdb->nAtom].alternativeLocation, " ");
-	strcpy(pdb->atom[pdb->nAtom].atomName, "");
-	strcpy(pdb->atom[pdb->nAtom].atomNameHet, "");
-	strcpy(pdb->atom[pdb->nAtom].residueName, "");
-	pdb->atom[pdb->nAtom].residueNumber = 0;
-	strcpy(pdb->atom[pdb->nAtom].recordName, "");
-	strcpy(pdb->atom[pdb->nAtom].icode, "");
-	pdb->atom[pdb->nAtom].occupancy = 0.;
-	pdb->atom[pdb->nAtom].modelNumber = 0;
-	strcpy(pdb->atom[pdb->nAtom].element, "");
-	strcpy(pdb->atom[pdb->nAtom].charge, "");
-	pdb->atom[pdb->nAtom].formalCharge = 0;
-	pdb->atom[pdb->nAtom].partialCharge = 0.;
-	pdb->atom[pdb->nAtom].het = 0;
+	/* no insertion code is written as '-', as in the PDB reader */
+	strcpy(pdb->atom[pdb->nAtom].icode, "-");
 }
 
 /*____________________________________________________________________________*/
 /* The XML library transparently handles compression when doing
      file-based accesses. That is different from the 'read_structure' routine
      in 'getpdb', where the 'gz' library is being invoked explicitly. */
-int parseXML(const char *filename, Str *pdb) {
+int parseXML(const char *filename, Argpdb *argpdb, Str *pdb) {
     xmlDoc *doc; /* the resulting document tree */
     xmlNode *root_node = 0;
 	xmlNode *cur_node = 0;
@@ -129,14 +96,14 @@ int parseXML(const char *filename, Str *pdb) {
 	xmlChar *id = (xmlChar*)"id";
 	xmlChar *content = 0;
 	unsigned int k = 0;
-	int ca_p = 0;
-	char resbuf;
-	/*char line[80];*/
+	int recordIndex = 0; /* index of the atom_site record within the model */
+	char residueAltloc = 0; /* altloc selected for the current residue */
+	Atom *prev = 0; /* previous atom_site record, for altloc selection */
+	Atom prevRecord;
 	regex_t *regexPattern = 0; /* regular atom patterns */
 	/* allowed HETATM atom types (standard N,CA,C,O) and elements (any N,C,O,P,S) */
 	const int nHetAtom = 6;
 	char hetAtomPattern[6][32] = {{"N"},{"CA"},{"C"},{"O"},{"P"},{"S"}};
-	/*char hetAtomNewname[6][32] = {{"N_"},{"CA"},{"C_"},{"O_"},{"P_"},{"S_"}};*/
 
 	/*____________________________________________________________________________*/
     /* parse the file and get the document (DOM) */
@@ -148,19 +115,29 @@ int parseXML(const char *filename, Str *pdb) {
 	/*____________________________________________________________________________*/
 	/* parse document tree */
 	/* set root node */
-	root_node = xmlDocGetRootElement(doc);
+	if ((root_node = xmlDocGetRootElement(doc)) == NULL) {
+        fprintf(stderr, "XML Parser: No root element in %s\n", filename);
+		exit(1);
+	}
 	/* extract pdbID via root node property "datablockName" */
-	content = xmlGetProp(root_node, data);
-	sscanf((char *)content, "%s", pdb->pdbID);
-	xmlFree(content);
+	strcpy(pdb->pdbID, "");
+	if ((content = xmlGetProp(root_node, data)) != NULL) {
+		copy_content(pdb->pdbID, sizeof(pdb->pdbID), content);
+		/* PDBML datablock names carry the suffix '-noatom' etc.: keep them as they are */
+		xmlFree(content);
+	}
 
 	/* traverse XML tree: read datablock content and halt at atom_siteCategory */
 	/* traverse atom sites as child nodes below */
 	for (cur_node = root_node->children; cur_node; cur_node = cur_node->next) {
-		if (strcmp("atom_siteCategory", (char *)cur_node->name) == 0) {
+		if (cur_node->name && strcmp("atom_siteCategory", (char *)cur_node->name) == 0) {
 			site_node = cur_node;
 			break;
 		}
+	}
+	if (site_node == NULL) {
+        fprintf(stderr, "XML Parser: No atom_siteCategory in %s\n", filename);
+		exit(1);
 	}
 
 	/*____________________________________________________________________________*/
@@ -186,19 +163,23 @@ int parseXML(const char *filename, Str *pdb) {
 	/*____________________________________________________________________________*/
 	/* traverse XML tree: atom sites */
 	for (atom_node = site_node->children; atom_node; atom_node = atom_node->next) {
-		if (strcmp("atom_site", (char *)atom_node->name) == 0) {
+		if (atom_node->name && strcmp("atom_site", (char *)atom_node->name) == 0) {
 			/* initialise all entries of this atom */ 
 			init_atom(pdb);
 
 			/* extract atom number via atom_site "id" */
-			content = xmlGetProp(atom_node, id);
-			sscanf((char *)content, "%d", &(pdb->atom[pdb->nAtom].atomNumber));
-			xmlFree(content);
+			if ((content = xmlGetProp(atom_node, id)) != NULL) {
+				sscanf((char *)content, "%d", &(pdb->atom[pdb->nAtom].atomNumber));
+				xmlFree(content);
+			}
 			
 			/* children (= entries) of this atom site */
 			for (cur_node = atom_node->children; cur_node; cur_node = cur_node->next) {
+				if (cur_node->name == NULL)
+					continue;
 				/* assign node content to string */
-				content = xmlNodeGetContent(cur_node);
+				if ((content = xmlNodeGetContent(cur_node)) == NULL)
+					continue;
 
 				/* copy string content to PDB data structure */
 				/* temperature factor */
@@ -219,25 +200,23 @@ int parseXML(const char *filename, Str *pdb) {
 				}
 				/* chain identifier */
 				if (strcmp((char *)cur_node->name, "auth_asym_id") == 0) {
-					sscanf((char *)content, "%s", pdb->atom[pdb->nAtom].chainIdentifier);
+					copy_content(pdb->atom[pdb->nAtom].chainIdentifier,
+						sizeof(pdb->atom[pdb->nAtom].chainIdentifier), content);
 				}
 				/* atom name */
 				if (strcmp((char *)cur_node->name, "auth_atom_id") == 0) {
-					sscanf((char *)content, "%s", pdb->atom[pdb->nAtom].atomName);
+					copy_content(pdb->atom[pdb->nAtom].atomName,
+						sizeof(pdb->atom[pdb->nAtom].atomName), content);
 				}
-				/* atom number */
-				/*
-				if (strcmp((char *)cur_node->name, "auth_seq_id") == 0) {
-					sscanf((char *)content, "%d", &(pdb->atom[pdb->nAtom].atomNumber));
-				}
-				*/
 				/* alternative location */
 				if (strcmp((char *)cur_node->name, "label_alt_id") == 0) {
-					sscanf((char *)content, "%s", pdb->atom[pdb->nAtom].alternativeLocation);
+					copy_content(pdb->atom[pdb->nAtom].alternativeLocation,
+						sizeof(pdb->atom[pdb->nAtom].alternativeLocation), content);
 				}
 				/* residue name */
 				if (strcmp((char *)cur_node->name, "auth_comp_id") == 0) {
-					sscanf((char *)content, "%s", pdb->atom[pdb->nAtom].residueName);
+					copy_content(pdb->atom[pdb->nAtom].residueName,
+						sizeof(pdb->atom[pdb->nAtom].residueName), content);
 				}
 				/* residue number */
 				if (strcmp((char *)cur_node->name, "auth_seq_id") == 0) {
@@ -245,11 +224,13 @@ int parseXML(const char *filename, Str *pdb) {
 				}
 				/* ATOM or HETATM */
 				if (strcmp((char *)cur_node->name, "group_PDB") == 0) {
-					sscanf((char *)content, "%s", pdb->atom[pdb->nAtom].recordName);
+					copy_content(pdb->atom[pdb->nAtom].recordName,
+						sizeof(pdb->atom[pdb->nAtom].recordName), content);
 				}
 				/* insert code */
 				if (strcmp((char *)cur_node->name, "pdbx_PDB_ins_code") == 0) {
-					sscanf((char *)content, "%s", pdb->atom[pdb->nAtom].icode);
+					copy_content(pdb->atom[pdb->nAtom].icode,
+						sizeof(pdb->atom[pdb->nAtom].icode), content);
 				}
 				/* occupancy */
 				if (strcmp((char *)cur_node->name, "occupancy") == 0) {
@@ -261,13 +242,14 @@ int parseXML(const char *filename, Str *pdb) {
 				}
 				/* atom element */
 				if (strcmp((char *)cur_node->name, "type_symbol") == 0) {
-					sscanf((char *)content, "%s", pdb->atom[pdb->nAtom].element);
+					copy_content(pdb->atom[pdb->nAtom].element,
+						sizeof(pdb->atom[pdb->nAtom].element), content);
 				}
 				/* charge */
 				if (strcmp((char *)cur_node->name, "pdbx_formal_charge") == 0) {
-					sscanf((char *)content, "%s", pdb->atom[pdb->nAtom].charge);
+					copy_content(pdb->atom[pdb->nAtom].charge,
+						sizeof(pdb->atom[pdb->nAtom].charge), content);
 					sscanf((char *)content, "%d", &(pdb->atom[pdb->nAtom].formalCharge));
-					sscanf((char *)content, "%f", &(pdb->atom[pdb->nAtom].partialCharge));
 				}
 
 				xmlFree(content);
@@ -275,43 +257,46 @@ int parseXML(const char *filename, Str *pdb) {
 
 			/*____________________________________________________________________________*/
 			/* select entries to record */
-			/* only first MODEL if several are persent in PDB entry */
+			/* only first MODEL if several are present in PDB entry */
 			if (pdb->atom[pdb->nAtom].modelNumber > 1) {
-				goto ENDPARSE;
+				break;
 			}
 
-			/* skip hydrogen atoms */
-			if (strcmp(pdb->atom[pdb->nAtom].element, "H") == 0) {
-				++ pdb->nAllAtom;
-				continue;
-			}
-			/* same for D (deuterium)*/
-			if (strcmp(pdb->atom[pdb->nAtom].element, "D") == 0) {
-				++ pdb->nAllAtom;
-				continue;
-			}
+			/* index of this record in the model (trajectories list all records) */
+			pdb->atom[pdb->nAtom].recordIndex = recordIndex ++;
 
-			/* skip alternative locations except for location 'A' */ 
-			if (pdb->atom[pdb->nAtom].alternativeLocation[0] != 32 &&
-				pdb->atom[pdb->nAtom].alternativeLocation[0] != 65) {
-				/*fprintf(stderr, "Warning: Skipping atom %d in alternative location %c\n",
-					atoi(&line[6]), line[16]);*/
-				continue;
+			/* select one alternative location per residue: the first one encountered */
+			if (prev == 0 ||
+				strcmp(pdb->atom[pdb->nAtom].chainIdentifier, prev->chainIdentifier) != 0 ||
+				pdb->atom[pdb->nAtom].residueNumber != prev->residueNumber ||
+				strcmp(pdb->atom[pdb->nAtom].icode, prev->icode) != 0) {
+				residueAltloc = 0;
 			}
-
-			/* aa code */
-			if (strcmp(pdb->atom[pdb->nAtom].recordName, "ATOM") == 0) {
-				assert((resbuf = aacode(pdb->atom[pdb->nAtom].residueName)) != ' ');
-			}
-	
-			/* process HETATM entries */
-			if (strcmp(pdb->atom[pdb->nAtom].recordName, "HETATM") == 0) {
-				/* HETATM disabled
-				if (process_het(pdb, &(line[0]), regexPattern,
-						&(hetAtomNewname[0]), nHetAtom) != 0) {
+			prevRecord = pdb->atom[pdb->nAtom];
+			prev = &prevRecord;
+			if (pdb->atom[pdb->nAtom].alternativeLocation[0] != ' ' &&
+				pdb->atom[pdb->nAtom].alternativeLocation[0] != '.' &&
+				pdb->atom[pdb->nAtom].alternativeLocation[0] != '?') {
+				if (residueAltloc == 0)
+					residueAltloc = pdb->atom[pdb->nAtom].alternativeLocation[0];
+				if (pdb->atom[pdb->nAtom].alternativeLocation[0] != residueAltloc)
 					continue;
-				}
-				*/
+			}
+
+			/* skip hydrogen and deuterium atoms unless requested */
+			if (! argpdb->hydrogens &&
+				(strcmp(pdb->atom[pdb->nAtom].element, "H") == 0 ||
+				 strcmp(pdb->atom[pdb->nAtom].element, "D") == 0)) {
+				continue;
+			}
+
+			/* HETATM entries are not processed */
+			if (strcmp(pdb->atom[pdb->nAtom].recordName, "ATOM") != 0) {
+				continue;
+			}
+
+			/* water is not part of the solute surface */
+			if (is_water(pdb->atom[pdb->nAtom].residueName)) {
 				continue;
 			}
 
@@ -325,35 +310,23 @@ int parseXML(const char *filename, Str *pdb) {
 					pdb->resAtom = safe_realloc(pdb->resAtom, allocated_residue * sizeof(int));
 					pdb->sequence.res = safe_realloc(pdb->sequence.res, allocated_residue * sizeof(char));
 				}
-				++ ca_p;
 			}
 
 			/* standardise non-standard atom names (here GRO ILE_CD) */
 			standardise_name(pdb->atom[pdb->nAtom].residueName,
 								pdb->atom[pdb->nAtom].atomName);
-			
 
-			/*____________________________________________________________________________*/
-			/* count number of allResidues (including HETATM residues) */
-			if (pdb->nAtom == 0 ||
-				pdb->atom[pdb->nAtom].residueNumber != pdb->atom[pdb->nAtom - 1].residueNumber ||
-				strcmp(pdb->atom[pdb->nAtom].icode, pdb->atom[pdb->nAtom - 1].icode) != 0) {
-				++ pdb->nAllResidue;
-			}
-
-			/*____________________________________________________________________________*/
-			/* count number of chains */
-			if (pdb->nAtom == 0 ||
-				pdb->atom[pdb->nAtom].chainIdentifier[0] != pdb->atom[pdb->nAtom - 1].chainIdentifier[0]) {
-				++ pdb->nChain;
+			/* in coarse mode record only the representative atoms: CA (amino acids), P (nucleotides) */
+			if (argpdb->coarse &&
+				! is_coarse_atom(pdb->atom[pdb->nAtom].residueName, pdb->atom[pdb->nAtom].atomName)) {
+				continue;
 			}
 
 			/* records original atom order (count) */
-			pdb->atomMap[pdb->nAtom] = pdb->nAllAtom;
+			pdb->atomMap[pdb->nAtom] = pdb->atom[pdb->nAtom].recordIndex;
 
 			/* increment atom number */
 			++ pdb->nAtom;
-			++ pdb->nAllAtom;
 
 			/* allocate more memory if needed */
 			if (pdb->nAtom == allocated_atom) {
@@ -364,10 +337,10 @@ int parseXML(const char *filename, Str *pdb) {
 		}
 	}
 
-	ENDPARSE:
-	/* fprintf(stderr, "\tUsing only the first model of the PDB entry\n"); */
-
 	pdb->nResidue = k;
+	pdb->sequence.res[k] = '\0';
+	/* all atom_site records of the model: the atom count of trajectory frames */
+	pdb->nAllAtom = recordIndex;
 
 	/*____________________________________________________________________________*/
 	/* free global variables */
@@ -390,7 +363,7 @@ void read_structure_xml(Arg *arg, Argpdb *argpdb, Str *pdb)
     pdb->sequence.name = safe_malloc((strlen(basename(arg->pdbmlInFileName)) + 1) * sizeof(char));
     strcpy(pdb->sequence.name, basename(arg->pdbmlInFileName));
 
-    parseXML(arg->pdbmlInFileName, pdb);
+    parseXML(arg->pdbmlInFileName, argpdb, pdb);
     xmlCleanupParser();
     xmlMemoryDump();
 
@@ -403,6 +376,12 @@ void read_structure_xml(Arg *arg, Argpdb *argpdb, Str *pdb)
         free(pdb->sequence.name);
         exit(1);
     }
+
+	/* residue and chain indices, residue and chain counts */
+	index_structure(pdb);
+	/* identifier for output file names: datablock name, else file name */
+	if (strlen(pdb->pdbID) == 0)
+		set_pdbID_from_filename(pdb, arg->pdbmlInFileName);
 
     if (! arg->silent) fprintf(stdout, "\tPDB file: %s\n"
 										"\tPDB identifier: %s\n"

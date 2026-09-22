@@ -121,15 +121,14 @@ static int compute_res_chain_mol_sfe(Str *pdb, Type *type, MolSFE *molSFE)
 		/*___________________________________________________________________________*/
 		/* increment residue index */
 		/* first atom of each residue is reference for residue type */
-		if (i > 0 && (pdb->atom[i].residueNumber != pdb->atom[i - 1].residueNumber || 
-					 strcmp(pdb->atom[i].icode, pdb->atom[i - 1].icode) != 0)) {
+		if (i > 0 && pdb->atom[i].residueIndex != pdb->atom[i - 1].residueIndex) {
 			++ j; /* increment residue index */
 			molSFE->resSFE[j].atomRef = i; /* assign atom reference */
 		}
 
 		/*___________________________________________________________________________*/
 		/* increment chain index */
-        if (i > 0 && pdb->atom[i].chainIdentifier[0] != pdb->atom[i - 1].chainIdentifier[0]) {
+        if (i > 0 && pdb->atom[i].chainIndex != pdb->atom[i - 1].chainIndex) {
 			++ k;
 			molSFE->chainSFE[k-1].last = i-1;
 			molSFE->chainSFE[k].first = i;

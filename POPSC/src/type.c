@@ -15,7 +15,8 @@ int get_types(Str *pdb, Type *type, ConstantSasa *constant_sasa)
 {
 	unsigned int i, j;
 	char p_residue[8] = "";
-	char p_atom[4] = "";
+	char p_atom[8] = "";
+	const char *unkName = NULL;
 	int found_residue = 0;
 	int found_atom = 0;
 
@@ -42,13 +43,13 @@ int get_types(Str *pdb, Type *type, ConstantSasa *constant_sasa)
 
 		/* if no match is found for this residue name */
 		if (! found_residue) {
-			strip_char(pdb->atom[i].residueName, p_residue); /* remove spaces */
-			fprintf(stderr, "Warning: Unknown residue name '%s' -> '%s' of residue number %d\n"
-							"Setting residue type to UNK (for unknown polymer residues)\n",
-				pdb->atom[i].residueName, p_residue, pdb->atom[i].residueNumber);
-			type->residueType[i] = 37; /* UNK is residue number 37 in 'sasa_data.h' */
+			/* warn once per residue */
+			if (i == 0 || pdb->atom[i].residueIndex != pdb->atom[i - 1].residueIndex)
+				fprintf(stderr, "Warning: Unknown residue name '%s' of residue %s%d; "
+								"setting residue type to UNK (for unknown polymer residues)\n",
+					p_residue, pdb->atom[i].chainIdentifier, pdb->atom[i].residueNumber);
+			type->residueType[i] = UNK_RESIDUE_TYPE;
 			++ found_residue; /* flag up match */
-			break;
 		}
 
 		/*____________________________________________________________________________*/
@@ -103,10 +104,26 @@ int get_types(Str *pdb, Type *type, ConstantSasa *constant_sasa)
 		}
 
 
+		/* atoms of unknown residues are parametrised by element */
+		if (! found_atom && type->residueType[i] == UNK_RESIDUE_TYPE &&
+			(unkName = unk_atom_name(&(pdb->atom[i]))) != NULL) {
+			for (j = 0; j < constant_sasa->nAtomResidue[UNK_RESIDUE_TYPE]; ++ j) {
+				if (strcmp(unkName, constant_sasa->atomDataSasa[UNK_RESIDUE_TYPE][j].atomName) == 0) {
+					type->atomType[i] = j;
+					++ found_atom; /* flag up match */
+					break;
+				}
+			}
+		}
+
 		/*____________________________________________________________________________*/
 		/* unknown atom means unknown parametrisation: exit */
-		if (! found_atom)
-			ErrorSpec("Unknown type of atom", pdb->atom[i].atomName);
+		if (! found_atom) {
+			fprintf(stderr, "Error: Unknown type of atom (%s) in residue %s %s%d\n",
+				pdb->atom[i].atomName, pdb->atom[i].residueName,
+				pdb->atom[i].chainIdentifier, pdb->atom[i].residueNumber);
+			exit(1);
+		}
 	}
 
 	return 0;

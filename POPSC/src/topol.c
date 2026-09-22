@@ -41,12 +41,23 @@ __inline__ static void print_torsion(Str *pdb, int t1, int t2, int t3, int t4)
 }
 
 /*___________________________________________________________________________*/
+/** record a bonded (1-2, 1-3 or 1-4) atom pair in the bondState matrix */
+__inline__ static void add_bondState(Topol *topol, int a, int b)
+{
+	if (topol->bondState[a][0] >= 63 || topol->bondState[b][0] >= 63)
+		Error("More than 63 bonded interactions per atom: check input structure for overlapping atoms");
+
+	++ topol->bondState[a][0];
+	topol->bondState[a][topol->bondState[a][0]] = b;
+	++ topol->bondState[b][0];
+	topol->bondState[b][topol->bondState[b][0]] = a;
+}
+
+/*___________________________________________________________________________*/
 /** init topology */
 void init_topology(Arg *arg, Str *pdb, Topol *topol)
 {
 	unsigned int i, j;
-	int *nCA = NULL;
-	char *chain1 = NULL;
 	/* assuming an upper limit of 63 bonded interactions per atom */
 	topol->bondState = alloc_mat2D_int(topol->bondState, pdb->nAtom, 64);
 	/* assuming an upper limit of 255 non-bonded interactions per atom */
@@ -60,19 +71,17 @@ void init_topology(Arg *arg, Str *pdb, Topol *topol)
 
 	/* between-chain or between domain Calpha distance matrix */
 	/* determine number of Calpha atoms per chain or domain */
-	nCA = &(topol->nCA1);
+	/* rows: CA atoms of the first chain, columns: CA atoms of the second chain */
 	for (i = 0, topol->nCA1 = 0, topol->nCA2 = 0; i < pdb->nAtom; ++ i) {
 		if (strcmp(pdb->atom[i].atomName, "CA") == 0) {
-			if ((*nCA) == 0) {
-				chain1 = &(pdb->atom[i].chainIdentifier[0]);
-			}
-			if ((*nCA) > 0 && strcmp(pdb->atom[i].chainIdentifier, chain1) != 0) {
-				nCA = &(topol->nCA2);
-			}			
-			++ (*nCA);
+			if (pdb->atom[i].chainIndex == 0)
+				++ topol->nCA1;
+			else if (pdb->atom[i].chainIndex == 1)
+				++ topol->nCA2;
 		}
 	}
-	printf("CA distance matrix has dimensions %d x %d \n", topol->nCA1, topol->nCA2);
+	if (! arg->silent && pdb->nChain == 2)
+		fprintf(stdout, "CA distance matrix has dimensions %d x %d \n", topol->nCA1, topol->nCA2);
 	/* allocate Calpha distance matrix */
 	topol->distMatCA = alloc_mat2D_float(topol->distMatCA, topol->nCA1, topol->nCA2);
 	init_mat2D_float(topol->distMatCA, topol->nCA1, topol->nCA2, 0.);
@@ -192,17 +201,21 @@ int get_bonds(Str *pdb, Type *type, Topol *topol, ConstantSasa *constant_sasa, A
 
 	/* for all pairwise atom combinations */
 	for (i = 0; i < pdb->nAtom - 1; ++ i) {
-		/* coarse grained 'P' needs more generous cutoff */
-		if (argpdb->coarse && (strncmp(pdb->atom[i].atomName, " P  ", 4) == 0))
-			cutoffFactor = 0.7;
-		else
-			cutoffFactor = 0.5;
 		for (j = i + 1; j < pdb->nAtom; ++ j) {
+			/* coarse grained 'P' needs more generous cutoff */
+			if (argpdb->coarse && ((strcmp(pdb->atom[i].atomName, "P") == 0) ||
+									(strcmp(pdb->atom[j].atomName, "P") == 0)))
+				cutoffFactor = 0.7;
+			else
+				cutoffFactor = 0.5;
 
-			/* if atoms i,j in the same or proximate residue */
-			if (((pdb->atom[j].residueNumber == pdb->atom[i].residueNumber) || \
-				(pdb->atom[j].residueNumber == pdb->atom[i].residueNumber + 1)) && \
-				 strcmp(pdb->atom[j].chainIdentifier, pdb->atom[i].chainIdentifier) == 0) {
+			/* if atoms i,j in the same or the next residue of the same chain;
+				'next' is the position in the input (residueIndex), not the residue number,
+				so that numbering gaps, insertion codes and descending numbering
+				do not break the chain topology; a real chain break fails the distance test */
+			if ((pdb->atom[j].chainIndex == pdb->atom[i].chainIndex) &&
+				((pdb->atom[j].residueIndex == pdb->atom[i].residueIndex) ||
+				 (pdb->atom[j].residueIndex == pdb->atom[i].residueIndex + 1))) {
 
 				/* add bond if atom distance shorter than cutoff */
 				/* atoms bonded if dist =< 0.5 * (atomRadius_i + atomRadius_j) */
@@ -223,10 +236,7 @@ int get_bonds(Str *pdb, Type *type, Topol *topol, ConstantSasa *constant_sasa, A
 						array element '0' records the total number of bonded atoms,
 						then each bonded atom's ID number is added to that array position;
 						the result is a list of all bonded atom IDs and their total number at '0' */
-					++ topol->bondState[i][0];
-					topol->bondState[i][topol->bondState[i][0]] = j;
-					++ topol->bondState[j][0];
-					topol->bondState[j][topol->bondState[j][0]] = i;
+					add_bondState(topol, i, j);
 
 					/*print_pair(pdb, i, j);*/
 
@@ -286,10 +296,7 @@ int get_angles(Str *pdb, Topol *topol)
 				/*print_angle(pdb, topol->jb[i], topol->ib[i], topol->jb[j]);*/
 
 				/* record 1,3-bond in bondState matrix */
-				++ topol->bondState[topol->jb[i]][0];
-				topol->bondState[topol->jb[i]][topol->bondState[topol->jb[i]][0]] = topol->jb[j];
-				++ topol->bondState[topol->jb[j]][0];
-				topol->bondState[topol->jb[j]][topol->bondState[topol->jb[j]][0]] = topol->jb[i];
+				add_bondState(topol, topol->jb[i], topol->jb[j]);
 
                 ++ topol->nAngle; /* increment angle index */
 				continue;
@@ -306,10 +313,7 @@ int get_angles(Str *pdb, Topol *topol)
 				/*print_angle(pdb, topol->jb[i], topol->ib[i], topol->ib[j]);*/
 
 				/* record 1,3-bond in bondState matrix */
-				++ topol->bondState[topol->jb[i]][0];
-				topol->bondState[topol->jb[i]][topol->bondState[topol->jb[i]][0]] = topol->ib[j];
-				++ topol->bondState[topol->ib[j]][0];
-				topol->bondState[topol->ib[j]][topol->bondState[topol->ib[j]][0]] = topol->jb[i];
+				add_bondState(topol, topol->jb[i], topol->ib[j]);
 
                 ++ topol->nAngle; /* increment angle index */
 				continue;
@@ -326,10 +330,7 @@ int get_angles(Str *pdb, Topol *topol)
 				/*print_angle(pdb, topol->ib[i], topol->jb[i], topol->jb[j]);*/
 
 				/* record 1,3-bond in bondState matrix */
-				++ topol->bondState[topol->ib[i]][0];
-				topol->bondState[topol->ib[i]][topol->bondState[topol->ib[i]][0]] = topol->jb[j];
-				++ topol->bondState[topol->jb[j]][0];
-				topol->bondState[topol->jb[j]][topol->bondState[topol->jb[j]][0]] = topol->ib[i];
+				add_bondState(topol, topol->ib[i], topol->jb[j]);
 
                 ++ topol->nAngle; /* increment angle index */
 				continue;
@@ -346,10 +347,7 @@ int get_angles(Str *pdb, Topol *topol)
 				/*print_angle(pdb, topol->ib[i], topol->jb[i], topol->ib[j]);*/
 
 				/* record 1,3-bond in bondState matrix */
-				++ topol->bondState[topol->ib[i]][0];
-				topol->bondState[topol->ib[i]][topol->bondState[topol->ib[i]][0]] = topol->ib[j];
-				++ topol->bondState[topol->ib[j]][0];
-				topol->bondState[topol->ib[j]][topol->bondState[topol->ib[j]][0]] = topol->ib[i];
+				add_bondState(topol, topol->ib[i], topol->ib[j]);
 
                 ++ topol->nAngle; /* increment angle index */
 				continue;
@@ -436,10 +434,7 @@ int get_torsions(Str *pdb, Type *type, Topol *topol, ConstantSasa *constant_sasa
 				/*print_torsion(pdb, topol->kt[j], topol->it[i], topol->jt[i], topol->kt[i]);*/
 
 				/* record 1,4-bond in bondState matrix */
-				++ topol->bondState[topol->kt[i]][0];
-				topol->bondState[topol->kt[i]][topol->bondState[topol->kt[i]][0]] = topol->kt[j];
-				++ topol->bondState[topol->kt[j]][0];
-				topol->bondState[topol->kt[j]][topol->bondState[topol->kt[j]][0]] = topol->kt[i];
+				add_bondState(topol, topol->kt[i], topol->kt[j]);
 
 				++ topol->nTorsion; /* increment torsion index */
 				continue;
@@ -462,10 +457,7 @@ int get_torsions(Str *pdb, Type *type, Topol *topol, ConstantSasa *constant_sasa
 				/*print_torsion(pdb, topol->it[j], topol->it[i], topol->jt[i], topol->kt[i]);*/
 
 				/* record 1,4-bond in bondState matrix */
-				++ topol->bondState[topol->kt[i]][0];
-				topol->bondState[topol->kt[i]][topol->bondState[topol->kt[i]][0]] = topol->it[j];
-				++ topol->bondState[topol->ib[j]][0];
-				topol->bondState[topol->it[j]][topol->bondState[topol->it[j]][0]] = topol->kt[i];
+				add_bondState(topol, topol->kt[i], topol->it[j]);
 
 				++ topol->nTorsion; /* increment torsion index */
 				continue;
@@ -488,10 +480,7 @@ int get_torsions(Str *pdb, Type *type, Topol *topol, ConstantSasa *constant_sasa
 				/*print_torsion(pdb, topol->it[i], topol->jt[i], topol->kt[i], topol->kt[j]);*/
 
 				/* record 1,4-bond in bondState matrix */
-				++ topol->bondState[topol->it[i]][0];
-				topol->bondState[topol->it[i]][topol->bondState[topol->it[i]][0]] = topol->kt[j];
-				++ topol->bondState[topol->kt[j]][0];
-				topol->bondState[topol->kt[j]][topol->bondState[topol->kt[j]][0]] = topol->it[i];
+				add_bondState(topol, topol->it[i], topol->kt[j]);
 
 				++ topol->nTorsion; /* increment torsion index */
 				continue;
@@ -514,10 +503,7 @@ int get_torsions(Str *pdb, Type *type, Topol *topol, ConstantSasa *constant_sasa
 				/*print_torsion(pdb, topol->it[i], topol->jt[i], topol->kt[i], topol->it[j]);*/
 
 				/* record 1,4-bond in bondState matrix */
-				++ topol->bondState[topol->it[i]][0];
-				topol->bondState[topol->it[i]][topol->bondState[topol->it[i]][0]] = topol->it[j];
-				++ topol->bondState[topol->it[j]][0];
-				topol->bondState[topol->it[j]][topol->bondState[topol->it[j]][0]] = topol->it[i];
+				add_bondState(topol, topol->it[i], topol->it[j]);
 
 				++ topol->nTorsion; /* increment torsion index */
 				continue;
@@ -562,19 +548,21 @@ int nonbonded_overlaps(Str *pdb, Type *type, Topol *topol, ConstantSasa *constan
 				/*print_pair(pdb, i, j);*/
 
 				/* record non-bonded pair in neighbourState matrix */
+				if (topol->neighbourState[i][0] >= 1023 || topol->neighbourState[j][0] >= 1023)
+					Error("More than 1023 neighbours per atom: check input structure for overlapping atoms");
 				++ topol->neighbourState[i][0];
-				assert(topol->neighbourState[i][0] < 1024);
 				topol->neighbourState[i][topol->neighbourState[i][0]] = j;
 				++ topol->neighbourState[j][0];
-				assert(topol->neighbourState[j][0] < 1024);
 				topol->neighbourState[j][topol->neighbourState[j][0]] = i;
 
-				/* record nearest neighbour */
-				if (atomDistance < topol->interfaceNnDist[i]) {
+				/* record nearest neighbour on a different chain */
+				if (pdb->atom[i].chainIndex != pdb->atom[j].chainIndex &&
+					atomDistance < topol->interfaceNnDist[i]) {
 					topol->interfaceNnDist[i] = atomDistance;
 					topol->interfaceNn[i] = j;
 				}
-				if (atomDistance < topol->interfaceNnDist[j]) {
+				if (pdb->atom[i].chainIndex != pdb->atom[j].chainIndex &&
+					atomDistance < topol->interfaceNnDist[j]) {
 					topol->interfaceNnDist[j] = atomDistance;
 					topol->interfaceNn[j] = i;
 				}
@@ -599,15 +587,8 @@ int nonbonded_overlaps(Str *pdb, Type *type, Topol *topol, ConstantSasa *constan
 /** derive molecular topology */
 int get_topology(Str *pdb, Type *type, Topol *topol, ConstantSasa *constant_sasa, Argpdb *argpdb, Arg *arg)
 {
-	char syscmd[128];
-	int syscmdstat = 0;
-
-	if (pdb->nAtom < 2) {
-		sprintf(syscmd, "touch %s.json", pdb->pdbID); 
-		syscmdstat = system(syscmd);
-		fprintf(stderr, "< 2 atoms: try '--coarse' switch ; system exit = %d\n",
-			syscmdstat);
-	}
+	if (pdb->nAtom < 2)
+		exit_structure_error(arg, pdb, "< 2 atoms: try '--coarse' switch");
 
 	/* the bondState matrix records, which atom pairs are bonded 
 	   (bond distances 1,2 1,3 1,4); the rest has non-bonded interactions 
@@ -621,37 +602,22 @@ int get_topology(Str *pdb, Type *type, Topol *topol, ConstantSasa *constant_sasa
 #if DEBUG>1
 	fprintf(stderr, "%s:%d: nBond = %d\n", __FILE__, __LINE__, topol->nBond);
 #endif
-	if (topol->nBond < 2) {
-		sprintf(syscmd, "touch %s.json", pdb->pdbID); 
-		syscmdstat = system(syscmd);
-		fprintf(stderr, "< 2 bonds: try '--coarse' switch ; system exit = %d\n",
-			syscmdstat);
-		exit(0);
-	}
+	if (topol->nBond < 2)
+		exit_structure_error(arg, pdb, "< 2 bonds: try '--coarse' switch");
 
 	get_angles(pdb, topol); /* calculate angles (from bonds) */
 #if DEBUG>1
 	fprintf(stderr, "%s:%d: nAngle = %d\n", __FILE__, __LINE__, topol->nAngle);
 #endif
-	if (topol->nAngle < 2) {
-		sprintf(syscmd, "touch %s.json", pdb->pdbID); 
-		syscmdstat = system(syscmd);
-		fprintf(stderr, "< 2 angles: try '--coarse' switch ; system exit = %d\n",
-			syscmdstat);
-		exit(0);
-	}
+	if (topol->nAngle < 2)
+		exit_structure_error(arg, pdb, "< 2 angles: try '--coarse' switch");
 
 	get_torsions(pdb, type, topol, constant_sasa); /* calculate torsions (from angles) */
 #if DEBUG>1
 	fprintf(stderr, "%s:%d: nTorsion = %d\n", __FILE__, __LINE__, topol->nTorsion);
 #endif
-	if (topol->nTorsion < 2) {
-		sprintf(syscmd, "touch %s.json", pdb->pdbID); 
-		syscmdstat = system(syscmd);
-		fprintf(stderr, "< 2 torsions: try '--coarse' switch ; system exit = %d\n",
-			syscmdstat);
-		exit(0);
-	}
+	if (topol->nTorsion < 2)
+		exit_structure_error(arg, pdb, "< 2 torsions: try '--coarse' switch");
 
 	nonbonded_overlaps(pdb, type, topol, constant_sasa, arg); /* calculate overlapping atoms */
 #if DEBUG>1
@@ -669,7 +635,6 @@ int get_topology(Str *pdb, Type *type, Topol *topol, ConstantSasa *constant_sasa
 int calpha_distances(Arg *arg, Str *pdb, Topol *topol, ConstantSasa *res_sasa) {
 	unsigned int i, j, k;
 	int n_cai, n_caj;
-	char chain1 = '\0';
 	float distance = 0.;
 	float soft_distance = 0.;
 	int found_CA1 = 0;
@@ -679,31 +644,18 @@ int calpha_distances(Arg *arg, Str *pdb, Topol *topol, ConstantSasa *res_sasa) {
 	float soft_distance_norm = 0.;
 
 	n_cai = 0;
+	n_caj = 0;
 
-	/* find first CA chain */
+	/* rows: CA atoms of the first chain */
 	for (i = 0; i < pdb->nAtom; ++i) {
-    	if (strcmp(pdb->atom[i].atomName, "CA") == 0) {
-       		chain1 = pdb->atom[i].chainIdentifier[0];
-       		break;
-    	}
-	}
-
-	for (i = 0; i < pdb->nAtom; ++i) {
-    	if (strcmp(pdb->atom[i].atomName, "CA") != 0)
-        	continue;
-
-    	/* only rows from chain 1 */
-    	if (pdb->atom[i].chainIdentifier[0] != chain1)
+    	if (strcmp(pdb->atom[i].atomName, "CA") != 0 || pdb->atom[i].chainIndex != 0)
         	continue;
 
     	n_caj = 0;
 
+		/* columns: CA atoms of the second chain */
     	for (j = 0; j < pdb->nAtom; ++j) {
-			if (strcmp(pdb->atom[j].atomName, "CA") != 0)
-            	continue;
-
-        	/* only columns from other chain(s) */
-        	if (pdb->atom[j].chainIdentifier[0] == chain1)
+			if (strcmp(pdb->atom[j].atomName, "CA") != 0 || pdb->atom[j].chainIndex != 1)
             	continue;
 
 			distance = atom_distance(pdb, i, j);
@@ -743,8 +695,8 @@ int calpha_distances(Arg *arg, Str *pdb, Topol *topol, ConstantSasa *res_sasa) {
     	++n_cai;
 	}
 
-	assert(n_cai == topol->nCA1);
-	assert(n_caj == topol->nCA2);
+	if (n_cai != topol->nCA1 || (n_cai > 0 && n_caj != topol->nCA2))
+		ErrorLoc("Inconsistent CA atom count", __FILE__, __LINE__);
 
 	return(0);
 }

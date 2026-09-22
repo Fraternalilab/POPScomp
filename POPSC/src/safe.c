@@ -23,7 +23,10 @@ FILE *safe_open(const char *name, const char *mode)
 /** safe memory allocation */
 void *check_non_null(void *ptr)
 {
-    assert (ptr != 0);
+    if (ptr == 0) {
+		fprintf(stderr, "Error: Memory allocation failed\n");
+		exit(1);
+	}
     return ptr;
 }
 

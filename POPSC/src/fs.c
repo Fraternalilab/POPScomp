@@ -17,6 +17,7 @@ int listfiles(char *dir, FileList *filelist)
 	unsigned int allocated = 64;
 
 	filelist->file = safe_malloc(allocated * sizeof(char [128]));
+	filelist->nFile = 0;
 
 	dp = opendir (dir);
 	if (dp != 0) {
@@ -24,7 +25,8 @@ int listfiles(char *dir, FileList *filelist)
 			/*puts(ep->d_name);*/
 			if (ep->d_name[0] == '.')
 				continue;
-			strcpy(filelist->file[n], ep->d_name);
+			/* file names longer than the 128-character entry are truncated */
+			snprintf(filelist->file[n], sizeof(filelist->file[n]), "%s", ep->d_name);
 			filelist->nFile = ++ n;
 			if (n == allocated) {
 				allocated += 64;

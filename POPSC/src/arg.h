@@ -17,6 +17,7 @@ Read the COPYING file for license information.
 
 #include "argpdb.h"
 #include "error.h"
+#include "safe.h"
 
 /*____________________________________________________________________________*/
 /* structures */
@@ -82,5 +83,6 @@ typedef struct
 /*____________________________________________________________________________*/
 /* prototypes */
 int parse_args(int argc, char **argv, Arg *arg, Argpdb *argpdb);
+FILE *open_output(Arg *arg, const char *name, const char *mode);
 
 #endif

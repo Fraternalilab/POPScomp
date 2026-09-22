@@ -45,7 +45,8 @@ int strpos0(char *string, char *substring)
         }
         b = substring;
     }
-    return (pos - 1);
+    /* substring not found */
+    return -1;
 }
 
 /*___________________________________________________________________________*/
@@ -75,6 +76,7 @@ int strpos1(char *string, char *substring)
         }
         b = substring;
     }
-    return pos;
+    /* substring not found */
+    return -1;
 }
 

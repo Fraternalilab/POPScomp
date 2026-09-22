@@ -14,7 +14,7 @@ static void print_atom_sfe(FILE *sigmaOutFile, Arg *arg, Str *pdb, MolSFE *molSF
 
 	if (! arg->noHeaderOut) {
 		fprintf(sigmaOutFile, "\n=== ATOM Solvation Free Energy ===\n");
-		fprintf(sigmaOutFile, "\nAtomNr\tAtomNe\tResiNe\tChain\tResidNr\tSFEt/(kJ/mol)\tSFEg/(kJ/mol)\tAtom Type\tAtom Group\n");
+		fprintf(sigmaOutFile, "\nAtomNr\tAtomNe\tResiNe\tChain\tResidNr\tiCode\tSFEt/(kJ/mol)\tSFEg/(kJ/mol)\tAtomTp\tAtomGp\n");
 	}
 
 	/* before the first line:
@@ -22,17 +22,17 @@ static void print_atom_sfe(FILE *sigmaOutFile, Arg *arg, Str *pdb, MolSFE *molSF
 	if (arg->padding)  {
 		j = 0;
 		while (++ j < pdb->atom[0].atomNumber) {
-			fprintf(sigmaOutFile, "%8d\t%3s\t%3s\t%1s\t%6d\t%10.2f\t\t%10.2f\t\t\t%2d\t\t%2d\n",
-				j, "XXX", pdb->atom[0].residueName, " ",
-				pdb->atom[0].residueNumber,
+			fprintf(sigmaOutFile, "%8d\t%3s\t%3s\t%1s\t%6d\t%1s\t%10.2f\t%10.2f\t%2d\t%2d\n",
+				j, "XXX", pdb->atom[0].residueName, "-",
+				pdb->atom[0].residueNumber, "-",
 				0., 0., 0, 0);
 		}
 	}
 
 	for (i = 0; i < pdb->nAtom; ++ i) {
-		fprintf(sigmaOutFile, "%8d\t%3s\t%3s\t%1s\t%6d\t%1s\t%10.2f\t\t%10.2f\t\t\t%2d\t\t%2d\n",
+		fprintf(sigmaOutFile, "%8d\t%3s\t%3s\t%1s\t%6d\t%1s\t%10.2f\t%10.2f\t%2d\t%2d\n",
 			pdb->atom[i].atomNumber, pdb->atom[i].atomName,
-			pdb->atom[i].residueName, pdb->atom[i].chainIdentifier,
+			pdb->atom[i].residueName, chain_label(&(pdb->atom[i])),
 			pdb->atom[i].residueNumber,
 			pdb->atom[i].icode,
 			molSFE->atomSFE[i].sfe_type, molSFE->atomSFE[i].sfe_group,
@@ -42,10 +42,9 @@ static void print_atom_sfe(FILE *sigmaOutFile, Arg *arg, Str *pdb, MolSFE *molSF
 		if (arg->padding && ((i + 1) < pdb->nAtom)) {
 			j = pdb->atom[i].atomNumber;
 			while (++ j < pdb->atom[i+1].atomNumber) {
-				fprintf(sigmaOutFile, "%8d\t%3s\t%3s\t%1s\t%6d\t%1s\t%10.2f\t\t%10.2f\t\t\t%2d\t\t%2d\n",
-					j, "HXX", pdb->atom[i].residueName, " ",
-					pdb->atom[i].residueNumber,
-					pdb->atom[i].icode,
+				fprintf(sigmaOutFile, "%8d\t%3s\t%3s\t%1s\t%6d\t%1s\t%10.2f\t%10.2f\t%2d\t%2d\n",
+					j, "HXX", pdb->atom[i].residueName, "-",
+					pdb->atom[i].residueNumber, "-",
 					0., 0., 0, 0);
 			}
 		}
@@ -60,13 +59,13 @@ static void print_residue_sfe(FILE *sigmaOutFile, Arg *arg, Str *pdb, MolSFE *mo
 
 	if (! arg->noHeaderOut) {
 		fprintf(sigmaOutFile, "\n=== RESIDUE Solvation Free Energy ===\n");
-		fprintf(sigmaOutFile, "\nResid\tChain\tResidNr\tSFEt/(kJ/mol)\tSFEg/(kJ/mol)\n");
+		fprintf(sigmaOutFile, "\nResid\tChain\tResidNr\tiCode\tSFEt/(kJ/mol)\tSFEg/(kJ/mol)\n");
 	}
 
     for (i = 0; i < pdb->nAllResidue; ++ i) { 
-		fprintf(sigmaOutFile, "%3s\t%3s\t%8d\t%1s\t%10.2f\t\t%10.2f\n",
+		fprintf(sigmaOutFile, "%3s\t%3s\t%8d\t%1s\t%10.2f\t%10.2f\n",
 			pdb->atom[molSFE->resSFE[i].atomRef].residueName,
-			pdb->atom[molSFE->resSFE[i].atomRef].chainIdentifier,
+			chain_label(&(pdb->atom[molSFE->resSFE[i].atomRef])),
 			pdb->atom[molSFE->resSFE[i].atomRef].residueNumber,
 			pdb->atom[molSFE->resSFE[i].atomRef].icode,
 			molSFE->resSFE[i].sfe_type,
@@ -82,13 +81,13 @@ static void print_chain_sfe(FILE *sigmaOutFile, Arg *arg, Str *pdb, MolSFE *molS
 
 	if (! arg->noHeaderOut) {
 		fprintf(sigmaOutFile, "\n=== CHAIN Solvation Free Energy ===\n(Atom Range excluding hydrogen atoms)\n");
-		fprintf(sigmaOutFile, "\nChain\tId\tAtom Range\tResidue Range\t\tSFEt/(kJ/mol)\tSFEg/(kJ/mol)\n");
+		fprintf(sigmaOutFile, "\nChain\tId\tAtomRange\tResidRange\tSFEt/(kJ/mol)\tSFEg/(kJ/mol)\n");
 	}
 
     for (i = 0; i < pdb->nChain; ++ i)
-		fprintf(sigmaOutFile, "%3d\t%3s\t%6d->%-6d\t%5d->%-5d\t%10.2f\t\t%10.2f\n",
+		fprintf(sigmaOutFile, "%3d\t%3s\t%6d->%-6d\t%5d->%-5d\t%10.2f\t%10.2f\n",
 			i,
-			pdb->atom[molSFE->chainSFE[i].first].chainIdentifier,
+			chain_label(&(pdb->atom[molSFE->chainSFE[i].first])),
 			pdb->atom[molSFE->chainSFE[i].first].atomNumber,
 			pdb->atom[molSFE->chainSFE[i].last].atomNumber,
 			pdb->atom[molSFE->chainSFE[i].first].residueNumber,
@@ -117,7 +116,7 @@ void print_sfe(Arg *arg, Argpdb *argpdb, Str *pdb, Type *type, Topol *topol, \
 	if (frame < 0) {
 		if (! arg->silent)
 			fprintf(stdout, "\tSFE of input molecule: %s\n", arg->sigmaOutFileName);
-		arg->sigmaOutFile = safe_open(arg->sigmaOutFileName, "w");
+		arg->sigmaOutFile = open_output(arg, arg->sigmaOutFileName, "w");
 
 		/* atom SFE */
 		if (arg->atomOut)
@@ -139,9 +138,17 @@ void print_sfe(Arg *arg, Argpdb *argpdb, Str *pdb, Type *type, Topol *topol, \
 
 	/* for trajectory */
 	} else {
-		if (! arg->silent)
+		/* one line per frame in '<sigmatrajOut>.out' */
+		char name[1024];
+		int n = snprintf(name, sizeof(name), "%s.out", arg->sigmatrajOutFileName);
+		if (n < 0 || (size_t)n >= sizeof(name))
+			ErrorSpec("Output file name too long", arg->sigmatrajOutFileName);
+		arg->sigmatrajOutFile = open_output(arg, name, frame == 0 ? "w" : "a");
+		if (frame == 0 && ! arg->noHeaderOut)
+			fprintf(arg->sigmatrajOutFile, "Frame\tSFEt/(kJ/mol)\tSFEg/(kJ/mol)\n");
 		fprintf(arg->sigmatrajOutFile, "%d\t%10.2f\t%10.2f\n",
 				(frame + 1), molSFE->sfe_type, molSFE->sfe_group);
+		fclose(arg->sigmatrajOutFile);
 	}
 }
 

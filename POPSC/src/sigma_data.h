@@ -56,7 +56,7 @@ ConstantSigma constant_sigma_data[] = {
 			/* G */ 24,
 			/* I */ 23,
 			/* N */ 22, 
-			/* T */ 22, 
+			/* T */ 21, 
 			/* U */ 21,
 			/* DNA */
 			/*DA */ 22,
@@ -67,9 +67,9 @@ ConstantSigma constant_sigma_data[] = {
 			/*DT */ 21, 
 			/*DU */ 20,
 			/* unknown polymer residue */
-			/*UNK*/ 5,
+			/*UNK*/ 8,
 			/* ligand */
-			/*HET*/ 6,
+			/*HET*/ 9,
 			/* unknown ligand */
 			/*UNL*/ 5
 		},
@@ -559,14 +559,21 @@ ConstantSigma constant_sigma_data[] = {
 				/*O4   DU*/	  {"DU",  "O4",   0., 0.},
 				/*C5   DU*/	  {"DU",  "C5",   0., 0.},
 				/*C6   DU*/	  {"DU",  "C6",   0., 0.}},
-			{	/*C   UNK*/   {"UNK", "C",    0., 0.},
-				/*N   UNK*/   {"UNK", "N",    0., 0.},
+			/* same atom order as in 'sasa_data.h': the atom type index is shared */
+			{	/*N   UNK*/   {"UNK", "N",    0., 0.},
+				/*CA  UNK*/   {"UNK", "CA",   0., 0.},
+				/*CB  UNK*/   {"UNK", "CB",   0., 0.},
+				/*CG  UNK*/   {"UNK", "CG",   0., 0.},
+				/*C   UNK*/   {"UNK", "C",    0., 0.},
 				/*O   UNK*/   {"UNK", "O",    0., 0.},
 				/*P   UNK*/   {"UNK", "P",    0., 0.},
 				/*S   UNK*/   {"UNK", "S",    0., 0.}},
-			{	/*N_  HET*/   {"HET", "N_",   0., 0.}, 
+			{	/*N   HET*/   {"HET", "N",    0., 0.}, 
 				/*CA  HET*/   {"HET", "CA",   0., 0.},
+				/*C   HET*/   {"HET", "C",    0., 0.},
+				/*O   HET*/   {"HET", "O",    0., 0.},
 				/*C_  HET*/   {"HET", "C_",   0., 0.},
+				/*N_  HET*/   {"HET", "N_",   0., 0.},
 				/*O_  HET*/   {"HET", "O_",   0., 0.},
 				/*P_  HET*/   {"HET", "P_",   0., 0.},
 				/*S_  HET*/   {"HET", "S_",   0., 0.}},
@@ -617,6 +624,7 @@ ConstantSigma constant_sigma_data[] = {
 			/*SOL*/ 1,
 			/* RNA */
 			/* A */ 1,
+			/* C */ 1,
 			/* G */ 1,
 			/* I */ 1,
 			/* N */ 1,

@@ -18,6 +18,7 @@ int get_atomgroup(Str *str, Atomgroup *atomGroup)
 	int atom_type; /* position in atom array */
 	char p_residue[4] = "";
 	char p_atom[8] = "";
+	const char *unkName = NULL;
 	int found_residue = 0;
 	int found_atom = 0;
 
@@ -41,15 +42,10 @@ int get_atomgroup(Str *str, Atomgroup *atomGroup)
 			}
 		}
 
-		/* if no match is found for this residue name */
+		/* if no match is found for this residue name: UNK (warned about in 'get_types') */
 		if (! found_residue) {
-			strip_char(str->atom[i].residueName, p_residue); /* remove spaces */
-			fprintf(stderr, "Warning: Unknown residue name '%s' -> '%s' of residue number %d\n"
-							"Setting residue type to UNK (for unknown polymer residues)\n",
-				str->atom[i].residueName, p_residue, str->atom[i].residueNumber);
-			residue_type = 37; /* UNK is residue number 37 in 'sasa_data.h' */
+			residue_type = UNK_RESIDUE_TYPE;
 			++ found_residue; /* flag up match */
-			break;
 		}
 
 		/* atom */
@@ -72,7 +68,6 @@ int get_atomgroup(Str *str, Atomgroup *atomGroup)
 				residue_type = 20;
 				atom_type = 0;
 				++ found_atom; /* flag up match */
-				continue;
 			}
 		}
 
@@ -85,7 +80,6 @@ int get_atomgroup(Str *str, Atomgroup *atomGroup)
 				residue_type = 20;
 				atom_type = 1;
 				++ found_atom; /* flag up match */
-				continue;
 			}
 		}
 
@@ -98,7 +92,18 @@ int get_atomgroup(Str *str, Atomgroup *atomGroup)
 				residue_type = 20;
 				atom_type = 2;
 				++ found_atom; /* flag up match */
-				continue;
+			}
+		}
+
+		/* atoms of unknown residues are grouped by element */
+		if (! found_atom && residue_type == UNK_RESIDUE_TYPE &&
+			(unkName = unk_atom_name(&(str->atom[i]))) != NULL) {
+			for (j = 0; j < atomGroup->nAtomResidue[residue_type]; ++ j) {
+				if (strcmp(unkName, atomGroup->atomDataGroup[residue_type][j].atomName) == 0) {
+					atom_type = j;
+					++ found_atom; /* flag up match */
+					break;
+				}
 			}
 		}
 
