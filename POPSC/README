@@ -84,19 +84,19 @@ pops [--pdb ... | --pdbml ...] [OPTIONS ...]
 	   --zipped			(type: no_arg, default: off)
 	 MODE OPTIONS
 	   --coarse			(type: no_arg, default: off)
-	   --hydrogens			(type: no_arg, default: off)
-	   --multiModel			(type: no_arg, default: off)
-	   --partOcc			(type: no_arg, default: off)
+	   --hydrogens			(type: no_arg, default: off, not available: no hydrogen parameters)
+	   --multiModel			(type: no_arg, default: off, not implemented)
+	   --partOcc			(type: no_arg, default: off, not implemented)
 	   --rProbe <probe radius [A]>	(type: float , default: 1.4)
 	   --silent			(type: no_arg, default: off)
 	 OUTPUT OPTIONS
-	   --outDirName <output dir>	(type: char  , default: NULL)
+	   --outDirName <output dir>	(type: char  , default: .)
 	   --popsOut <POPS output>	(type: char  , default: pops.out)
-	   --popstrajOut <POPS output>	(type: char  , default: popstraj.out)
+	   --popstrajOut <POPS output>	(type: char  , default: popstraj -> popstraj.<frame>.out)
 	   --popsbOut <POPSb output>	(type: char  , default: popsb.out)
-	   --popsbtrajOut <POPSb output>(type: char  , default: popsbtraj.out)
+	   --popsbtrajOut <POPSb output>(type: char  , default: popsbtraj -> popsbtraj.<frame>.out)
 	   --sigmaOut <SFE output>	(type: char  , default: sigma.out)
-	   --sigmatrajOut <SFE output>	(type: char  , default: sigmatraj.out)
+	   --sigmatrajOut <SFE output>	(type: char  , default: sigmatraj -> sigmatraj.out)
 	   --interfaceOut		(type: no_arg, default: off)
 	   --compositionOut		(type: no_arg, default: off)
 	   --typeOut			(type: no_arg, default: off)
@@ -110,7 +110,7 @@ pops [--pdb ... | --pdbml ...] [OPTIONS ...]
 	   --noHeaderOut		(type: no_arg, default: off)
 	   --padding			(type: no_arg, default: off)
 	   --rout			(type: no_arg, default: off)
-	   --routPrefix <prefix>	(type: char   , default: NULL)
+	   --routPrefix <prefix>	(type: char   , default: id)
 	   --jsonOut			(type: no_arg, default: off)
 	 INFO OPTIONS
 	   --cite			(type: no_arg, default: off)
@@ -124,9 +124,11 @@ pops [--pdb ... | --pdbml ...] [OPTIONS ...]
 * pdbml : input format is the XML format of the PDB database
 * trajInFileName : trajectory input file
 * zipped : the input file is compressed with gzip or similar (zlib compatible)
-* coarse : Calpha-only computation [0,1]
-* hydrogens : hydrogens [0,1]
-* multiModel : input with multiple models
+* coarse : computation on one atom per residue: CA (amino acids), P (nucleotides) [0,1]
+* hydrogens : hydrogens [0,1]; not available, the parameter tables contain no hydrogen atoms
+* multiModel : input with multiple models; not implemented, only the first model is read
+* partOcc : partial occupancy; not implemented, the first alternative location of each residue is read
+* outDirName : directory for all output files
 * rProbe : probe radius (in Angstrom) */
 * silent : suppress stdout
 * sasaOutFileName : output of SASA values for single structure
@@ -136,7 +138,7 @@ pops [--pdb ... | --pdbml ...] [OPTIONS ...]
 * compositionOut : print molecule composition
 * sigmaOutFileName : output of sigma values for single structure 
 * sigmatrajOutFileName : output of sigma value for trajectory
-* interfaceOutFileName : pairlist of contact residues between distinct chains, where only the contact residue with the shortest distance is listed
+* interfaceOutFileName : pairlist of contact atoms between distinct chains, where for each atom only the contact atom with the shortest distance is listed
 * interfaceOut : output of interface residue pairs
 * typeOut : print atom/residue types
 * topologyOut : print molecule topology
@@ -303,6 +305,15 @@ The same type of information as for the SASAs is produced for bSASAs,
 which are the buried SASAs of side-chain atoms only.
 bSASAs serve as a component in the definition of a structural 
 environment (3D profile).
+The area buried by all contacts of an atom is its surface minus its SASA.
+That area is shared out over the contacts of the atom in proportion to the
+burial weight -ln(1 - f) of each contact, where f is the fraction of the atom
+surface that the contact removes; the weights are additive, so the result does
+not depend on the order in which contacts are processed. The bSASA of an atom
+is the part of its buried area that comes from contacts of side-chain atoms
+(including CA) with atoms of other residues, split by the polarity of the
+contact atom. Note that the 1-4 connectivity parameter is negative, so single
+contributions can be negative.
 * Phob/A^2 : solvent accessible surface area buried by hydrophobic neighbour atoms in Angstrom^2 units
 * Phil/A^2 : solvent accessible surface area buried by hydrophilic neighbour atoms in Angstrom^2 units
 * SASA/A^2 : solvent accessible surface area buried by all neighbour atoms in Angstrom^2 units
@@ -310,8 +321,8 @@ environment (3D profile).
 ### INTERFACE
 Information of interface residues in complexes can be obtained with switch
 --interfaceOut. For each atom of the input structure, the nearest neighbour
-is computed based on the neighbour list and printed if the two contact
-atoms are in different chains. Note that this pairlist is not symmetric:
+on a different chain is computed based on the neighbour list and printed.
+Note that this pairlist is not symmetric:
 atom distance A-B might be shortest for A, but distance B-C might be shortest
 for B. Also, the list might change with protein motion. Therefore it depends
 on the interpretation to be derived from the interface whether it is suitable

@@ -41,13 +41,24 @@ __inline__ static double atom_sasa(MolSasa *molSasa, int k, double connectivityP
 }
 
 /*___________________________________________________________________________*/
-/** compute the fraction of atomic SASA buried by one contact;
-	multiplied by the final atom SASA after all contacts (see 'compute_atom_bsasa'),
-	so that bSASA does not depend on the order in which contacts are processed */
-__inline__ static double atom_bsasa_fraction(MolSasa *molSasa, int k, double connectivityParameter, \
+/** burial weight of one contact for atom 'k' */
+/** Each contact multiplies the SASA of atom 'k' by (1 - f), with
+	f = p * b_kl * P_k / S_k, so the area buried by all contacts together is
+	S_k - SASA_k, independently of the order in which contacts are processed.
+	The weight -ln(1 - f) is additive over contacts and sums to ln(S_k / SASA_k),
+	which makes it the order-independent share of atom 'k' buried by this contact
+	(see 'compute_atom_bsasa'). */
+__inline__ static double atom_burial_weight(MolSasa *molSasa, int k, double connectivityParameter, \
 	double bkl, double atomParameter_k)
 {
-	return (connectivityParameter * bkl * atomParameter_k / molSasa->atomSasa[k].surface);
+	double f = connectivityParameter * bkl * atomParameter_k / molSasa->atomSasa[k].surface;
+
+	/* a contact that would bury the whole atom (f >= 1) cannot be weighted
+		logarithmically; such a contact takes the fraction itself as its weight */
+	if (f >= 1.)
+		return f;
+
+	return (- log(1. - f));
 }
 
 /*___________________________________________________________________________*/
@@ -68,6 +79,9 @@ int init_sasa(Str *pdb, Type *type, MolSasa *molSasa, ConstantSasa *constant_sas
 			sphere_surface(constant_sasa->atomDataSasa[type->residueType[i]][type->atomType[i]].radius, arg->rProbe);
 		molSasa->atomSasa[i].sasa = molSasa->atomSasa[i].surface;
 		molSasa->atomSasa[i].nOverlap = 0; /* no overlaps yet (isolated atom) */
+		molSasa->atomSasa[i].burialWeight = 0.; /* burial weight over all contacts */
+		molSasa->atomSasa[i].phobicbWeight = 0.; /* burial weight of hydrophobic contacts */
+		molSasa->atomSasa[i].philicbWeight = 0.; /* burial weight of hydrophilic contacts */
 		molSasa->atomSasa[i].phobicbSasa = 0.; /* hydrophobic buried SASA */
 		molSasa->atomSasa[i].philicbSasa = 0.; /* hydrophilic buried SASA */
 		molSasa->atomSasa[i].bSasa = 0.; /* buried SASA */
@@ -191,26 +205,30 @@ __inline__ static int mod_atom_sasa(Str *pdb, Topol *topol, Type *type, \
     	++ molSasa->atomSasa[j].nOverlap;
 
 	/* compute atom SASA for atoms i and j */
+	/* burial weights are taken before the SASA is modified: they only use the surface */
+	molSasa->atomSasa[i].burialWeight += atom_burial_weight(molSasa, i, connectivityParameter, bij, atomParameter_i);
+	molSasa->atomSasa[j].burialWeight += atom_burial_weight(molSasa, j, connectivityParameter, bji, atomParameter_j);
+
     	molSasa->atomSasa[i].sasa = atom_sasa(molSasa, i, connectivityParameter, bij, atomParameter_i);
     	molSasa->atomSasa[j].sasa = atom_sasa(molSasa, j, connectivityParameter, bji, atomParameter_j);
 
-	/* compute buried fractions of atoms i and j (bSASA) */
+	/* accumulate burial weights of atoms i and j (bSASA) */
 	/* select side-chain (including CA) atoms of different residues and
 		determine polarity of neighbour (overlap) atom; atom i and atom j are
 		treated identically, each with its own overlap term (bij, bji) */
 	if (pdb->atom[i].residueIndex != pdb->atom[j].residueIndex) {
 		if ((type->atomType[i] == 1) || (type->atomType[i] > 3)) {
 			if (constant_sasa->atomDataSasa[type->residueType[j]][type->atomType[j]].polarity == 0)
-				molSasa->atomSasa[i].phobicbSasa += atom_bsasa_fraction(molSasa, i, connectivityParameter, bij, atomParameter_i);
+				molSasa->atomSasa[i].phobicbWeight += atom_burial_weight(molSasa, i, connectivityParameter, bij, atomParameter_i);
 			else
-				molSasa->atomSasa[i].philicbSasa += atom_bsasa_fraction(molSasa, i, connectivityParameter, bij, atomParameter_i);
+				molSasa->atomSasa[i].philicbWeight += atom_burial_weight(molSasa, i, connectivityParameter, bij, atomParameter_i);
 		}
 
 		if ((type->atomType[j] == 1) || (type->atomType[j] > 3)) {
 			if (constant_sasa->atomDataSasa[type->residueType[i]][type->atomType[i]].polarity == 0)
-				molSasa->atomSasa[j].phobicbSasa += atom_bsasa_fraction(molSasa, j, connectivityParameter, bji, atomParameter_j);
+				molSasa->atomSasa[j].phobicbWeight += atom_burial_weight(molSasa, j, connectivityParameter, bji, atomParameter_j);
 			else
-				molSasa->atomSasa[j].philicbSasa += atom_bsasa_fraction(molSasa, j, connectivityParameter, bji, atomParameter_j);
+				molSasa->atomSasa[j].philicbWeight += atom_burial_weight(molSasa, j, connectivityParameter, bji, atomParameter_j);
 		}
 	}
 
@@ -288,10 +306,20 @@ static int compute_atom_sasa(Str *pdb, Topol *topol, Type *type, MolSasa *molSas
 	/*}*/
 
 	/*___________________________________________________________________________*/
-    /* bSASA: buried fractions accumulated over all contacts times final atom SASA */
+    /* bSASA: the area buried by all contacts of an atom is its surface minus its SASA;
+		it is shared out over the contacts by their burial weights, of which the
+		side-chain contacts with other residues make up the bSASA (see 'atom_burial_weight') */
 	for (i = 0; i < pdb->nAtom; ++ i) {
-		molSasa->atomSasa[i].phobicbSasa *= molSasa->atomSasa[i].sasa;
-		molSasa->atomSasa[i].philicbSasa *= molSasa->atomSasa[i].sasa;
+		double buried = molSasa->atomSasa[i].surface - molSasa->atomSasa[i].sasa;
+		double weight = molSasa->atomSasa[i].burialWeight;
+
+		if (weight > 0.) {
+			molSasa->atomSasa[i].phobicbSasa = buried * molSasa->atomSasa[i].phobicbWeight / weight;
+			molSasa->atomSasa[i].philicbSasa = buried * molSasa->atomSasa[i].philicbWeight / weight;
+		} else {
+			molSasa->atomSasa[i].phobicbSasa = 0.;
+			molSasa->atomSasa[i].philicbSasa = 0.;
+		}
 		molSasa->atomSasa[i].bSasa = molSasa->atomSasa[i].phobicbSasa + molSasa->atomSasa[i].philicbSasa;
 	}
 

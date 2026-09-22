@@ -30,6 +30,9 @@ typedef struct
 	double surface; /* surface area of isolated atom */
 	int nOverlap; /* number of overlaps */
 	int polar; /* polarity */
+	double burialWeight; /* sum of burial weights over all contacts */
+	double phobicbWeight; /* burial weights of contacts with hydrophobic neighbours (bSASA) */
+	double philicbWeight; /* burial weights of contacts with hydrophilic neighbours (bSASA) */
     double phobicbSasa; /* hydrophobic bSASA */
     double philicbSasa; /* hydrophilic bSASA */
     double bSasa; /* bSASA */

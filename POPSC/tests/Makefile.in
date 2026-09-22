@@ -447,6 +447,10 @@ noinst_DATA = \
 	1f3r.pdb.gz \
 	1F3R.cif \
 	1F3R.cif.gz \
+	1f3r.xml \
+	1f3r.xml.gz \
+	5lff.pdb \
+	5lff.pdb.gz \
 	5lff.xml \
 	5lff.xml.gz \
 	5LFF.cif.gz \
@@ -466,7 +470,14 @@ noinst_SCRIPTS = \
 	test2e.sh \
 	test4a.sh \
 	test4b.sh \
-	test5a.sh
+	test5a.sh \
+	test6a.sh \
+	test6b.sh \
+	test6c.sh \
+	test6d.sh \
+	test6e.sh \
+	test6f.sh \
+	test6g.sh
 
 EXTRA_DIST = $(noinst_DATA) $(noinst_SCRIPTS)
 TESTS = $(noinst_SCRIPTS)
@@ -745,6 +756,55 @@ test4b.sh.log: test4b.sh
 test5a.sh.log: test5a.sh
 	@p='test5a.sh'; \
 	b='test5a.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test6a.sh.log: test6a.sh
+	@p='test6a.sh'; \
+	b='test6a.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test6b.sh.log: test6b.sh
+	@p='test6b.sh'; \
+	b='test6b.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test6c.sh.log: test6c.sh
+	@p='test6c.sh'; \
+	b='test6c.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test6d.sh.log: test6d.sh
+	@p='test6d.sh'; \
+	b='test6d.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test6e.sh.log: test6e.sh
+	@p='test6e.sh'; \
+	b='test6e.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test6f.sh.log: test6f.sh
+	@p='test6f.sh'; \
+	b='test6f.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test6g.sh.log: test6g.sh
+	@p='test6g.sh'; \
+	b='test6g.sh'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
