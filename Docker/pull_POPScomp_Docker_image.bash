@@ -1,2 +1,2 @@
 #! /bin/bash
-docker pull jkleinj150999/popscomp:newest
+docker pull jkleinj150999/popscomp:latest

@@ -1,0 +1,31 @@
+# Build context of the POPScomp image.
+# The C program is compiled inside the image: host build artefacts must not be
+# copied in, because COPY preserves their timestamps and 'make' would then
+# consider them up to date and ship the host binary instead.
+.git
+.gitignore
+**/*.o
+**/*.lo
+**/*.a
+**/*.so
+POPSC/src/pops
+POPSC/src/.deps/
+POPSC/src/stamp-h1
+POPSC/src/config.h
+POPSC/config.log
+POPSC/config.status
+POPSC/Makefile
+POPSC/src/Makefile
+POPSC/tests/Makefile
+POPSC/autom4te.cache/
+POPSC/gemmi/build/
+
+# R and editor state
+**/.Rhistory
+**/.RData
+**/.Rproj.user/
+POPSR/*.tar.gz
+
+# test run artefacts
+POPSR/script/tests/
+POPSC/tests/*.json

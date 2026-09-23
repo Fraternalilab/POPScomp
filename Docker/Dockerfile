@@ -34,8 +34,14 @@ RUN ./bootstrap && \
     make -j$(nproc) && \
     make install DESTDIR=/build/install
 
+## The POPS program is staged into /build/install by 'make install DESTDIR=...',
+## which is not on the PATH. Both are set here, so that the R package (POPS_BIN)
+## and the command-line scripts (bare 'pops') find it.
+ENV POPS_BIN=/build/install/usr/local/bin/pops
+ENV PATH=/build/install/usr/local/bin:$PATH
+
 # R packages
-RUN R -e "install.packages(c('shiny', 'bio3d', 'data.table', 'DT', 'rgl', 'remotes', \
+RUN R -e "install.packages(c('shiny', 'bio3d', 'DT', 'remotes', \
                              'digest', 'ggplot2', 'optparse', 'markdown'), \
                              repos='https://cloud.r-project.org')"
 
