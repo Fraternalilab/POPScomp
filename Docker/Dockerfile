@@ -16,7 +16,6 @@ RUN apt-get update && \
         zlib1g-dev \
         libgsl-dev \
         libxml2-dev \
-        libglu1-mesa \
         libssl-dev \
         vim-tiny \
         python3-pip \
