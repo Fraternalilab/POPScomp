@@ -18,8 +18,8 @@ library(POPSR)
 library(markdown)
 
 #_______________________________________________________________________________
-## load 'Readme' text
-readme = readRDS("readme.rds")
+## load 'Readme' text (optional: only used by the commented-out Readme tab)
+readme = if (file.exists("readme.rds")) readRDS("readme.rds") else NULL
 
 #_______________________________________________________________________________
 # POPS UI
@@ -333,21 +333,48 @@ ui <- fluidPage(
 
 #_______________________________________________________________________________
 # server routines
-server <- function(input, output) {
+server <- function(input, output, session) {
 
-  ## pops binary in Shiny installation via Dockerfile
-  pops_shiny = c("/build/install/usr/local/bin/pops")
+  ## Path of the POPS program: the POPS_BIN environment variable, else the
+  ## program on the PATH, else the location in the Shiny Docker image.
+  pops_bin = Sys.getenv("POPS_BIN", unset = "")
+  if (! nzchar(pops_bin)) pops_bin = Sys.which("pops")
+  if (! nzchar(pops_bin)) pops_bin = "/build/install/usr/local/bin/pops"
 
-  ## initialisation output directory
-  ## Shiny needs empty output files to be present here,
-  ##   otherwise it shows error messages on the start page before the POPScomp run.
-  ## This will be overwritten/replaced by the input$popscomp function,
-  ##   which will copy over the empty initialisation files and overwrite them where applicable.
-  mainDir = "/tmp"
-  subDir = "POPScomp_init"
-  outDir = paste(mainDir, subDir, sep = "/")
-  dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
-  setwd(file.path(mainDir, subDir))
+  ## Every session computes in its own directory and every file is addressed by
+  ##   its absolute path. The working directory of the R process is never changed:
+  ##   it is shared by all sessions, so one session would otherwise serve its
+  ##   results into the browser of another.
+  sessionDir = file.path(tempdir(), paste0("POPScomp_", digest(Sys.time())))
+  dir.create(sessionDir, showWarnings = FALSE, recursive = TRUE)
+  ## directory of the current run; before the first run there is none and the
+  ##   result tables show their empty placeholders
+  runDir = reactiveVal(sessionDir)
+  ## run identifier of the last completed run, for the download file names
+  runid_done = reactiveVal(NULL)
+  ## remove the session directory when the browser tab is closed
+  session$onSessionEnded(function() {
+    unlink(sessionDir, recursive = TRUE)
+  })
+
+  ## Read one POPS output table. A table that does not exist yet, or that POPS
+  ##   is in the middle of writing, yields the empty placeholder instead of an
+  ##   error message in the user interface.
+  readSasaTable = function(path, empty) {
+    if (! file.exists(path)) return(empty)
+    out = tryCatch({
+        ## identifying columns are read as character: 'T' and 'F' are valid
+        ##   chain identifiers and would otherwise become TRUE and FALSE
+        header = scan(path, what = "", nlines = 1, quiet = TRUE)
+        colClasses = rep(NA_character_, length(header))
+        colClasses[header %in% c("AtomNe", "ResidNe", "Chain", "Id", "iCode",
+                                 "AtomRange", "ResidRange")] = "character"
+        read.table(path, header = TRUE, stringsAsFactors = FALSE,
+                   colClasses = colClasses)
+      }, error = function(e) empty)
+    if (is.null(out) || nrow(out) == 0) return(empty)
+    return(out)
+  }
 
   ## o1.1 display input PDB entry
   output$pdbentry <- renderText({
@@ -381,68 +408,93 @@ server <- function(input, output) {
   ## o4 download PDB entry or upload input file
   ## run POPS on specified PDB file
   ## Comments:
-  ## - 'pops' binary defined as 'pops_shiny' at beginning of server section.
+  ## - 'pops' binary located as 'pops_bin' at the beginning of the server section.
   ## - The App will set its own working directory to a temporary directory,
   ##     to which the specified PDB file will be up/down-loaded.
   ## - For uploaded files: The 'fileInput' function returns the object 'input$file1',
   ##     a list of four elements, of which the fourth element contains the
   ##     path to the temporary file.
   ## - POPS will be run on the PDB file and the output will be zipped.
-  output$nil <- eventReactive(input$popscomp, {
-    ## create a new output directory for each POPScomp run
-    subDir = paste0("POPScomp_", runid_string())
-    outDir = paste(mainDir, subDir, sep = "/")
-    dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
-    setwd(file.path(mainDir, subDir))
-
-    ## Copy initialisation files to the new output directory,
-    ##   otherwise error messages will appear in non-complex structure results
-    ##   for isolated chains and difference SASAs.
-    initDir = "POPScomp_init"
-    cpInit = paste0("cp ", mainDir, "/", initDir, "/* .")
-    system(cpInit, wait = TRUE)
-
+  ## The run is an eventReactive so that it is evaluated when the result text is
+  ##   rendered; 'validate' inside it reports its message in that text field.
+  popscomp_run <- eventReactive(input$popscomp, {
     ## to proceed, we require one PDB identifier or uploaded PDB file
+    ## (checked before anything is created, so that a failed attempt leaves the
+    ##  results of the previous run in place)
     validate(need(((input$pdbentry != "") || (! is.null(input$PDBfile))),
           message = "No PDB source input!"))
     ## to proceed, we refuse 2 specified PDB inputs
     validate(need(((input$pdbentry == "") || (is.null(input$PDBfile))),
           message = "Two PDB sources input!"))
+    ## a PDB identifier has four alphanumeric characters
+    if (input$pdbentry != "") {
+      validate(need(grepl("^[0-9A-Za-z]{4}$", input$pdbentry),
+          message = "Not a PDB identifier: four letters or digits expected"))
+    }
+
+    ## create a new output directory for each POPScomp run
+    runid = runid_string()
+    outDir = file.path(sessionDir, paste0("POPScomp_", runid))
+    dir.create(outDir, showWarnings = FALSE, recursive = TRUE)
 
     ## download (PDB database) or upload (local file system) the PDB structure
     if (input$pdbentry != "") {
       ## get.pdb downloads the PDB structure from the database
       get.pdb(input$pdbentry, format = "cif", path = outDir)
-      mmcifDownloadName = paste0(input$pdbentry, ".cif")
-      pdbConversionName = paste0(input$pdbentry, ".pdb")
-      command0 = paste0("gemmi convert ", outDir, "/", mmcifDownloadName, " ", outDir, "/", pdbConversionName)
+      mmcifDownloadName = file.path(outDir, paste0(input$pdbentry, ".cif"))
+      validate(need(file.exists(mmcifDownloadName),
+          message = paste0("No structure ", input$pdbentry, " in the PDB")))
+      inputPDB = paste0(input$pdbentry, ".pdb")
+      command0 = paste("gemmi convert", shQuote(mmcifDownloadName),
+                       shQuote(file.path(outDir, inputPDB)))
       system_status0 = system(command0)
-      inputPDB = pdbConversionName
+      validate(need(system_status0 == 0,
+          message = paste0("Conversion of ", input$pdbentry, " failed")))
     } else {
-      ## move uploaded PDB file from its temporary directory to output directory
-      system(paste("mv ", input$PDBfile[[4]], " ", outDir, "/",
-                   input$PDBfile[[1]],  sep = ""), wait = TRUE)
-      inputPDB = input$PDBfile[[1]]
+      ## copy the uploaded PDB file from its temporary directory to the output
+      ##   directory; the name comes from the browser, so it is reduced to
+      ##   harmless characters and the file is copied, not moved, so that the
+      ##   same upload can be run more than once
+      inputPDB = gsub("[^A-Za-z0-9._-]", "_", basename(input$PDBfile$name))
+      validate(need(file.copy(input$PDBfile$datapath, file.path(outDir, inputPDB),
+                              overwrite = TRUE),
+          message = "Could not read the uploaded file"))
     }
 
     ## run POPS as system command
-    if (input$popsmode == "atomistic") {
-      command = paste(pops_shiny, "--outDirName", outDir,
-                      "--rout --atomOut --residueOut --chainOut --neighbourOut",
-                      "--rProbe", input$rprobe, "--pdb", inputPDB, "1> POPScomp.o 2> POPScomp.e");
-    } else if (input$popsmode == "coarse") {
-      command = paste(pops_shiny, "--outDirName", outDir,
-                      "--rout --coarse --chainOut --residueOut --chainOut --neighbourOut",
-                      "--rProbe", input$rprobe, "--pdb", inputPDB, "1> POPScomp.o 2> POPScomp.e");
-    }
+    coarse = (input$popsmode == "coarse")
+    command = paste(shQuote(pops_bin), "--outDirName", shQuote(outDir),
+                    "--rout --residueOut --chainOut --neighbourOut",
+                    if (coarse) "--coarse" else "--atomOut",
+                    "--rProbe", shQuote(as.character(input$rprobe)),
+                    "--pdb", shQuote(file.path(outDir, inputPDB)),
+                    "1>", shQuote(file.path(outDir, "POPScomp.o")),
+                    "2>", shQuote(file.path(outDir, "POPScomp.e")))
     system_status = system(command, wait = TRUE)
+    validate(need(system_status == 0,
+        message = paste0("POPS declined this structure (exit code ", system_status,
+                         "); see the Exit Codes tab")))
 
-    ## run POPScomp
-    popscompR(inputPDB, outDir)
-    ## zip output directory for potential All-Result download
-    zip(paste0("POPScomp_", runid_string()), outDir)
+    ## run POPScomp on the chains and chain pairs of a complex
+    popscompR(inputPDB, outDir, coarse = coarse)
+
+    ## zip output directory for potential All-Result download;
+    ##   the archive is written outside the directory it archives
+    ## 'zip' is called with absolute paths and '-j' (no directory names), so that
+    ##   the working directory of the process does not have to be changed
+    zipFile = file.path(sessionDir, paste0("POPScomp_", runid, ".zip"))
+    zip(zipFile, list.files(outDir, full.names = TRUE), flags = "-r9Xjq")
+
+    ## publish the results of this run to the tables and the download buttons
+    runDir(outDir)
+    runid_done(runid)
+
     ## return exit code of POPS command
     paste("Exit code:", system_status)
+  })
+
+  output$nil <- renderText({
+    popscomp_run()
   })
 
   ## o5.1.1 atom SASA
@@ -451,10 +503,10 @@ server <- function(input, output) {
   atom_sasa_null.df = data.frame(
                         AtomNr = integer(),
                         AtomNe = character(),
-                        Residue = character(),
+                        ResidNe = character(),
                         Chain = character(),
                         ResidNr = integer(),
-                        iCode = integer(),
+                        iCode = character(),
                         SASA.A.2 = double(),
                         Q.SASA. = double(),
                         N.overl. = integer(),
@@ -462,11 +514,11 @@ server <- function(input, output) {
                         AtomGp = integer(),
                         Surf.A.2 = double()
   )
-  write.table(atom_sasa_null.df, file = paste(outDir, "id.rpopsAtom", sep = '/'))
   ## reactive data: update output when file content changes
   atomSASAOutput = reactiveValues(highlight = NULL, data = NULL)
-  atomSASAOutputData = reactiveFileReader(2000, NULL, "id.rpopsAtom",
-                                      read.table, header = TRUE)
+  atomSASAOutputData = reactiveFileReader(2000, session,
+                         function() file.path(runDir(), "id.rpopsAtom"),
+                         readSasaTable, empty = atom_sasa_null.df)
   ## render output data as table
   output$popsSASAAtom = DT::renderDataTable({
     atomSASAOutput$data = atomSASAOutputData()
@@ -476,18 +528,18 @@ server <- function(input, output) {
   atom_deltasasa_null.df = data.frame(
                             AtomNr = integer(),
                             AtomNe = character(),
-                            Residue = character(),
+                            ResidNe = character(),
                             Chain = character(),
                             ResidNr = integer(),
-                            iCode = integer(),
+                            iCode = character(),
                             D_SASA.A.2 = double(),
                             AtomTp = integer(),
                             AtomGp = integer()
   )
-  write.table(atom_deltasasa_null.df, file = paste(outDir, "deltaSASA.rpopsAtom", sep = '/'))
   atomDeltaSASAOutput = reactiveValues(highlight = NULL, data = NULL)
-  atomDeltaSASAOutputData = reactiveFileReader(2000, NULL, "deltaSASA.rpopsAtom",
-                                      read.table, header = TRUE)
+  atomDeltaSASAOutputData = reactiveFileReader(2000, session,
+                         function() file.path(runDir(), "deltaSASA.rpopsAtom"),
+                         readSasaTable, empty = atom_deltasasa_null.df)
   output$popsDeltaSASAAtom = DT::renderDataTable({
     atomDeltaSASAOutput$data = atomDeltaSASAOutputData()
   })
@@ -496,10 +548,10 @@ server <- function(input, output) {
   atom_isosasa_null.df = data.frame(
                           AtomNr = integer(),
                           AtomNe = character(),
-                          Residue = character(),
+                          ResidNe = character(),
                           Chain = character(),
                           ResidNr = integer(),
-                          iCode = integer(),
+                          iCode = character(),
                           SASA.A.2 = double(),
                           Q.SASA. = double(),
                           N.overl. = integer(),
@@ -507,10 +559,10 @@ server <- function(input, output) {
                           AtomGp = integer(),
                           Surf.A.2 = double()
   )
-  write.table(atom_isosasa_null.df, file = paste(outDir, "isoSASA.rpopsAtom", sep = '/'))
   atomIsoSASAOutput = reactiveValues(highlight = NULL, data = NULL)
-  atomIsoSASAOutputData = reactiveFileReader(2000, NULL, "isoSASA.rpopsAtom",
-                                         read.table, header = TRUE)
+  atomIsoSASAOutputData = reactiveFileReader(2000, session,
+                         function() file.path(runDir(), "isoSASA.rpopsAtom"),
+                         readSasaTable, empty = atom_isosasa_null.df)
   output$popsIsoSASAAtom = DT::renderDataTable({
     atomIsoSASAOutput$data = atomIsoSASAOutputData()
   })
@@ -520,7 +572,7 @@ server <- function(input, output) {
                           ResidNe = character(),
                           Chain = character(),
                           ResidNr = integer(),
-                          iCode = integer(),
+                          iCode = character(),
                           Phob.A.2 = double(),
                           Phil.A.2 = double(),
                           SASA.A.2 = double(),
@@ -528,10 +580,10 @@ server <- function(input, output) {
                           N.overl. = integer(),
                           Surf.A.2 = double()
   )
-  write.table(residue_sasa_null.df, file = paste(outDir, "id.rpopsResidue", sep = '/'))
   residueSASAOutput = reactiveValues(highlight = NULL, data = NULL)
-  residueSASAOutputData = reactiveFileReader(2000, NULL, "id.rpopsResidue",
-                                         read.table, header = TRUE)
+  residueSASAOutputData = reactiveFileReader(2000, session,
+                         function() file.path(runDir(), "id.rpopsResidue"),
+                         readSasaTable, empty = residue_sasa_null.df)
   output$popsSASAResidue = DT::renderDataTable({
     residueSASAOutput$data = residueSASAOutputData()
   })
@@ -541,15 +593,15 @@ server <- function(input, output) {
                                 ResidNe = character(),
                                 Chain = character(),
                                 ResidNr = integer(),
-                                iCode = integer(),
+                                iCode = character(),
                                 D_Phob.A.2 = double(),
                                 D_Phil.A.2 = double(),
                                 D_SASA.A.2 = double()
   )
-  write.table(residue_deltasasa_null.df, file = paste(outDir, "deltaSASA.rpopsResidue", sep = '/'))
   residueDeltaSASAOutput = reactiveValues(highlight = NULL, data = NULL)
-  residueDeltaSASAOutputData = reactiveFileReader(2000, NULL, "deltaSASA.rpopsResidue",
-                                         read.table, header = TRUE)
+  residueDeltaSASAOutputData = reactiveFileReader(2000, session,
+                         function() file.path(runDir(), "deltaSASA.rpopsResidue"),
+                         readSasaTable, empty = residue_deltasasa_null.df)
   output$popsDeltaSASAResidue = DT::renderDataTable({
     residueDeltaSASAOutput$data = residueDeltaSASAOutputData()
   })
@@ -559,7 +611,7 @@ server <- function(input, output) {
                               ResidNe = character(),
                               Chain = character(),
                               ResidNr = integer(),
-                              iCode = integer(),
+                              iCode = character(),
                               Phob.A.2 = double(),
                               Phil.A.2 = double(),
                               SASA.A.2 = double(),
@@ -567,10 +619,10 @@ server <- function(input, output) {
                               N.overl. = integer(),
                               Surf.A.2 = double()
   )
-  write.table(residue_isosasa_null.df, file = paste(outDir, "isoSASA.rpopsResidue", sep = '/'))
   residueIsoSASAOutput = reactiveValues(highlight = NULL, data = NULL)
-  residueIsoSASAOutputData = reactiveFileReader(2000, NULL, "isoSASA.rpopsResidue",
-                                      read.table, header = TRUE)
+  residueIsoSASAOutputData = reactiveFileReader(2000, session,
+                         function() file.path(runDir(), "isoSASA.rpopsResidue"),
+                         readSasaTable, empty = residue_isosasa_null.df)
   output$popsIsoSASAResidue = DT::renderDataTable({
     residueIsoSASAOutput$data = residueIsoSASAOutputData()
   })
@@ -585,10 +637,10 @@ server <- function(input, output) {
                           Phil.A.2 = double(),
                           SASA.A.2 = double()
   )
-  write.table(chain_sasa_null.df, file = paste(outDir, "id.rpopsChain", sep = '/'))
   chainSASAOutput = reactiveValues(highlight = NULL, data = NULL)
-  chainSASAOutputData = reactiveFileReader(2000, NULL, "id.rpopsChain",
-                                       read.table, header = TRUE)
+  chainSASAOutputData = reactiveFileReader(2000, session,
+                         function() file.path(runDir(), "id.rpopsChain"),
+                         readSasaTable, empty = chain_sasa_null.df)
   output$popsSASAChain = DT::renderDataTable({
     chainSASAOutput$data = chainSASAOutputData()
   })
@@ -603,10 +655,10 @@ server <- function(input, output) {
                               D_Phil.A.2 = double(),
                               D_SASA.A.2 = double()
   )
-  write.table(chain_deltasasa_null.df, file = paste(outDir, "deltaSASA.rpopsChain", sep = '/'))
   chainDeltaSASAOutput = reactiveValues(highlight = NULL, data = NULL)
-  chainDeltaSASAOutputData = reactiveFileReader(2000, NULL, "deltaSASA.rpopsChain",
-                                       read.table, header = TRUE)
+  chainDeltaSASAOutputData = reactiveFileReader(2000, session,
+                         function() file.path(runDir(), "deltaSASA.rpopsChain"),
+                         readSasaTable, empty = chain_deltasasa_null.df)
   output$popsDeltaSASAChain = DT::renderDataTable({
     chainDeltaSASAOutput$data = chainDeltaSASAOutputData()
   })
@@ -621,10 +673,10 @@ server <- function(input, output) {
                             Phil.A.2 = double(),
                             SASA.A.2 = double()
   )
-  write.table(chain_isosasa_null.df, file = paste(outDir, "isoSASA.rpopsChain", sep = '/'))
   chainIsoSASAOutput = reactiveValues(highlight = NULL, data = NULL)
-  chainIsoSASAOutputData = reactiveFileReader(2000, NULL, "isoSASA.rpopsChain",
-                                      read.table, header = TRUE)
+  chainIsoSASAOutputData = reactiveFileReader(2000, session,
+                         function() file.path(runDir(), "isoSASA.rpopsChain"),
+                         readSasaTable, empty = chain_isosasa_null.df)
   output$popsIsoSASAChain = DT::renderDataTable({
     chainIsoSASAOutput$data = chainIsoSASAOutputData()
   })
@@ -635,10 +687,10 @@ server <- function(input, output) {
                             Phil.A.2 = double(),
                             SASA.A.2 = double()
   )
-  write.table(molecule_sasa_null.df, file = paste(outDir, "id.rpopsMolecule", sep = '/'))
   moleculeSASAOutput = reactiveValues(highlight = NULL, data = NULL)
-  moleculeSASAOutputData = reactiveFileReader(2000, NULL, "id.rpopsMolecule",
-                                      read.table, header = TRUE)
+  moleculeSASAOutputData = reactiveFileReader(2000, session,
+                         function() file.path(runDir(), "id.rpopsMolecule"),
+                         readSasaTable, empty = molecule_sasa_null.df)
   output$popsSASAMolecule = DT::renderDataTable({
     moleculeSASAOutput$data = moleculeSASAOutputData()
   })
@@ -649,10 +701,10 @@ server <- function(input, output) {
                                 D_Phil.A.2 = double(),
                                 D_SASA.A.2 = double()
   )
-  write.table(molecule_deltasasa_null.df, file = paste(outDir, "deltaSASA.rpopsMolecule", sep = '/'))
   moleculeDeltaSASAOutput = reactiveValues(highlight = NULL, data = NULL)
-  moleculeDeltaSASAOutputData = reactiveFileReader(2000, NULL, "deltaSASA.rpopsMolecule",
-                                                read.table, header = TRUE)
+  moleculeDeltaSASAOutputData = reactiveFileReader(2000, session,
+                         function() file.path(runDir(), "deltaSASA.rpopsMolecule"),
+                         readSasaTable, empty = molecule_deltasasa_null.df)
   output$popsDeltaSASAMolecule = DT::renderDataTable({
     moleculeDeltaSASAOutput$data = moleculeDeltaSASAOutputData()
   })
@@ -661,10 +713,17 @@ server <- function(input, output) {
   ## d2 download all results
   output$downloadAllResults <- downloadHandler(
     filename = function() {
-      paste0("POPScomp_", runid_string(),".zip")
+      paste0("POPScomp_", if (is.null(runid_done())) "results" else runid_done(), ".zip")
     },
     content = function(file) {
-      file.copy(paste0("POPScomp_", runid_string(),".zip"), file)
+      ## the identifier of the completed run, not the one of the current input
+      ##   settings: those change as soon as a form field is touched
+      validate(need(! is.null(runid_done()), message = "No results to download yet"))
+      zipFile = file.path(sessionDir, paste0("POPScomp_", runid_done(), ".zip"))
+      validate(need(file.exists(zipFile), message = "No results to download yet"))
+      if (! file.copy(zipFile, file, overwrite = TRUE)) {
+        stop("Could not read the result archive")
+      }
     },
     contentType = "application/zip"
   )
@@ -672,7 +731,7 @@ server <- function(input, output) {
   ## d3.1 download atom SASA
   output$downloadAtomSASA <- downloadHandler(
     filename = function() {
-      paste('atomSASA_', runid_string(), '.csv', sep = '')
+      paste('atomSASA_', if (is.null(runid_done())) 'results' else runid_done(), '.csv', sep = '')
     },
     content = function(fname) {
       write.csv(atomSASAOutputData(), fname)
@@ -682,7 +741,7 @@ server <- function(input, output) {
   ## d3.2 download atom DeltaSASA
   output$downloadAtomDeltaSASA <- downloadHandler(
     filename = function() {
-      paste('atomDeltaSASA_', runid_string(), '.csv', sep = '')
+      paste('atomDeltaSASA_', if (is.null(runid_done())) 'results' else runid_done(), '.csv', sep = '')
     },
     content = function(fname) {
       write.csv(atomDeltaSASAOutputData(), fname)
@@ -692,7 +751,7 @@ server <- function(input, output) {
   ## d3.3 download atom isolated-chains SASA
   output$downloadAtomIsoSASA <- downloadHandler(
     filename = function() {
-      paste('atomIsoSASA_', runid_string(), '.csv', sep = '')
+      paste('atomIsoSASA_', if (is.null(runid_done())) 'results' else runid_done(), '.csv', sep = '')
     },
     content = function(fname) {
       write.csv(atomIsoSASAOutputData(), fname)
@@ -702,7 +761,7 @@ server <- function(input, output) {
   ## d4.1 download residue SASA
   output$downloadResidueSASA <- downloadHandler(
     filename = function() {
-      paste('residueSASA_', runid_string(), '.csv', sep = '')
+      paste('residueSASA_', if (is.null(runid_done())) 'results' else runid_done(), '.csv', sep = '')
     },
     content = function(fname) {
       write.csv(residueSASAOutputData(), fname)
@@ -712,7 +771,7 @@ server <- function(input, output) {
   ## d4.2 download residue DeltaSASA
   output$downloadResidueDeltaSASA <- downloadHandler(
     filename = function() {
-      paste('residueDeltaSASA_', runid_string(), '.csv', sep = '')
+      paste('residueDeltaSASA_', if (is.null(runid_done())) 'results' else runid_done(), '.csv', sep = '')
     },
     content = function(fname) {
       write.csv(residueDeltaSASAOutputData(), fname)
@@ -722,7 +781,7 @@ server <- function(input, output) {
   ## d4.1 download residue isolated-chains SASA
   output$downloadResidueIsoSASA <- downloadHandler(
     filename = function() {
-      paste('residueIsoSASA_', runid_string(), '.csv', sep = '')
+      paste('residueIsoSASA_', if (is.null(runid_done())) 'results' else runid_done(), '.csv', sep = '')
     },
     content = function(fname) {
       write.csv(residueIsoSASAOutputData(), fname)
@@ -732,7 +791,7 @@ server <- function(input, output) {
   ## d5.1 download chain SASA
   output$downloadChainSASA <- downloadHandler(
     filename = function() {
-      paste('chainSASA_', runid_string(), '.csv', sep = '')
+      paste('chainSASA_', if (is.null(runid_done())) 'results' else runid_done(), '.csv', sep = '')
     },
     content = function(fname) {
       write.csv(chainSASAOutputData(), fname)
@@ -742,7 +801,7 @@ server <- function(input, output) {
   ## d5.2 download chain DeltaSASA
   output$downloadChainDeltaSASA <- downloadHandler(
     filename = function() {
-      paste('chainDeltaSASA_', runid_string(), '.csv', sep = '')
+      paste('chainDeltaSASA_', if (is.null(runid_done())) 'results' else runid_done(), '.csv', sep = '')
     },
     content = function(fname) {
       write.csv(chainDeltaSASAOutputData(), fname)
@@ -752,7 +811,7 @@ server <- function(input, output) {
   ## d5.1 download chain isolated-chains SASA
   output$downloadChainIsoSASA <- downloadHandler(
     filename = function() {
-      paste('chainIsoSASA_', runid_string(), '.csv', sep = '')
+      paste('chainIsoSASA_', if (is.null(runid_done())) 'results' else runid_done(), '.csv', sep = '')
     },
     content = function(fname) {
       write.csv(chainIsoSASAOutputData(), fname)
@@ -762,7 +821,7 @@ server <- function(input, output) {
   ## d6 download molecule SASA
   output$downloadMoleculeSASA <- downloadHandler(
     filename = function() {
-      paste('moleculeSASA_', runid_string(), '.csv', sep = '')
+      paste('moleculeSASA_', if (is.null(runid_done())) 'results' else runid_done(), '.csv', sep = '')
     },
     content = function(fname) {
       write.csv(moleculeSASAOutputData(), fname)
@@ -772,7 +831,7 @@ server <- function(input, output) {
   ## d7 download molecule DeltaSASA
   output$downloadMoleculeDeltaSASA <- downloadHandler(
     filename = function() {
-      paste('moleculeDeltaSASA_', runid_string(), '.csv', sep = '')
+      paste('moleculeDeltaSASA_', if (is.null(runid_done())) 'results' else runid_done(), '.csv', sep = '')
     },
     content = function(fname) {
       write.csv(moleculeDeltaSASAOutputData(), fname)

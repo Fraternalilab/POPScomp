@@ -4,3 +4,8 @@ export(plotSASAresidue)
 export(plotSASAchain)
 export(runPOPSR)
 
+importFrom(bio3d, pdbsplit)
+importFrom(bio3d, get.pdb)
+importFrom(grDevices, dev.off, png)
+importFrom(graphics, plot)
+importFrom(utils, combn, read.table, write.table, zip)

@@ -1,0 +1,53 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+Makefile.upload
+
+# Autoconf
+autom4te.cache/
+config.log
+config.status
+configure~
+config.h.in~
+
+# Automake
+Makefile.in
+aclocal.m4
+compile
+depcomp
+install-sh
+missing
+
+# Libtool
+libtool
+ltmain.sh
+.libs/
+*.la
+
+# Generic build outputs
+*.o
+*.lo
+*.a
+*.so
+*.so.*
+*.dylib
+*.dll
+*.exe
+
+.positai
+.RData
+.Rhistory
+.Rproj.user/
+
+# POPSR test run artefacts
+POPSR/script/tests/*.iso.*
+POPSR/script/tests/*.pair.*
+POPSR/script/tests/*.o
+POPSR/script/tests/*.e
+POPSR/script/tests/*_Qinterface.dat
+POPSR/script/tests/deltaSASA.*
+POPSR/script/tests/isoSASA.*
+POPSR/script/tests/*.distMatCA.out
+POPSR/script/tests/1F3R_?.pdb
+POPSR/script/tests/1F3R_?-1F3R_?.pdb

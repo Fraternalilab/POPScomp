@@ -1,7 +1,7 @@
 Package: POPSR
 Type: Package
 Title: R Interface of POPS
-Version: 3.4.1
+Version: 3.5
 Authors@R: c(person("Jens", "Kleinjung", role  = c("aut", "cre", "cph"),
                      email = "jens@jkleinj.eu"),
              person("Franca", "Fraternali", role  = c("aut", "cph"),
@@ -9,23 +9,30 @@ Authors@R: c(person("Jens", "Kleinjung", role  = c("aut", "cre", "cph"),
 Author: Jens Kleinjung, Franca Fraternali
 Maintainer: Jens Kleinjung <jens@jkleinj.eu> 
 Description: The package serves as a front-end to the POPS program,
-  either in the R environment (pops.R) or as a Shiny server (shiny.R).
+  either in the R environment (popscomp.R) or as a Shiny server (app.R).
   It serves additionally as a source for SASA plotting functions
   (plotSASA.R) and to process protein complexes on-the-fly in the
   spirit of POPSCOMP.
 Depends: R (>= 3.5),
-		 bio3d (>= 2.3),
-		 ggplot2 (>= 3.2),
-		 rgl (>= 0.1),
-		 optparse (>= 1.6.6)
-Imports: 
+		 bio3d (>= 2.3)
+Imports: ggplot2 (>= 3.2),
+         grDevices,
+         graphics,
+         utils
 Suggests: knitr,
-          rmarkdown
+          rmarkdown,
+          shiny (>= 1.4),
+          DT,
+          digest,
+          markdown,
+          shinysky
+Additional_repositories: https://github.com/AnalytixWare/ShinySky
 Collate: popscomp.R plotSASA.R runApp.R
 License: GPL-3
-URL: https://github.com/Fraternalilab/POPS
-BugReports: https://github.com/Fraternalilab/POPS/Issues
+URL: https://github.com/Fraternalilab/POPScomp
+BugReports: https://github.com/Fraternalilab/POPScomp/issues
 Encoding: UTF-8
-LazyData: true
 RoxygenNote: 6.1.1
 VignetteBuilder: knitr
+SystemRequirements: POPS (the C program of the POPScomp package); its
+  location is taken from the POPS_BIN environment variable or from the PATH

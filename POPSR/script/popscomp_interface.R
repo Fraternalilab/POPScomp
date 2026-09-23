@@ -2,11 +2,11 @@
 
 #===============================================================================
 # POPSR package
-# popscomp.R: Implementation of the POPSCOMP functionality,
-# i.e. processing of complex structures to compute SASA difference values.
-# Returns a list of POPS output files for single-chain and pair-chain structures
-#   plus a list of buried SASA values.
-# This version has ben used to compute interface residue burial and scores.
+# popscomp_interface.R: Implementation of the POPSCOMP functionality,
+# i.e. processing of complex structures to compute SASA difference values,
+# and selection of the interface residues of each chain pair.
+# Writes the POPS output files of the single chains and chain pairs
+#   plus one '<chain pair>_Qinterface.dat' table per chain pair.
 #
 # (C) 2019-2026 Jens Kleinjung and Franca Fraternali
 #===============================================================================
@@ -54,26 +54,62 @@ if (is.null(opt$workdir)) {
   workDir = opt$workdir
 }
 
+## input files are named relative to the directory the user started in,
+## so they are resolved before the working directory is changed
+if (! is.null(opt$pdb)) {
+  opt$pdb = normalizePath(opt$pdb, mustWork = TRUE)
+}
+if (! is.null(opt$mmcif)) {
+  opt$mmcif = normalizePath(opt$mmcif, mustWork = TRUE)
+}
+
 setwd(workDir)
 
 if(! is.null(opt$pdb)) {
   ## upload local PDB structure in '.pdb' format
-  inputPDB = opt$pdb
+  ## a '.pdb' input needs no conversion; it is copied into the working directory
+  ## so that the chain files and all output land in --workdir, not beside the source
+  pdbConversionName = basename(opt$pdb)
+  if (! identical(normalizePath(dirname(opt$pdb)), normalizePath("."))) {
+    if (! file.copy(opt$pdb, pdbConversionName, overwrite = TRUE)) {
+      stop("Could not copy ", opt$pdb, " into the working directory")
+    }
+  }
+  inputPDB = pdbConversionName
 } else if (! is.null(opt$id)) {
   ## download PDB structure based on PDB identifier
+  if (! grepl("^[0-9A-Za-z]{4}$", opt$id)) {
+    stop("Not a PDB identifier: ", opt$id)
+  }
   get.pdb(opt$id, format = "cif", path = ".")
-  pdbConversionName = sub("\\.cif$", ".pdb", opt$mmcif)
-  command0 = paste("gemmi convert", opt$mmcif, pdbConversionName)
+  ## 'get.pdb' writes '<id>.cif' into the working directory
+  cifName = paste0(opt$id, ".cif")
+  pdbConversionName = paste0(opt$id, ".pdb")
+  command0 = paste("gemmi convert", shQuote(cifName), shQuote(pdbConversionName))
   system_status0 = system(command0)
+  if (system_status0 != 0) {
+    stop("Conversion of ", cifName, " failed with exit code ", system_status0)
+  }
   inputPDB = pdbConversionName
 } else if (! is.null(opt$mmcif)) {
-  ## convert from '.mmcif' format to '.pdb' format
-  pdbConversionName = sub("\\.cif.gz$", ".pdb", opt$mmcif)
-  command0 = paste("zcat", opt$mmcif, "|", "gemmi convert -", pdbConversionName)
+  ## convert from '.mmcif' format to '.pdb' format;
+  ## both '.cif' and '.cif.gz' are accepted and the input file is never written to
+  pdbConversionName = sub("\\.cif(\\.gz)?$", ".pdb", basename(opt$mmcif))
+  if (pdbConversionName == basename(opt$mmcif)) {
+    stop("MMCIF input is expected to end in '.cif' or '.cif.gz': ", opt$mmcif)
+  }
+  if (grepl("\\.gz$", opt$mmcif)) {
+    command0 = paste("zcat", shQuote(opt$mmcif), "|", "gemmi convert -", shQuote(pdbConversionName))
+  } else {
+    command0 = paste("gemmi convert", shQuote(opt$mmcif), shQuote(pdbConversionName))
+  }
   system_status0 = system(command0)
+  if (system_status0 != 0) {
+    stop("Conversion of ", opt$mmcif, " failed with exit code ", system_status0)
+  }
   inputPDB = pdbConversionName
 } else {
-  stop("No valid input. Get help with 'Rscript popscomp_standalone.R --help'.")
+  stop("No valid input. Get help with 'Rscript popscomp_interface.R --help'.")
 }
 
 
@@ -95,19 +131,33 @@ chain.files.short = sub('\\.pdb$', '', basename(as.character(chain.files)))
 message("Isolated chains")
 exit_codes = sapply(1:length(chain.files), function(x) {
  	command1 = paste0("pops --outDirName ", ".",
-          " --rout --routPrefix ", paste0(chain.files.short[x], ".iso"),
+          " --rout --routPrefix ", shQuote(paste0(chain.files.short[x], ".iso")),
 					" --residueOut",
-					" --pdb ", chain.files[x], " 1> ", chain.files.short[x], ".o",
-					" 2> ", chain.files.short[x], ".e")
-	print(command1)
+					" --pdb ", shQuote(chain.files[x]),
+					" 1> ", shQuote(paste0(chain.files.short[x], ".o")),
+					" 2> ", shQuote(paste0(chain.files.short[x], ".e")))
 	system_status1 = system(command1, wait = TRUE)
 	message("  chain ", x, ": ", chain.files[x], "  exit code: ", system_status1)
+	return(system_status1)
 })
+if (any(exit_codes != 0)) {
+	stop("POPS failed on isolated chain(s): ",
+		paste(chain.files.short[exit_codes != 0], collapse = ", "))
+}
 
-## Concatenate output files of single (ISO = isolated) chains.
-## Residue
-command3 = paste0("tail -q -n+2 ", "*.iso.rpopsResidue >> ", "isoSASA.rpopsResidue")
+## Concatenate output files of single (ISO = isolated) chains:
+## the header line of the first chain, then the data lines of all chains.
+## The file is truncated ('>'), so a re-run in the same directory does not
+## append to the table of the previous run. Only the chains of this structure
+## are listed, so left-over '*.iso.*' files of other structures are not swept in.
+iso.residue.files = paste0(chain.files.short, ".iso.rpopsResidue")
+command3 = paste("head -1", shQuote(iso.residue.files[1]), "> isoSASA.rpopsResidue &&",
+                 "tail -q -n+2", paste(shQuote(iso.residue.files), collapse = " "),
+                 ">> isoSASA.rpopsResidue")
 system_status3 = system(command3, wait = TRUE)
+if (system_status3 != 0) {
+	stop("Concatenation of isolated-chain SASA files failed with exit code ", system_status3)
+}
 
 #________________________________________________________________________________
 ## PAIR: create PDB files for all pairwise chain combinations
@@ -119,9 +169,9 @@ chainpair.files = sapply(1:dim(pair.cmbn)[2], function(x) {
  	chainpair.files[[x]] = paste0(chain.files.short[pair.cmbn[1, x]], "-",
                 	              chain.files.short[pair.cmbn[2, x]], ".pdb")
  	## concatenate single chain PDB files to paired chain PDB files
-	 command5 = paste("cat", chain.files[pair.cmbn[1, x]],
-    	                     chain.files[pair.cmbn[2, x]], ">",
-        	                 chainpair.files[[x]])
+	 command5 = paste("cat", shQuote(chain.files[pair.cmbn[1, x]]),
+    	                     shQuote(chain.files[pair.cmbn[2, x]]), ">",
+        	                 shQuote(chainpair.files[[x]]))
  	system_status5 = system(command5, wait = TRUE)
  	paste("  chain pair:", x, " exit code:", system_status5)
  	return(chainpair.files[[x]])
@@ -132,16 +182,21 @@ chainpair.files.short = sub('\\.pdb$', '', basename(as.character(chainpair.files
 #________________________________________________________________________________
 ## PAIR: run POPS over all pairwise chain combinations via system (= shell) call
 exit_codes = sapply(1:length(chainpair.files), function(x) {
-	command6 = paste0("pops",
-					" --rout --routPrefix ", paste0(chainpair.files.short[x], ".pair"),
+	command6 = paste0("pops --outDirName ", ".",
+					" --rout --routPrefix ", shQuote(paste0(chainpair.files.short[x], ".pair")),
 					" --residueOut",
-					paste0(" --distMatCAOut ", pdbConversionName, "_distMatCA.out"),
-					" --pdb ", chainpair.files[x], " 1> ", "POPScomp_chainpair", x, ".o",
-                    " 2> ", "POPScomp_chainpair", x, ".e")
-	print(command6)
+					" --distMatCAOut ", shQuote(paste0(chainpair.files.short[x], ".distMatCA.out")),
+					" --pdb ", shQuote(chainpair.files[x]),
+					" 1> ", shQuote(paste0("POPScomp_chainpair", x, ".o")),
+                    " 2> ", shQuote(paste0("POPScomp_chainpair", x, ".e")))
 	system_status6 = system(command6, wait = TRUE)
-	message("  chain ", x, ": ", chainpair.files[x], "  exit code: ", system_status6)
+	message("  chain pair ", x, ": ", chainpair.files[x], "  exit code: ", system_status6)
+	return(system_status6)
 })
+if (any(exit_codes != 0)) {
+	stop("POPS failed on chain pair(s): ",
+		paste(chainpair.files.short[exit_codes != 0], collapse = ", "))
+}
 
 #________________________________________________________________________________
 ## read SASA files
@@ -180,38 +235,66 @@ for (i in 1:dim(pair.cmbn)[2]) {
 names(pair.sasa.level.files[[1]]) = chainpair.files.short
 
 #________________________________________________________________________________
-## DIFF: compute SASA differences (POPScomp values)
+## DIFF: compute interface residues per chain pair
 ## 'pair.cmbn' contains the order of PAIR files as column order and
 ##   the index of ISO files as column elements. That way the match between
 ##   PAIR and ISO files is reconstructed here.
-## initialise list of lists with predefined number of SASA difference tables
-#message("Compuing SASA differences")
-diff.sasa.level = vector(mode = "list", length = length(rpopsLevel))
-diff.veclist = function(x) { vector(mode = "list", length = dim(pair.cmbn)[2]) }
-diff.sasa.level = lapply(diff.sasa.level, diff.veclist)
+message("Computing interface residues")
 
-## compute SASA differences
-iso.rbind.tmp = rbind(iso.sasa.level.files[[1]][[1]],
-                      iso.sasa.level.files[[1]][[2]])
+for (i in 1:dim(pair.cmbn)[2]) {
+	## the two isolated chains of this pair, in the order in which they were
+	## concatenated into the pair structure
+	iso.rbind.tmp = rbind(iso.sasa.level.files[[1]][[pair.cmbn[1, i]]],
+	                      iso.sasa.level.files[[1]][[pair.cmbn[2, i]]])
+	pair.tmp = pair.sasa.level.files[[1]][[i]]
 
-## using the log-ratio in a robust normalised form (Zrobust_Q)
-#D_Phob.A.2 = round(iso.rbind.tmp[ , "Phob.A.2"] - pair.sasa.level.files[[1]][[1]][ , "Phob.A.2"], digits = 2)
-#D_Phil.A.2 = round(iso.rbind.tmp[ , "Phil.A.2"] - pair.sasa.level.files[[1]][[1]][ , "Phil.A.2"], digits = 2)
-#D_SASA.A.2 = round(iso.rbind.tmp[ , "SASA.A.2"] - pair.sasa.level.files[[1]][[1]][ , "SASA.A.2"], digits = 2)
-logratio_Q.SASA = round(log2(iso.rbind.tmp[ , "Q.SASA."] / pair.sasa.level.files[[1]][[1]][ , "Q.SASA."]), digits = 2)
-is.lix = logratio_Q.SASA > 0
-#Z_Q.SASA = logratio_Q.SASA / sd(logratio_Q.SASA)
-#is.logratio_Q.SASA = logratio_Q.SASA[is.lix]
-Zrobust_Q.SASA = (logratio_Q.SASA[is.lix] - median(logratio_Q.SASA[is.lix])) / (1.4862 * mad(logratio_Q.SASA[is.lix]))
+	## The two tables are compared row by row, so they must describe the same
+	## residues in the same order. That is verified here instead of assumed:
+	## a silent mismatch would subtract unrelated residues from each other.
+	res.key = function(x) paste(x[ , "Chain"], x[ , "ResidNr"], x[ , "iCode"], sep = ":")
+	if (! identical(res.key(iso.rbind.tmp), res.key(pair.tmp))) {
+		stop("Residues of the isolated chains and of the chain pair ",
+			chainpair.files.short[i], " do not match")
+	}
 
-## final residue selection is Q.SASA <= 0.25 and Zrobust > 1
-sel.lix = (pair.sasa.level.files[[1]][[1]][ , "Q.SASA."][is.lix] <= 0.25) & (Zrobust_Q.SASA > 1)
-final.ix = (which(is.lix))[sel.lix]
+	## using the log-ratio in a robust normalised form (Zrobust_Q)
+	## Residues that are fully buried in either structure have Q.SASA = 0, which
+	## would give an infinite or undefined log-ratio; they are excluded here, as
+	## are residues that lose no accessibility (log-ratio <= 0).
+	q.iso = iso.rbind.tmp[ , "Q.SASA."]
+	q.pair = pair.tmp[ , "Q.SASA."]
+	logratio_Q.SASA = rep(NA_real_, length(q.iso))
+	valid = is.finite(q.iso) & is.finite(q.pair) & (q.iso > 0) & (q.pair > 0)
+	logratio_Q.SASA[valid] = round(log2(q.iso[valid] / q.pair[valid]), digits = 2)
+	is.lix = ! is.na(logratio_Q.SASA) & (logratio_Q.SASA > 0)
 
-#________________________________________________________________________________
-## write results
-write.table(pair.sasa.level.files[[1]][[1]][final.ix, ],
-				file = paste0(pdbConversionName, "_Qinterface.dat"))
+	if (! any(is.lix)) {
+		message("  chain pair ", chainpair.files.short[i], ": no buried residues")
+		next
+	}
+
+	## robust z-score: 'mad' already scales by 1.4826 for consistency with the
+	## standard deviation of a normal distribution, so it must not be scaled again
+	lr = logratio_Q.SASA[is.lix]
+	lr.mad = mad(lr)
+	if (lr.mad == 0) {
+		message("  chain pair ", chainpair.files.short[i],
+			": log-ratios have zero deviation, no residue selected")
+		next
+	}
+	Zrobust_Q.SASA = (lr - median(lr)) / lr.mad
+
+	## final residue selection is Q.SASA <= 0.25 and Zrobust > 1
+	sel.lix = (q.pair[is.lix] <= 0.25) & (Zrobust_Q.SASA > 1)
+	final.ix = (which(is.lix))[sel.lix]
+
+	#________________________________________________________________________________
+	## write results: one table per chain pair
+	outName = paste0(chainpair.files.short[i], "_Qinterface.dat")
+	write.table(pair.tmp[final.ix, ], file = outName)
+	message("  chain pair ", chainpair.files.short[i], ": ",
+		length(final.ix), " interface residues -> ", outName)
+}
 
 
 #===============================================================================
