@@ -6,6 +6,7 @@ Copyright (C) 2018 Jens Kleinjung
 Read the COPYING file for license information.
 ==============================================================================*/
 
+#include "config.h"
 #include "json.h"
 #include "cJSON.h"
 
@@ -85,7 +86,9 @@ static void make_json(Arg *arg, Str *pdb, ResSasa *resSasa, cJSON *json, int bur
 	/* header: attached to 'json' */
 	cJSON_AddStringToObject(json, "data_resource", "POPScomp_PDBML");
 	cJSON_AddStringToObject(json, "resource_version", "weekly");
-	cJSON_AddStringToObject(json, "software_version", "3.4.1");
+	/* VERSION is set by the build system (configure.ac), so that the version
+		of the JSON output cannot drift from the version of the program */
+	cJSON_AddStringToObject(json, "software_version", VERSION);
 	cJSON_AddStringToObject(json, "resource_entry_url", "https://github.com/Fraternalilab/POPScomp");
 	cJSON_AddStringToObject(json, "release_date", "25/10/2021");
 	cJSON_AddStringToObject(json, "pdb_id", pdb->pdbID);

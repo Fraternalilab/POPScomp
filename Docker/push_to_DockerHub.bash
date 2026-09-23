@@ -18,8 +18,8 @@ docker images
 
 #_______________________________________________________________________________
 ## push 'version'-tag
-docker tag popscomp:latest jkleinj150999/popscomp:v3.4
-docker push jkleinj150999/popscomp:v3.4
+docker tag popscomp:latest jkleinj150999/popscomp:v3.5
+docker push jkleinj150999/popscomp:v3.5
 
 #===============================================================================
 
