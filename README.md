@@ -76,35 +76,39 @@ For clarity, these are the legacy servers:
 Kleinjung, J. and Fraternali, F.<br>
 *Design and Application of Implicit Solvent Models in Biomolecular Simulations.*<br>
 **Current Opinion in Structural Biology** 25 (2014) 126-134.<br> 
-[![doi](https://img.shields.io/badge/doi-10.1016/j.sbi.2014.04.003-blue.svg?style=flat)](https://dx.doi.org/10.1016/j.sbi.2014.04.003)
-[![pubmed](https://img.shields.io/badge/pubmed-4045398-blue.svg?style=flat)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4045398/)
+[![doi](https://img.shields.io/badge/doi-10.1016%2Fj.sbi.2014.04.003-blue.svg?style=flat)](https://doi.org/10.1016/j.sbi.2014.04.003)
+[![pubmed](https://img.shields.io/badge/pubmed-24841242-blue.svg?style=flat)](https://pubmed.ncbi.nlm.nih.gov/24841242/)
+[![pmc](https://img.shields.io/badge/pmc-PMC4045398-blue.svg?style=flat)](https://pmc.ncbi.nlm.nih.gov/articles/PMC4045398/)
 
 Fraternali, F. and van Gunsteren, W.F.<br>
 *An efficient mean solvation force model for use in molecular dynamics simulations of proteins in aqueous solution.*<br>
 **Journal of Molecular Biology** 256 (1996) 939-948.<br>
-[![doi](https://img.shields.io/badge/doi-10.1016%2Fj.jmb.2014.03.010-blue.svg?style=flat)](https://dx.doi.org/10.1016%2Fj.sbi.2014.04.003)
-[![pubmed](https://img.shields.io/badge/pubmed-24681267-blue.svg?style=flat)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4045398/)
+[![doi](https://img.shields.io/badge/doi-10.1006%2Fjmbi.1996.0139-blue.svg?style=flat)](https://doi.org/10.1006/jmbi.1996.0139)
+[![pubmed](https://img.shields.io/badge/pubmed-8601844-blue.svg?style=flat)](https://pubmed.ncbi.nlm.nih.gov/8601844/)
 
 #### POPS method
 Fraternali, F. and Cavallo, L.<br>
 *Parameter optimized surfaces (POPS): analysis of key interactions and conformational changes in the ribosome.*<br>
 **Nucleic Acids Research** 30 (2002) 2950-2960.<br>
-[![doi](https://img.shields.io/badge/doi-10.1093%2Fnar%2Fgkf373-blue.svg?style=flat)](https://dx.doi.org/10.1093%2Fnar%2Fgkf373)
-[![pubmed](https://img.shields.io/badge/pubmed-117037-blue.svg?style=flat)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC117037/)
+[![doi](https://img.shields.io/badge/doi-10.1093%2Fnar%2Fgkf373-blue.svg?style=flat)](https://doi.org/10.1093/nar/gkf373)
+[![pubmed](https://img.shields.io/badge/pubmed-12087181-blue.svg?style=flat)](https://pubmed.ncbi.nlm.nih.gov/12087181/)
+[![pmc](https://img.shields.io/badge/pmc-PMC117037-blue.svg?style=flat)](https://pmc.ncbi.nlm.nih.gov/articles/PMC117037/)
 
 #### POPS server
 Cavallo, L., Kleinjung, J. and Fraternali, F.<br>
 *POPS: A fast algorithm for solvent accessible surface areas at atomic and residue level.*<br>
 **Nucleic Acids Research** 31 (2003) 3364-3366.<br>
-[![doi](https://img.shields.io/badge/doi-0.1093%2Fnar%2Fgkg601-blue.svg?style=flat)](https://dx.doi.org/10.1093%2Fnar%2Fgkg601)
-[![pubmed](https://img.shields.io/badge/pubmed-169007-blue.svg?style=flat)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC169007/)
+[![doi](https://img.shields.io/badge/doi-10.1093%2Fnar%2Fgkg601-blue.svg?style=flat)](https://doi.org/10.1093/nar/gkg601)
+[![pubmed](https://img.shields.io/badge/pubmed-12824328-blue.svg?style=flat)](https://pubmed.ncbi.nlm.nih.gov/12824328/)
+[![pmc](https://img.shields.io/badge/pmc-PMC169007-blue.svg?style=flat)](https://pmc.ncbi.nlm.nih.gov/articles/PMC169007/)
 
 #### POPSCOMP method and server
 Kleinjung, J. and Fraternali, F.<br>
 *POPSCOMP: an automated interaction analysis of biomolecular complexes.*<br>
 **Nucleic Acids Research** 33 (2005) W342-W346.<br>
-[![doi](https://img.shields.io/badge/doi-10.1093%2Fnar%2Fgki369-blue.svg?style=flat)](https://dx.doi.org/10.1093%2Fnar%2Fgki369)
-[![pubmed](https://img.shields.io/badge/pubmed-1160130-blue.svg?style=flat)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1160130/)
+[![doi](https://img.shields.io/badge/doi-10.1093%2Fnar%2Fgki369-blue.svg?style=flat)](https://doi.org/10.1093/nar/gki369)
+[![pubmed](https://img.shields.io/badge/pubmed-15980485-blue.svg?style=flat)](https://pubmed.ncbi.nlm.nih.gov/15980485/)
+[![pmc](https://img.shields.io/badge/pmc-PMC1160130-blue.svg?style=flat)](https://pmc.ncbi.nlm.nih.gov/articles/PMC1160130/)
 
 
 ## Issues
