@@ -252,38 +252,42 @@ ui <- fluidPage(
 			    An efficient mean solvation force model for use in
 			    molecular dynamics simulations of proteins in aqueous solution.
 			    Journal of Molecular Biology 256 (1996) 939-948.",
-			  a("DOI", href="https://dx.doi.org/10.1016%2Fj.sbi.2014.04.003"),
-			  a("Pubmed", href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4045398/")
+			  a("DOI", href="https://doi.org/10.1006/jmbi.1996.0139"),
+			  a("PubMed", href="https://pubmed.ncbi.nlm.nih.gov/8601844/")
 			),
 			p("Kleinjung, J. and Fraternali, F.
 			Design and Application of Implicit Solvent Models
 			in Biomolecular Simulations.
                             Current Opinion in Structural Biology 25 (2014) 126-134.",
-			  a("DOI", href="http://dx.doi.org/10.1016/j.sbi.2014.04.003"),
-			  a("Pubmed", href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4045398/")
+			  a("DOI", href="https://doi.org/10.1016/j.sbi.2014.04.003"),
+			  a("PubMed", href="https://pubmed.ncbi.nlm.nih.gov/24841242/"),
+			  a("PMC", href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4045398/")
 			),
 			h4("POPS method"),
 			p("Fraternali, F. and Cavallo, L.
 			    Parameter optimized surfaces (POPS): analysis of key interactions
 			    and conformational changes in the ribosome.
 			    Nucleic Acids Research 30 (2002) 2950-2960.",
-			  a("DOI", href="https://dx.doi.org/10.1093%2Fnar%2Fgkf373"),
-			  a("Pubmed", href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC117037/")
+			  a("DOI", href="https://doi.org/10.1093/nar/gkf373"),
+			  a("PubMed", href="https://pubmed.ncbi.nlm.nih.gov/12087181/"),
+			  a("PMC", href="https://pmc.ncbi.nlm.nih.gov/articles/PMC117037/")
 			),
 			h4("POPS server"),
 			p("Cavallo, L., Kleinjung, J. and Fraternali, F.
 			    POPS: A fast algorithm for solvent accessible surface areas
 			    at atomic and residue level.
 			    Nucleic Acids Research 31 (2003) 3364-3366.",
-			  a("DOI", href="https://dx.doi.org/10.1093%2Fnar%2Fgkg601"),
-			  a("Pubmed", href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC169007/")
+			  a("DOI", href="https://doi.org/10.1093/nar/gkg601"),
+			  a("PubMed", href="https://pubmed.ncbi.nlm.nih.gov/12824328/"),
+			  a("PMC", href="https://pmc.ncbi.nlm.nih.gov/articles/PMC169007/")
 			),
 			h4("POPSCOMP server"),
 			p("Kleinjung, J. and Fraternali, F.
 			    POPSCOMP: an automated interaction analysis of biomolecular complexes.
 			    Nucleic Acids Research 33 (2005) W342-W346.",
-			  a("DOI", href="https://dx.doi.org/10.1093%2Fnar%2Fgki369"),
-			  a("Pubmed", href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1160130/")
+			  a("DOI", href="https://doi.org/10.1093/nar/gki369"),
+			  a("PubMed", href="https://pubmed.ncbi.nlm.nih.gov/15980485/"),
+			  a("PMC", href="https://pmc.ncbi.nlm.nih.gov/articles/PMC1160130/")
 			),
 			h3("License and Copyright"),
 			p("Usage of the software and server is free under the

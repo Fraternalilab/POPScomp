@@ -70,7 +70,7 @@ For clarity, these are the legacy servers:
 ## References
 
 ### POPScomp releases in Zenodo
-[Zenodo account of Fraternalilab/POPScomp](https://zenodo.org/account/settings/github/repository/Fraternalilab/POPScomp)
+[All POPScomp releases in Zenodo](https://doi.org/10.5281/zenodo.3679109)
 
 #### Implicit solvent
 Kleinjung, J. and Fraternali, F.<br>
