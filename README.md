@@ -69,8 +69,7 @@ For clarity, these are the legacy servers:
 
 ## References
 
-### POPScomp releases in Zenodo
-[All POPScomp releases in Zenodo](https://doi.org/10.5281/zenodo.3679109)
+### [POPScomp releases in Zenodo](https://doi.org/10.5281/zenodo.3679109)
 
 #### Implicit solvent
 Kleinjung, J. and Fraternali, F.<br>
@@ -112,7 +111,7 @@ Kleinjung, J. and Fraternali, F.<br>
 
 
 ## Issues
-Iussues can be recorded on the [Issues](https://github.com/Fraternalilab/POPScomp/issues) page.
+Issues can be recorded on the [Issues](https://github.com/Fraternalilab/POPScomp/issues) page.
 
 
 ## License and Copyright
