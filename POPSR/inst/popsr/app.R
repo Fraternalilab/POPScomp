@@ -13,7 +13,7 @@ library(shiny)
 library(bio3d)
 library(DT)
 library(digest)
-library(shinysky)
+library(shinybusy)
 library(POPSR)
 library(markdown)
 
@@ -71,7 +71,7 @@ ui <- fluidPage(
       textOutput("runid"),
       tags$hr(),
 
-      busyIndicator(wait = 1000),
+      add_busy_spinner(spin = "fading-circle", timeout = 1000),
 
       ## i5 download button
       downloadButton('downloadAllResults', 'Download All Results')

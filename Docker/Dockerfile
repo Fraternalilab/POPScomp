@@ -40,11 +40,9 @@ ENV POPS_BIN=/build/install/usr/local/bin/pops
 ENV PATH=/build/install/usr/local/bin:$PATH
 
 # R packages
-RUN R -e "install.packages(c('shiny', 'bio3d', 'DT', 'remotes', \
+RUN R -e "install.packages(c('shiny', 'bio3d', 'DT', 'shinybusy', \
                              'digest', 'ggplot2', 'optparse', 'markdown'), \
                              repos='https://cloud.r-project.org')"
-
-RUN R -e "remotes::install_github('AnalytixWare/ShinySky')"
 
 ## Compile and install POPSR
 COPY POPSR /build/POPSR

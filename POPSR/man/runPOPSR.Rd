@@ -12,7 +12,7 @@ return until it is closed.
 Start the Shiny interface of POPScomp, which runs POPS on an uploaded or
 downloaded structure and shows the SASA and buried-SASA tables. The
 application additionally needs the packages \code{shiny}, \code{DT},
-\code{digest}, \code{markdown} and \code{shinysky}.
+\code{digest}, \code{markdown} and \code{shinybusy}.
 }
 \examples{
 \dontrun{

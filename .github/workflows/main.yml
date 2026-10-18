@@ -25,15 +25,12 @@ jobs:
 
       - name: Install dependencies
         run: |
-          Rscript -e 'install.packages(c("bio3d", "ggplot2", "knitr", "rmarkdown", "shiny", "DT", "digest", "markdown"))'
+          Rscript -e 'install.packages(c("bio3d", "ggplot2", "knitr", "rmarkdown", "shiny", "DT", "digest", "markdown", "shinybusy"))'
 
       - name: Build POPSR
         run: |
           R CMD build POPSR
 
-      ## 'shinysky' (Suggests) is not on CRAN, so allow checking without it
       - name: Check POPSR
-        env:
-          _R_CHECK_FORCE_SUGGESTS_: false
         run: |
           R CMD check --no-manual POPSR_*.tar.gz

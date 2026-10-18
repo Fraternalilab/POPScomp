@@ -25,8 +25,7 @@ Suggests: knitr,
           DT,
           digest,
           markdown,
-          shinysky
-Additional_repositories: https://github.com/AnalytixWare/ShinySky
+          shinybusy
 Collate: popscomp.R plotSASA.R runApp.R
 License: GPL-3
 URL: https://github.com/Fraternalilab/POPScomp
