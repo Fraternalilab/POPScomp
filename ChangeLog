@@ -12,6 +12,10 @@ http://popscomp.org
 #_______________________________________________________________________________
 
 - 3.5
+Sun 18 Oct 23:02:05 CEST 2026
+	Replaced the unmaintained 'shinysky' library (GitHub only) by 'shinybusy'
+	(CRAN) for the busy indicator of the Shiny interface.
+
 Wed 23 Sep 09:00:01 CEST 2026
 	Bugfix audit with Claude Code.
 
