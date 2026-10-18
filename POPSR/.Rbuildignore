@@ -2,3 +2,5 @@
 ^\.Rproj\.user$
 ^\.positai$
 ^\.claude$
+^script/pops$
+^script/tests/1F3R\.cif$

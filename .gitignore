@@ -76,3 +76,6 @@ POPSC/src/config.h.in
 POPSC/config.guess
 POPSC/config.sub
 POPSC/test-driver
+
+# local link to the POPSC build (dangles in a fresh clone and breaks R CMD build)
+POPSR/script/pops
