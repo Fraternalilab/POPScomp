@@ -25,8 +25,12 @@ jobs:
 
       - name: Install dependencies
         run: |
-          Rscript -e 'install.packages("knitr", dependencies = TRUE)'
+          Rscript -e 'install.packages(c("ggplot2", "knitr"), dependencies = TRUE)'
 
       - name: Build POPSR
         run: |
           R CMD build POPSR
+
+      - name: Check POPSR
+        run: |
+          R CMD check --no-manual POPSR_*.tar.gz
