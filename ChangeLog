@@ -11,11 +11,18 @@ http://popscomp.org
 
 #_______________________________________________________________________________
 
-- 3.5
+- 3.5.1
 Sun 18 Oct 23:02:05 CEST 2026
 	Replaced the unmaintained 'shinysky' library (GitHub only) by 'shinybusy'
 	(CRAN) for the busy indicator of the Shiny interface.
+	Generated Autotools files are no longer tracked: run 'bootstrap' before
+	'configure' when building from a repository checkout.
+	R CI runs 'R CMD check' on the built POPSR package.
+	Corrected the DOIs and PubMed IDs of the references in the README and
+	in the 'About' tab; CITATION.cff rewritten to pass validation,
+	so that Zenodo can archive the release.
 
+- 3.5
 Wed 23 Sep 09:00:01 CEST 2026
 	Bugfix audit with Claude Code.
 

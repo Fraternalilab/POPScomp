@@ -1,7 +1,31 @@
 cff-version: 1.2.0
-message: "References pertaining to POPS and POPSCOMP methods."
+message: "If you use POPScomp, please cite the software and the references below that pertain to the POPS and POPSCOMP methods."
+type: software
+title: "POPScomp"
+abstract: "Solvent Accessible Surface Areas of Biomolecules and their Complexes"
+authors:
+  - family-names: Kleinjung
+    given-names: Jens
+  - family-names: Fraternali
+    given-names: Franca
+version: "3.5.1"
+date-released: "2026-10-18"
+doi: "10.5281/zenodo.3679109"
+license: GPL-3.0-only
+repository-code: "https://github.com/Fraternalilab/POPScomp"
+url: "https://github.com/Fraternalilab/POPScomp"
+keywords:
+  - protein
+  - DNA
+  - RNA
+  - structure
+  - complex
+  - solvent accessible surface area
+  - biomolecule
+  - solvation
 references:
-  - authors:
+  - type: article
+    authors:
       - family-names: Kleinjung
         given-names: Jens
       - family-names: Fraternali
@@ -9,9 +33,17 @@ references:
     title: "Design and Application of Implicit Solvent Models in Biomolecular Simulations"
     journal: "Current Opinion in Structural Biology"
     year: 2014
+    volume: 25
+    start: 126
+    end: 134
     doi: "10.1016/j.sbi.2014.04.003"
+    identifiers:
+      - type: url
+        value: "https://pubmed.ncbi.nlm.nih.gov/24841242/"
+        description: "PubMed 24841242"
 
-  - authors:
+  - type: article
+    authors:
       - family-names: Fraternali
         given-names: Franca
       - family-names: van Gunsteren
@@ -19,9 +51,17 @@ references:
     title: "An efficient mean solvation force model for use in molecular dynamics simulations of proteins in aqueous solution"
     journal: "Journal of Molecular Biology"
     year: 1996
-	doi: "10.1006/jmbi.1996.0139"
+    volume: 256
+    start: 939
+    end: 948
+    doi: "10.1006/jmbi.1996.0139"
+    identifiers:
+      - type: url
+        value: "https://pubmed.ncbi.nlm.nih.gov/8601844/"
+        description: "PubMed 8601844"
 
-  - authors:
+  - type: article
+    authors:
       - family-names: Fraternali
         given-names: Franca
       - family-names: Cavallo
@@ -29,9 +69,17 @@ references:
     title: "Parameter optimized surfaces (POPS): analysis of key interactions and conformational changes in the ribosome"
     journal: "Nucleic Acids Research"
     year: 2002
+    volume: 30
+    start: 2950
+    end: 2960
     doi: "10.1093/nar/gkf373"
+    identifiers:
+      - type: url
+        value: "https://pubmed.ncbi.nlm.nih.gov/12087181/"
+        description: "PubMed 12087181"
 
-  - authors:
+  - type: article
+    authors:
       - family-names: Cavallo
         given-names: Luigi
       - family-names: Kleinjung
@@ -41,9 +89,17 @@ references:
     title: "POPS: A fast algorithm for solvent accessible surface areas at atomic and residue level"
     journal: "Nucleic Acids Research"
     year: 2003
+    volume: 31
+    start: 3364
+    end: 3366
     doi: "10.1093/nar/gkg601"
+    identifiers:
+      - type: url
+        value: "https://pubmed.ncbi.nlm.nih.gov/12824328/"
+        description: "PubMed 12824328"
 
-  - authors:
+  - type: article
+    authors:
       - family-names: Kleinjung
         given-names: Jens
       - family-names: Fraternali
@@ -51,5 +107,11 @@ references:
     title: "POPSCOMP: an automated interaction analysis of biomolecular complexes"
     journal: "Nucleic Acids Research"
     year: 2005
+    volume: 33
+    start: W342
+    end: W346
     doi: "10.1093/nar/gki369"
-
+    identifiers:
+      - type: url
+        value: "https://pubmed.ncbi.nlm.nih.gov/15980485/"
+        description: "PubMed 15980485"
