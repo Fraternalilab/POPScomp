@@ -1,3 +1,4 @@
 [submodule "POPSC/gemmi"]
 	path = POPSC/gemmi
 	url = https://github.com/project-gemmi/gemmi.git
+	ignore = untracked
