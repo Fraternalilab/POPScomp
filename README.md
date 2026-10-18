@@ -89,7 +89,7 @@ Fraternali, F. and van Gunsteren, W.F.<br>
 Fraternali, F. and Cavallo, L.<br>
 *Parameter optimized surfaces (POPS): analysis of key interactions and conformational changes in the ribosome.*<br>
 **Nucleic Acids Research** 30 (2002) 2950-2960.<br>
-[![doi](https://im)](https://dx.doi.org/10.1093%2Fnar%2Fgkf373)
+[![doi](https://img.shields.io/badge/doi-10.1093%2Fnar%2Fgkf373-blue.svg?style=flat)](https://dx.doi.org/10.1093%2Fnar%2Fgkf373)
 [![pubmed](https://img.shields.io/badge/pubmed-117037-blue.svg?style=flat)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC117037/)
 
 #### POPS server
