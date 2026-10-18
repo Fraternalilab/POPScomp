@@ -66,10 +66,10 @@ For clarity, these are the legacy servers:
 * mathbio.crick.mrc.ac.uk/POPSCOMP : Only for a short while the POPS and POPSCOMP servers were supported by the Francis Crick Institute.
 * mathbio.nimr.mrc.ac.uk/POPSCOMP : This was the original address of the POPS and POPSCOMP servers in the Division of Mathematical Biology at the NIMR institute, which has been closed in 2015 and became a part of the Francis Crick Institute.
 
+### [POPScomp releases in Zenodo](https://doi.org/10.5281/zenodo.3679109)
+
 
 ## References
-
-### [POPScomp releases in Zenodo](https://doi.org/10.5281/zenodo.3679109)
 
 #### Implicit solvent
 Kleinjung, J. and Fraternali, F.<br>
