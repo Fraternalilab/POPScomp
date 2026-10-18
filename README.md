@@ -60,13 +60,7 @@ An R package to
 - split complexes into single and pair components to compute buried SASA using POPSC and 
 - provide a *Shiny* App as interface to run POPScomp analyses and visualise the results.
 
-### Legacy POPScomp servers referenced in our papers
-The code, servers and URL addresses in our papers have been comprehensively replaced by this GitHub repository.
-For clarity, these are the legacy servers:
-* mathbio.crick.mrc.ac.uk/POPSCOMP : Only for a short while the POPS and POPSCOMP servers were supported by the Francis Crick Institute.
-* mathbio.nimr.mrc.ac.uk/POPSCOMP : This was the original address of the POPS and POPSCOMP servers in the Division of Mathematical Biology at the NIMR institute, which has been closed in 2015 and became a part of the Francis Crick Institute.
-
-### [POPScomp releases in Zenodo](https://doi.org/10.5281/zenodo.3679109)
+#### [POPScomp releases in Zenodo](https://doi.org/10.5281/zenodo.3679109)
 
 
 ## References
@@ -125,3 +119,8 @@ Usage of the software and server is free under the GNU General Public License v3
 - 2002 Kuang Lin and Valerie Hindie (translation to C)
 - 2002 Luigi Cavallo (parametrisation)
 
+### P.S.: Legacy POPScomp servers referenced in our papers
+The code, servers and URL addresses in our papers have been comprehensively replaced by this GitHub repository.
+For clarity, these are the legacy servers:
+* mathbio.crick.mrc.ac.uk/POPSCOMP : Only for a short while the POPS and POPSCOMP servers were supported by the Francis Crick Institute.
+* mathbio.nimr.mrc.ac.uk/POPSCOMP : This was the original address of the POPS and POPSCOMP servers in the Division of Mathematical Biology at the NIMR institute, which has been closed in 2015 and became a part of the Francis Crick Institute.
