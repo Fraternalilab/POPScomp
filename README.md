@@ -7,7 +7,6 @@
 [![C CI](https://github.com/Fraternalilab/POPScomp/workflows/C%20CI/badge.svg)](https://github.com/Fraternalilab/POPScomp/blob/main/.github/workflows/ccpp.yml)
 [![R CI](https://github.com/Fraternalilab/POPScomp/workflows/R%20CI/badge.svg)](https://github.com/Fraternalilab/POPScomp/blob/main/.github/workflows/main.yml)
 
-
 The POPScomp program computes the Solvent Accessible Surface Area (SASA) of a given PDB or CIF structure.
 If the structure is a complex, *i.e.* composed of more than one chain
 containing protein or RNA/DNA, POPScomp computes additionally the SASA buried between chains.
@@ -18,15 +17,11 @@ Details of those routines are explained in the
 (Note: The POPScomp release in this repository combines both methods originally published as POPS and POPSCOMP).
 
 
-## popscomp.org : an easy-to-rember URL
-* [popscomp.org](http://popscomp.org) points to this GitHub repository. 
-
-
 ## Installation
 There are 2 ways to (install and) use POPScomp,
 please refer to the [Wiki](https://github.com/Fraternalilab/POPScomp/wiki) for details:
 
-1. Download the latest [POPScomp *Docker* image](https://hub.docker.com/repository/docker/jkleinj150999/popscomp)
+1. Download the latest [POPScomp *Docker* image](https://hub.docker.com/repository/docker/jkleinj150999/popscomp/tags/latest)
   and run the *Shiny* App on your local computer. The Docker image provides the program suite in fully functional form,
 *i.e.* a Shiny server with integrated POPSC/POPSR as computational backbone.
 Please refer to the [Wiki](https://github.com/Fraternalilab/POPScomp/wiki/Docker-Image)
@@ -39,7 +34,7 @@ git clone --recurse-submodules https://github.com/Fraternalilab/POPScomp.git
 ```
 
 ## Usage
-Enter a PDB identifier or upload a custom PDB|CIF file and press 'run POPScomp'.
+Enter a PDB databaseidentifier or upload a local PDB|CIF file and press 'run POPScomp'.
 SASA values and related information will be shown as tables for different resolutions: Atom, Residue, Chain and Molecule.
 Download individual results *via* the buttons underneath the tables or bundled *via* the
 'Download All Results' button.
@@ -60,7 +55,13 @@ An R package to
 - split complexes into single and pair components to compute buried SASA using 'pops' (see above) and 
 - provide a *Shiny* App as interface to run POPScomp analyses and visualise the results.
 
-#### [POPScomp releases in Zenodo](https://doi.org/10.5281/zenodo.3679109)
+
+## Software Sites and Releases
+
+- [popscomp.org](http://popscomp.org) points to this GitHub repository
+- [POPScomp images in Docker](https://hub.docker.com/repository/docker/jkleinj150999/popscomp)
+- [POPScomp releases in GitHub](https://github.com/Fraternalilab/POPScomp/releases)
+- [POPScomp releases in Zenodo](https://doi.org/10.5281/zenodo.3679109)
 
 
 ## References
