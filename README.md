@@ -7,8 +7,8 @@
 [![C CI](https://github.com/Fraternalilab/POPScomp/workflows/C%20CI/badge.svg)](https://github.com/Fraternalilab/POPScomp/blob/main/.github/workflows/ccpp.yml)
 [![R CI](https://github.com/Fraternalilab/POPScomp/workflows/R%20CI/badge.svg)](https://github.com/Fraternalilab/POPScomp/blob/main/.github/workflows/main.yml)
 
-The POPScomp program computes the Solvent Accessible Surface Area (SASA) of a given PDB or CIF structure.
-If the structure is a complex, *i.e.* composed of more than one chain
+The POPScomp program computes the Solvent Accessible Surface Area (SASA) of a given protein or DNA/RNA molecule,
+provided as PDB or CIF structure. If the structure is a complex, *i.e.* composed of more than one chain
 containing protein or RNA/DNA, POPScomp computes additionally the SASA buried between chains.
 The name 'POPS' is derived from **P**arameter **OP**timised **S**urfaces, because its parametrisation
 was performed by regression against a large set of protein and RNA/DNA structures.
