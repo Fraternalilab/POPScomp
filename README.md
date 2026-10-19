@@ -48,7 +48,7 @@ The [Wiki](https://github.com/Fraternalilab/POPScomp/wiki) contains additional d
 This POPScomp repository contains the following components:
 
 #### POPSC
-A GNU Autotools C package that creates the 'pops' program, a stand-alone application for the SASA calculation of structures.
+A GNU Autotools C package that creates the 'pops' program, a stand-alone application for the SASA calculation of biomolecular structures.
   
 #### POPSR
 An R package to
