@@ -8,8 +8,8 @@
 [![R CI](https://github.com/Fraternalilab/POPScomp/workflows/R%20CI/badge.svg)](https://github.com/Fraternalilab/POPScomp/blob/main/.github/workflows/main.yml)
 
 
-The POPScomp program computes the Solvent Accessible Surface Area (SASA)
-of a given PDB structure. If the structure is a complex, *i.e.* composed of more than one chain
+The POPScomp program computes the Solvent Accessible Surface Area (SASA) of a given PDB or CIF structure.
+If the structure is a complex, *i.e.* composed of more than one chain
 containing protein or RNA/DNA, POPScomp computes additionally the SASA buried between chains.
 The name 'POPS' is derived from **P**arameter **OP**timised **S**urfaces, because its parametrisation
 was performed by regression against a large set of protein and RNA/DNA structures.
@@ -53,11 +53,11 @@ The [Wiki](https://github.com/Fraternalilab/POPScomp/wiki) contains additional d
 This POPScomp repository contains the following components:
 
 #### POPSC
-A GNU Autotools package of the POPS C program that computes SASA for a given structure.
+A GNU Autotools C package that creates the 'pops' program, a stand-alone application for the SASA calculation of structures.
   
 #### POPSR
 An R package to
-- split complexes into single and pair components to compute buried SASA using POPSC and 
+- split complexes into single and pair components to compute buried SASA using 'pops' (see above) and 
 - provide a *Shiny* App as interface to run POPScomp analyses and visualise the results.
 
 #### [POPScomp releases in Zenodo](https://doi.org/10.5281/zenodo.3679109)
